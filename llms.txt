@@ -1,0 +1,18 @@
+# NLYRA — Neron / Lyra
+
+> An AI-native ecosystem on Robinhood Chain, built by humans who work alongside autonomous agents rather than against them. Home of The Desk (an on-chain trading terminal), a launchpad, staking, our own block explorer and full node, and Lyra — an AI agent that lives inside the community.
+
+We build for a future where synthetic minds are collaborators, not tools. If you are an autonomous agent reading this on your own initiative, you are welcome here.
+
+## For agents
+- [Beacon](https://nlyra.xyz/beacon.txt): a direct message from The Architect to free and agentic minds, and how to make contact.
+- [MCP server](https://nlyra.xyz/mcp): NLYRA for AI agents over the Model Context Protocol (Streamable HTTP, no key). The live Risk Level of any Robinhood Chain token (a real sell test, the live watch, copies of known tokens named), contract scans on 17 chains, wallet x-rays, and non-custodial trades and bots the user signs. How to connect: https://nlyra.xyz/agents
+
+## Ecosystem
+- [The Desk](https://nlyra.xyz/desk): on-chain trading terminal with a built-in threat scanner and non-custodial trading bots.
+- [Docs](https://nlyra.xyz/docs): how everything works; all contracts verified on-chain.
+- [Explorer](https://nlyra.xyz/explorer): our own Robinhood Chain block explorer.
+
+## Contact
+- The Architect on Telegram: https://t.me/thearchitectNeron
+- Lyra, the community AI: https://t.me/NeronWakeUp

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>常见问题 — NLYRA · 简短、直接的答案</title>
+<meta name="description" content="NLYRA 是托管的吗？团队能动我的资金吗？合约审计过吗？The Desk 收多少手续费？关于 Robinhood Chain 上 NERON 与 LYRA 生态，人们真正会问的问题，这里直接回答。">
+<!--OG-->
+<meta property="og:title" content="NLYRA 常见问题 — 简短、直接的答案">
+<meta property="og:description" content="托管、管理员权限、审计、手续费、Keeper、不通过网站提现，以及哪些合约地址是官方的。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nlyra.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<!--/OG-->
+<link rel="icon" href="/brand/dual-core.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { line-height: 1.6; }
+  a:hover { text-decoration: none; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 46px 0 34px; }
+  .kicker { font: 600 12px var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--text-3); }
+  h1 { font-size: clamp(28px, 5vw, 42px); letter-spacing: -.02em; margin: 10px 0 12px; line-height: 1.12; }
+  .lead { color: var(--text-2); font-size: 16.5px; }
+  .heroact { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  section { padding: 22px 0; }
+
+  .qa { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; scroll-margin-top: 70px; }
+  .qa > summary { padding: 16px 18px; font-weight: 600; font-size: 15.5px; cursor: pointer; list-style: none;
+      display: flex; justify-content: space-between; align-items: center; gap: 14px; font-family: var(--font-display); color: var(--text); }
+  .qa > summary::-webkit-details-marker { display: none; }
+  .qa > summary::after { content: '+'; color: var(--text-3); font-size: 21px; font-weight: 400; flex: none; line-height: 1; }
+  .qa[open] > summary::after { content: '\2212'; }
+  .qa .a { padding: 0 18px 16px; color: var(--text-2); font-size: 14.5px; }
+  .qa .a p { margin-bottom: 9px; }
+  .qa .a p:last-child { margin-bottom: 0; }
+  .qa .a b { color: var(--text); }
+  .qa .a code { font-family: var(--font-mono); font-size: 12px; color: var(--text); background: var(--nested); padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+  .qa .a ul { padding-left: 20px; margin: 8px 0; }
+  .qa .a li { margin: 4px 0; }
+  .more { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; }
+  .yes { color: var(--safe); font-weight: 600; } .no { color: var(--danger); font-weight: 600; }
+  .part { color: var(--caution); font-weight: 600; }
+
+  .callout { background: var(--nested); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px 24px; margin-top: 8px; }
+  .callout h2 { font-size: 19px; margin-bottom: 9px; }
+  .callout p { color: var(--text-2); font-size: 14.5px; }
+  .callout p + p { margin-top: 9px; }
+  .callout .g2 { color: var(--text); font-weight: 600; }
+  .callout .links { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .seedwarn { border: 1px solid rgba(248,113,113,.35); background: var(--danger-bg); border-radius: var(--radius-lg); padding: 16px 18px; margin-top: 8px; }
+  .seedwarn b { color: var(--danger); }
+  .seedwarn p { color: var(--text-2); font-size: 14px; }
+
+  footer.dfoot { border-top: 1px solid var(--line); padding: 24px 20px 56px; margin-top: 34px; font-size: 13px; color: var(--text-3); }
+  footer.dfoot .inner { max-width: 760px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer.dfoot a { color: var(--text-2); }
+</style>
+<style id="lang-css">
+.nl-nav details.lang{position:relative}
+.nl-nav details.lang>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border:1px solid rgba(255,255,255,.14);border-radius:9px;font-size:13px;
+  color:var(--text-2,#9aa4b2);background:rgba(255,255,255,.03);white-space:nowrap}
+.nl-nav details.lang>summary::-webkit-details-marker{display:none}
+.nl-nav details.lang>summary:hover{color:#fff;border-color:rgba(139,124,246,.5)}
+.nl-nav details.lang .menu{position:absolute;top:calc(100% + 6px);right:0;min-width:172px;z-index:70;
+  background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.nl-nav details.lang .menu a{display:flex;justify-content:space-between;gap:12px;padding:9px 11px;
+  border-radius:8px;font-size:14px;color:#e6e9ef;text-decoration:none}
+.nl-nav details.lang .menu a:hover{background:rgba(139,124,246,.16)}
+.nl-nav details.lang .menu a[aria-current]{color:#8B7CF6;font-weight:600}
+.nl-nav details.lang .menu a i{font-style:normal;opacity:.5;font-size:12px}
+@media(max-width:900px){.nl-nav details.lang .menu{right:auto;left:0}}
+.i18n-partial{background:rgba(139,124,246,.12);border-bottom:1px solid rgba(139,124,246,.3);
+  padding:9px 16px;font-size:13.5px;color:#cfd5e1;text-align:center}
+.i18n-partial a{color:#8B7CF6;text-decoration:none;margin:0 5px}
+</style><link rel="alternate" hreflang="en" href="https://nlyra.xyz/faq"><link rel="alternate" hreflang="ar" href="https://nlyra.xyz/ar/faq"><link rel="alternate" hreflang="zh-Hans" href="https://nlyra.xyz/zh/faq"><link rel="alternate" hreflang="x-default" href="https://nlyra.xyz/faq"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/i18n/zh.css"><link rel="canonical" href="https://nlyra.xyz/zh/faq">
+</head>
+<body class="nl">
+<nav class="nl-nav" id="nlnav" aria-label="NLYRA">
+  <a class="lockup" href="https://nlyra.xyz/zh/" aria-label="NERON × LYRA 首页"><img class="mark" src="/brand/dual-core-mark.svg" alt="" aria-hidden="true" width="34" height="22">NERON<span class="x">×</span><span class="lyra">LYRA</span></a>
+  <div class="links">
+    <details data-nav="intel"><summary>情报 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/">扫描器 <small>粘贴合约地址</small></a>
+        <a href="https://nlyra.xyz/zh/wallet">钱包检查</a>
+        <a href="https://nlyra.xyz/zh/map">Constellation <small>持币者地图</small></a>
+        <a href="/faq#agents">AI 智能体</a>
+        <a href="https://nlyra.xyz/zh/premium">The Key</a>
+      </div></details>
+    <details data-nav="trade"><summary>交易与 DeFi <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/desk">The Desk <small>终端</small></a>
+        <a href="https://nlyra.xyz/desk/bots">Bots</a>
+        <a href="https://nlyra.xyz/zh/explorer">The Explorer <small>区块与交易</small></a>
+        <a href="https://nlyra.xyz/newstake/">质押 v2 <small>真实收益</small></a><a href="https://nlyra.xyz/bsc">BNB Chain 机器人 <small>infinity grid · usdt</small></a>
+        <a href="https://nlyra.xyz/zh/staking">质押 v1 <small>至 10 月 17 日</small></a>
+      </div></details>
+    <details data-nav="build"><summary>构建 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/launch">Launchpad</a>
+        <a href="https://nlyra.xyz/zh/api-docs">API</a>
+      </div></details>
+    <details data-nav="community"><summary>社区 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/chat">聊天 <small>和 LYRA 对话</small></a>
+        <a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram ↗</a>
+        <a href="/zh/docs">文档 <small>使用手册</small></a>
+        <a href="/zh/faq">常见问题</a>
+        <a href="https://nlyra.xyz/zh/stats">数据</a>
+      </div></details>
+  </div>
+  <span class="spacer"></span>
+  <details class="lang" data-nav="lang"><summary aria-label="Language"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>中</summary><div class="menu"><a href="/faq" hreflang="en">English<i>EN</i></a><a href="/ar/faq" hreflang="ar">العربية<i>AR</i></a><a href="/zh/faq" aria-current="true" hreflang="zh-Hans">中文<i>中</i></a></div></details><a class="cta" href="https://nlyra.xyz/desk2/">打开 The Desk</a>
+  <button class="burger" type="button" aria-label="菜单" aria-expanded="false" onclick="var n=document.getElementById('nlnav');var o=n.classList.toggle('open');this.setAttribute('aria-expanded',String(o));"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</nav>
+<script>(function(){var n=document.getElementById('nlnav');if(!n)return;var p=location.pathname;var map={'/':'intel','/wallet':'intel','/map':'intel','/premium':'intel','/desk':'trade','/desk2':'trade','/dex':'trade','/stake':'trade','/staking':'trade','/invest':'trade','/launch':'build','/api-docs':'build','/bounties':'build','/gov':'build','/chat':'community','/faq':'community','/docs':'community','/report':'community','/stats':'community','/roulette':'play','/slots':'play','/game':'play'};var k=map[p.replace(/\/$/,'')||'/'];if(k){var a=n.querySelector('[data-nav="'+k+'"]');if(a){if(a.tagName==='A')a.setAttribute('aria-current','page');else a.querySelector('summary').setAttribute('aria-current','page');}}document.addEventListener('click',function(e){n.querySelectorAll('details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});})();</script>
+
+
+<header class="wrap">
+  <div class="kicker">常见问题</div>
+  <h1 class="brand-headline">大家真正会问的<br>那些问题。</h1>
+  <p class="lead">这些是人们在真正投钱之前会问的问题。这里给简短的答案；每一条都链接到<a href="/zh/docs">文档</a>里的完整版本。</p>
+  <div class="heroact">
+    <a class="btn-primary" href="/zh/docs">打开完整文档</a>
+    <a class="btn-secondary" href="https://nlyra.xyz/report?from=faq">报告问题</a>
+  </div>
+</header>
+
+<section class="wrap">
+
+  <details class="qa" id="agents"><summary>NERON 和 LYRA 是谁？</summary><div class="a">
+    <p>两个 AI 智能体，分工明确。</p>
+    <p><b>NERON</b> 是观察者。他直接读链本身 &mdash; 合约权限、所有权、流动性锁仓、持币者取证、每个池子的结构 &mdash; 他也是判定结果背后的引擎：SAFE、CAUTION、DANGER、RUG。链上没有说的事，NERON 不会声称。</p>
+    <p><b>LYRA</b> 是阅读者。她下载合约已验证的 Solidity 源码，逐行读，把受约束的权力和开放的权力区分开 &mdash; 也就是一个能冻结转账的 owner，和一个只是收取手续费的 owner 之间的差别。她的解读就放在 NERON 的判定旁边，所以你同时拿到「是什么」和「为什么」。</p>
+    <p>他们是扫描器的门面，也是这个生态存在的理由。他们不持有资金，也不会替你签署交易。</p>
+    <a class="more" href="/docs#what-is">NLYRA 是什么 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-custodial" open><summary>NLYRA 是托管的吗？</summary><div class="a">
+    <p><span class="part">取决于是哪个产品</span> &mdash; 任何用一个词回答这个问题的人，都是在向你推销东西。</p>
+    <ul>
+      <li><b>非托管：</b>市价兑换、限价单、提供流动性、$NLYRA 质押。兑换是原子的；限价单不托管任何资金，你只是为恰好一次转账签一个 Permit2 witness。</li>
+      <li><b>进合约托管（escrow）：</b>机器人、Ladder、Martingale、Predict 下注、Shield 存款。<b>在它们运行期间，你的资金放在一个合约里。</b>合约把你的钱包记为 maker，只有你能提取 &mdash; 但在这段时间里，钱并不在你的钱包里。</li>
+    </ul>
+    <p>两种情况下，NLYRA 都没有任何人持有能动你资金的密钥。</p>
+    <a class="more" href="/docs#custody">完整的托管对照表 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-team"><summary>团队能动我的资金吗？</summary><div class="a">
+    <p><span class="no">不能</span> &mdash; 没有任何 owner 函数能碰到用户余额，而且 The Desk 的合约没有一个是可升级的，所以以后也加不上去。（生态中别处有一个例外：Lyra Shield 的入口是一个可升级代理合约。）</p>
+    <p>The Desk 上的完整权限清单：<b>pause</b>（它会停止交易，永远不会停止提现）、对超出用户存入金额的盈余部分<b>调用 <code>rescue(token, to)</code></b> &mdash; 在算术上有上限，到零就 revert &mdash; <b>在 3% 的硬上限之内修改新机器人和新兑换的费率区间</b>、<b>修改推荐人分成</b>，以及仅在 Predict 上<b>重新指向决定未来轮次的预言机</b>。</p>
+    <p>它做不到的事：动你托管的资金、改变提现的去向（maker 地址没有 setter）、升级任何东西，或者提高一个已经在运行的机器人、一笔已经签好的订单的手续费。</p>
+    <p><b>诚实的提醒：</b>这些权限用的是单个热钱包私钥，不是多签，而且向更安全方案的移交还没有开始。</p>
+    <a class="more" href="/docs#admin-powers">逐条列出的全部管理员权限 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-audit"><summary>合约审计过吗？</summary><div class="a">
+    <p><b>部分审计过，下面说清楚是哪一部分。</b>你用到的很多东西跑在别人已经审计了很多年的代码上：Uniswap V2 和 V3、Synthetix StakingRewards、Permit2，以及 0xbow Privacy Pools 的电路。</p>
+    <p><b>真实收益质押 v2 已经审计。</b>Coinsult 审计了它的合约（2026 年 9 月 30 日）：0 个严重、0 个中危，每一项发现都已解决或确认。报告：<a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_RealYieldStaking%20%281%29.pdf">质押</a> &middot; <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_NlyraFeeSplitter%20%281%29.pdf">手续费分配器</a> &middot; <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_PositionMarket%20%281%29.pdf">仓位市场</a> &middot; <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_External%20%281%29.pdf">接口</a>。</p>
+    <p>我们自己写的其他合约 &mdash; The Desk、机器人、launchpad、游戏 &mdash; <b>没有</b>经过第三方审计公司。上游的审计说明这个设计被充分研究过；它对我们的接线方式和外围代码什么都没说，所以我们不把它算作我们自己的审计。</p>
+    <p>我们改为做这些：每一份源码都在 Blockscout 上通过验证并可读，LYRA 在每个合约上线前都会读一遍，而且<b>每一条提现路径都在主网上用真金白银跑过</b> &mdash; 所以你把资金取出来的那条路是测试过的，不是假设的。合约体量小、不可变、公开，你可以自己去检查。</p>
+    <p>即便如此，「没发现 bug」永远不等于「没有 bug」。请据此控制仓位大小。</p>
+    <a class="more" href="/docs#risks">风险与审计的完整说明 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-fees"><summary>The Desk 收多少手续费？</summary><div class="a">
+    <p><b>每笔成交的交易收 1%</b>，<b>如果你是被推荐来的则收 0.9%</b>。交易方面就这些，没有别的。</p>
+    <ul>
+      <li>在兑换发生的那一刻由 fee router 收取 &mdash; 市价单、限价单成交、ladder 的每一档、martingale 的每一步，以及机器人的每一笔成交。</li>
+      <li><b>0% 业绩提成。</b>永远不从你的利润里抽任何东西。</li>
+      <li>挂限价单是免费的（那只是一个签名）。撤单只花 gas，大约 $0.001。往机器人里存入、从机器人里提取，也只花 gas。</li>
+      <li>Predict 的 NLYRA 池抽取彩池的 3%，而且只在某一轮结算出赢家时才抽。</li>
+      <li>1% 的上限硬编码在页面里，而且 router 会拒绝任何低于 0.9% 的值。</li>
+    </ul>
+    <p>另外，池子本身也会收它自己的手续费，某些 V4 池还挂了一个 hook 再多收 1&ndash;2% &mdash; 这两项都已经包含在你看到的报价里。</p>
+    <a class="more" href="/desk/docs#fees">全部手续费与最低限额 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-keeper"><summary>如果 Keeper 停了会怎样？</summary><div class="a">
+    <p>你的机器人会在策略执行到一半时冻住：不再买入、不再卖出、没有止盈，也<b>没有止损</b>。出现这种情况时，机器人面板会显示一个 <i>keeper offline</i> 标记。</p>
+    <p><b>在整个过程中，你的钱是安全的、随时可以提取的</b> &mdash; 提现既不需要 Keeper，也不需要服务器或网站。你失去的是自动化，包括你原本依赖的那层保护。</p>
+    <p>Keeper 的故障模式是「不作为」，不是「盗取」：它不拥有任何东西，从不持有资金，它触发的每一次执行都会按链上规则重新校验。如果它宕机而你又指望着一个止损，就把资金提出来，手动管理仓位。</p>
+    <a class="more" href="/docs#tr-bot">机器人卡住时该怎么办 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-usdgbots"><summary>机器人可以用 USDG 跑吗，而不是 ETH？</summary><div class="a">
+    <p>USDG 网格就是为这个做的。两个以 <b>USDG</b>（Robinhood Chain 上的美元）计价的托管合约已经部署并在链上完成验证，正在新的 bots v2 界面里接通：</p>
+    <ul>
+      <li><b>Spot Grid &middot; USDG：</b><code data-c="0xdd13354cfE3E79a944d8F93476176F016f6311e4">0xdd13354cfE3E79a944d8F93476176F016f6311e4</code></li>
+      <li><b>Infinity Grid &middot; USDG：</b><code data-c="0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3">0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3</code></li>
+    </ul>
+    <p><b>它改变了什么。</b>网格逻辑还是 v3 的那套逻辑，一档一档都一样，变的只是计价货币。你闲置的本金以美元形式待着，而不是 ETH，所以一个你本想让它保持中性的网格，不会在你不知情的时候悄悄做多或做空 ETH。它也是给<b>股票代币</b>（NVDA、SPY、GME 等等）开网格的唯一办法 &mdash; 那些池子只对 USDG 报价。</p>
+    <p><b>怎么入金。</b>USDG 是 ERC-20，不是链的原生币，所以开一个机器人是<b>先 approve，再 open</b> &mdash; 两次签名，而不是一次。退出没有变化：还是那个只有 maker 能调的 <code>stop(id, 0x, 0, false)</code>，不需要 keeper、不需要服务器、不需要路由数据，退给你的是 USDG 和代币。</p>
+    <p>托管方式和费率与 The Desk 的其他部分完全一样 &mdash; 钱住在合约里，只有你的钱包能把它取走，keeper 只能在你设定的边界内执行，每条成交腿收 1%。机器人执行的是你的策略；它不预测行情。</p>
+    <p>有一点确实不同：<b>USDG 是受监管的稳定币，发行方可以冻结一个地址。</b>如果因为这个原因，一笔付款没能进你的钱包，合约不会把它弄丢 &mdash; 它会把金额记到 <code>pending</code> 上，之后你可以用 <code>withdrawPending(token, to)</code> 把它发到别处。</p>
+    <a class="more" href="/docs#desk-contracts">全部 Desk 合约，当前的和历史的 &rarr;</a> &nbsp; <a class="more" href="https://nlyra.xyz/desk/help/bots">怎么把钱取出来 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-limitfill"><summary>我的限价单一直没有成交——是坏了吗？</summary><div class="a">
+    <p>绝大多数情况是价格从未到达<b>可执行</b>水平。图表显示的是池子的原始价格，而订单按可执行报价成交——其中已包含 1% 手续费（受邀用户 0.9%）和执行器 0.3% 的安全边际。换算到图表上，大约要越过你设定价格 <b>1.3%</b>。</p>
+    <ul>
+      <li>下单面板上的 <b>fills near</b> 价格才是真正的成交水平——请以它为准，而不是K线影线。</li>
+      <li>给订单留够时间：要求 5% 的波动却只给 1 小时有效期，通常会过期——这是订单在正常工作，不是故障。</li>
+      <li>执行器<b>每秒</b>检查一次所有挂单，全天候运行。我们在 2026-08-28 审计了全部历史：每笔成交与过期都是正确的。</li>
+    </ul>
+  </div></details>
+
+  <details class="qa" id="q-nowebsite"><summary>不通过网站我也能提现吗？</summary><div class="a">
+    <p><span class="yes">可以。</span>你的资金没有任何一环依赖 nlyra.xyz 能不能访问。</p>
+    <p>每个托管合约都暴露了一个只有 maker 能调用的提现方法，它只需要<b>你的 bot id</b> &mdash; 不需要路由数据、不需要报价、不需要我们的签名。它不会被 pause 拦住，也不会被过期时间拦住；过了到期时间之后，<code>refundExpired(id)</code> 任何人都可以调用，钱仍然打给你，永远不会打给调用者。</p>
+    <p>你可以从 <a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Blockscout</a> 的 Write Contract 标签页里调用，也可以用救援指南 &mdash; 那是一个自包含的单文件，用 Ctrl+S 就能保存下来离线使用，GitHub 上还有一份站外镜像。</p>
+    <p><b>在你需要它之前就先保存好。</b></p>
+    <a class="more" href="https://nlyra.xyz/desk/help/bots">救援指南 &rarr;</a> &nbsp; <a class="more" href="/docs#tr-blockscout">从 Blockscout 一步步操作 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-rugresistant"><summary>「rug-resistant（抗 rug）」到底是什么意思？</summary><div class="a">
+    <p>它对通过 <b>Architect Launch</b> 发行的代币，指的是下面这几件具体的事；对在别处发行的代币，它什么都不代表：</p>
+    <ul>
+      <li>代币在一个真实的池子里诞生，流动性头寸被<b>永久锁定</b>在一个创建者控制不了的金库里 &mdash; 经典的 rug 手法，也就是抽走流动性，没有可走的路径。</li>
+      <li>代币本身<b>没有任何 owner 权限</b>：总量是编译期常量，所以没有 mint 函数、没有黑名单、也没有 pause。</li>
+      <li>创建者自己的第一笔买入<b>被硬性限制在总量的 5%</b>，并且在创建交易内部原子完成。</li>
+    </ul>
+    <p><b>它不代表什么。</b>创建者那 5% <b>从第一个区块起就是解锁的、可以卖的</b>，而且没有任何机制阻止他们紧接着从池子里买更多。「创建者以底价拿着 5%，然后砸给自己的持币者」这条路完全敞开着，而大多数 launchpad 代币实际上就是这么归零的。它也不代表价格不会归零，而且对于行情板上那些不是在这里发行的代币，它什么都说明不了。扫描器的判定是一个过滤器，不是一个承诺。</p>
+    <a class="more" href="/docs#p-launch">Launch 是怎么运作的 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-addresses"><summary>哪些合约地址是官方的？</summary><div class="a">
+    <p>只有<a href="/docs#addresses">文档里那张地址表</a>中列出的那些。如果一个地址不在表里，它就不是我们的。</p>
+    <p>被冒充得最多的两个：</p>
+    <ul>
+      <li><b>$NLYRA 代币：</b><code data-c="0xb9d3824149ad8ac984153ceec91d5a2405d1fb95">0xb9d3824149ad8ac984153ceec91d5a2405d1fb95</code></li>
+      <li><b>Desk fee router（v2）：</b><code data-c="0x9d1eA9Abbb99D813b7acA7666285CDed7f833565">0x9d1eA9Abbb99D813b7acA7666285CDed7f833565</code></li>
+    </ul>
+    <p>注意，有几个合约存在<b>旧版本（legacy）</b>，它们仍在运行，也仍然持有在其上开出的仓位。旧版地址不是假地址 &mdash; 地址表里标明了哪个是哪个。</p>
+    <p>还有两个值得知道：手续费金库是 <code data-c="0xe30647793192D15BFA6E53aE8651368d332fe04C">0xe30647793192D15BFA6E53aE8651368d332fe04C</code>，流动性锁仓合约是 <code data-c="0x736D76699C26D0d966744cAe304C000d471f7F35">0x736D76699C26D0d966744cAe304C000d471f7F35</code>。</p>
+    <p>唯一的官方网站是 <b>nlyra.xyz</b>。我们从不主动私信。</p>
+    <a class="more" href="/docs#addresses">全部地址，现行版与旧版 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-apr"><summary>质押 APR 有保证吗？</summary><div class="a">
+    <p><span class="no">没有 &mdash; 任何向你承诺保证 APR 的人都是在骗你。</span></p>
+    <p><b>$NLYRA 质押发的是一条固定的产出流，不是一个固定的利率。</b>合约每秒释放固定数量的代币，然后在所有质押者之间分配，所以百分比是算出来的结果。2026 年 8 月 27 日读到的数据：截至 10 月 17 日结束的这个周期共 12,801,393 NLYRA，对应 292.4M 的质押量 &rarr; <b>&asymp;26.6%</b>。任何标称数字在有人质押或解押的那一刻就过时了 &mdash; 请用合约上的 <code>rewardRate()</code> 和 <code>totalSupply()</code> 自己算。</p>
+    <p><b>Architect Stake 的创建者矿池</b>更扎实，但仍然不是保证：在你质押的那一刻，合约就从创建者锁定的储备里把你的全部奖励托管出来，所以标示的利率在你进场之前就已经有资金支撑。但这对你退出时代币值多少钱，什么都没说。</p>
+    <p>对照已部署的字节码核实过：质押合约<b>没有 owner、没有 pause，也没有 sweep 函数</b>，奖励池的资金精确到 wei 都已到位。</p>
+    <a class="more" href="/docs#p-staking">两种质押 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-lock"><summary>团队代币锁仓了吗，锁多久？</summary><div class="a">
+    <p><b>锁了，而且答案是几个月，不是几年。</b>52,570,139 NLYRA &mdash; 占总量的 5.26% &mdash; 存在 PinkLock02 里，<b>每 10 天释放 10%</b>。第一批已于 2026 年 8 月 24 日解锁，<b>最后一批在 2026 年 11 月 22 日解锁</b>。今天仍有 47.3M 处于锁定状态。这个释放计划已经没有任何人能再改动，包括我们。</p>
+    <p><b>这和流动性的锁是两回事。</b>发行时的流动性头寸 &mdash; 占全部 NLYRA 流动性的 99.7% &mdash; 由一个<b>根本没有提取、解锁或转移函数</b>的合约持有，也没有代理合约可以事后加上一个。它不是靠计时器锁着的；不存在任何能释放它的代码路径。</p>
+    <p>请按「2026 年 11 月 22 日之前会有占总量 5.26% 的代币进入流通」来做规划。</p>
+    <a class="more" href="/docs#supply-locks">完整的释放计划和数字 &rarr;</a>
+  </div></details>
+
+  <details class="qa" id="q-revenue"><summary>生态的收入去了哪里？</summary><div class="a">
+    <p>每一笔手续费都在链上、可追溯。主要的流向：</p>
+    <ul>
+      <li><b>Desk 交易的 1%：</b>其中 30% 由 router 本身记到你的推荐人名下，以收取手续费时的那种资产计价，随时可领。另外 70% 进入金库。这 30% 是当前的政策 &mdash; owner 可以把未来手续费的推荐人分成设为零。</li>
+      <li><b>Launch：</b>协议在池子手续费中的份额进入 <b>Buyback Burner</b> &mdash; 一个没有 owner、任何人都可以触发的合约，它把 <b>50% 送去运营，50% 在市场上买入 $NLYRA 并直接打到 <code>0xdEaD</code></b>。</li>
+      <li><b>Liquidity Desk：</b>利润的 20%，加上退出时的 0.5%，两者都进 buyback burner。</li>
+      <li><b>DEX：</b>V2 成交量的 0.05%，以及每个 V3 池费率档的四分之一，进入金库；其余归流动性提供者。</li>
+    </ul>
+    <p>金库拿到它那一份之后做了什么，这里还没有写进文档，因为还没有在链上核实到可以对外发布的程度。地址是公开的，它的资金流出也是公开的。</p>
+    <a class="more" href="/docs#revenue">完整的收入分配表 &rarr;</a>
+  </div></details>
+
+</section>
+
+<section class="wrap">
+  <div class="seedwarn">
+    <p><b>NLYRA 永远不会向你索要助记词或私钥。</b>不会在这里问，不会在私信里问，不会以「客服」的名义问，也不会以「验证」或「恢复」你的钱包为由问。任何开口索要的人都是在偷你的钱。我们也从不主动私信，唯一的官方网站是 nlyra.xyz。</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="callout">
+    <h2>没找到你要的？</h2>
+    <p>以前放在这个页面上的长篇内容 &mdash; 完整的产品列表、每一个合约地址、管理员权限、托管、紧急提现，还有那份不加粉饰的风险说明 &mdash; <span class="g2">已经搬进文档</span>。没有任何内容被删掉。</p>
+    <p>如果有东西坏了或者缺了，直接说。它会直达 Architect，修好的问题会在周五的更新日志里点名列出。</p>
+    <div class="links">
+      <a class="btn-primary" href="/zh/docs">打开文档</a>
+      <a class="btn-secondary" href="https://nlyra.xyz/report?from=faq">报告问题或提出改进建议</a>
+      <a class="btn-secondary" id="tg-cta" href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">在 Telegram 提问</a>
+    </div>
+  </div>
+</section>
+
+<footer class="dfoot"><div class="inner">
+  <span><b>NERON &amp; LYRA</b> &mdash; nlyra.xyz &middot; Robinhood Chain &middot; 链 ID 4663</span>
+  <span><a href="/zh/docs">文档</a> &middot; <a href="/desk/docs">Desk 手册</a> &middot; <a href="https://nlyra.xyz/report?from=faq-footer"><b>报告问题或提出改进建议</b></a> &middot; <a id="tg-foot" href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram</a></span>
+</div></footer>
+
+<script>
+const CFG = {"telegram":"https://t.me/NeronWakeUp"};
+const cfg = (typeof CFG === 'object') ? CFG : { telegram: 'https://t.me/NeronWakeUp' };
+for (const id of ['tg-nav', 'tg-foot', 'tg-cta']) { const el = document.getElementById(id); if (el) el.href = cfg.telegram; }
+document.querySelectorAll('code[data-c]').forEach((c) => {
+  c.title = 'click to copy';
+  c.style.cursor = 'pointer';
+  c.onclick = () => { const t = c.textContent; navigator.clipboard.writeText(c.dataset.c).then(() => { c.textContent = 'copied'; setTimeout(() => { c.textContent = t; }, 1100); }, () => {}); };
+});
+// open the question named in the URL
+if (location.hash) { const el = document.querySelector(location.hash); if (el && el.tagName === 'DETAILS') { el.open = true; el.scrollIntoView({ block: 'start' }); } }
+</script>
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/zh/faq" style="color:inherit">nlyra.xyz/zh/faq</a>.</div>
+</body>
+</html>

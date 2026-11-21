@@ -1,0 +1,73 @@
+{
+  "_note": "v2 (2026-10-27): two destinations of the same adapter. adapter = NlyraOFTAdapter on Robinhood Chain (2026-10-19); ofts.arbitrum = NLYRA on Arbitrum One (2026-10-19); ofts.bsc = NLYRA on BNB Smart Chain (2026-10-27).",
+  "adapter": "0xe7b3171b76B959Db805874926aA0D62b1A5d3264",
+  "oft": "0x834e80509b23dC82d79F982510a32348986B06b5",
+  "token": "0xb9d3824149ad8ac984153ceec91d5a2405d1fb95",
+  "eids": {
+    "robinhood": 30416,
+    "arbitrum": 30110,
+    "bsc": 30102
+  },
+  "localDecimals": 18,
+  "sharedDecimals": 6,
+  "dailyLimit": "20000000",
+  "extraOptions": "0x",
+  "lzReceiveGas": 0,
+  "priceApi": "https://nlyra.xyz/api/desk/token?t=0xb9d3824149ad8ac984153ceec91d5a2405d1fb95",
+  "chainlink": {
+    "rpc": "https://arb1.arbitrum.io/rpc",
+    "ETH": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+    "BNB": {
+      "rpc": "https://bsc-dataseed.bnbchain.org",
+      "address": "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE"
+    }
+  },
+  "lzScanApi": "https://scan.layerzero-api.com/v1/messages/tx/",
+  "lzScanUrl": "https://layerzeroscan.com/tx/",
+  "chains": {
+    "robinhood": {
+      "chainId": 4663,
+      "name": "Robinhood Chain",
+      "short": "Robinhood",
+      "native": {
+        "name": "Ether",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      "rpc": "https://rpc.mainnet.chain.robinhood.com",
+      "explorer": "https://robinhoodchain.blockscout.com",
+      "explorerName": "Blockscout"
+    },
+    "arbitrum": {
+      "chainId": 42161,
+      "name": "Arbitrum One",
+      "short": "Arbitrum",
+      "native": {
+        "name": "Ether",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      "rpc": "https://arb1.arbitrum.io/rpc",
+      "explorer": "https://arbiscan.io",
+      "explorerName": "Arbiscan"
+    },
+    "bsc": {
+      "chainId": 56,
+      "name": "BNB Smart Chain",
+      "short": "BNB Chain",
+      "native": {
+        "name": "BNB",
+        "symbol": "BNB",
+        "decimals": 18
+      },
+      "rpc": "https://bsc-dataseed.bnbchain.org",
+      "explorer": "https://bscscan.com",
+      "explorerName": "BscScan"
+    }
+  },
+  "ofts": {
+    "arbitrum": "0x834e80509b23dC82d79F982510a32348986B06b5",
+    "bsc": "0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec"
+  },
+  "defaultDestination": "arbitrum"
+}

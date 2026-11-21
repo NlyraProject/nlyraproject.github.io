@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070B18">
+<title>The Desk — Bots: how they work and how to get your money out</title>
+<meta name="description" content="How The Desk's trading bots hold your money, and the exact step-by-step way to withdraw it straight from the contract with your own wallet — even if The Desk is offline forever.">
+<meta name="robots" content="index,follow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2060%2040'%3E%3Ccircle%20cx='20'%20cy='20'%20r='15'%20fill='none'%20stroke='%238B7CF6'%20stroke-width='5'/%3E%3Ccircle%20cx='40'%20cy='20'%20r='15'%20fill='none'%20stroke='%23E84FE0'%20stroke-width='5'/%3E%3C/svg%3E">
+<link href="/desk2/fonts/fonts.css?v=1" rel="stylesheet">
+<style>
+:root{
+  --neron:#8B7CF6;--lyra:#E84FE0;
+  --brand-grad:linear-gradient(90deg,var(--neron),var(--lyra));
+  --s0:#070B18;--s1:#0B1022;--s2:#0F1528;--s3:#141B33;--s4:#1A2240;
+  --line-soft:rgba(233,238,248,.06);--line:#1E2747;--line-hot:#2C3760;
+  --ink0:#E9EEF8;--ink1:#C3CCDF;--ink2:#9AA7BD;--ink3:#5D6A82;
+  --acc:var(--neron);--acc-t:#A89CFF;--acc-bg:rgba(139,124,246,.12);--acc-line:rgba(139,124,246,.35);
+  --up:#4ADE80;--down:#F87171;--gold:#FBBF24;
+  --up-bg:rgba(74,222,128,.12);--down-bg:rgba(248,113,113,.12);--gold-bg:rgba(251,191,36,.12);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --display:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r1:6px;--r2:9px;--r3:14px;--pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{background:var(--s0);color:var(--ink0);font:400 15px/1.62 var(--sans);
+  font-variant-numeric:tabular-nums slashed-zero;-webkit-font-smoothing:antialiased;padding-bottom:80px}
+a{color:var(--acc-t);text-decoration:none;border-bottom:1px solid rgba(168,156,255,.28)}
+a:hover{border-bottom-color:var(--acc-t)}
+a.plain{border:0}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.25;letter-spacing:-.01em}
+code,.mono{font-family:var(--mono);font-size:.92em;overflow-wrap:anywhere;word-break:break-word}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px}
+hr{border:0;border-top:1px solid var(--line);margin:44px 0}
+
+/* header */
+header{background:linear-gradient(180deg,var(--s1),var(--s0));border-bottom:1px solid var(--line);padding:26px 0 34px}
+.brand{display:flex;align-items:center;gap:10px;font:600 15px var(--display);margin-bottom:26px}
+.brand .dot{width:22px;height:22px;border-radius:var(--pill);background:var(--brand-grad);flex:0 0 auto}
+.brand .the{color:var(--ink2);font-weight:500}
+header h1{font-size:clamp(27px,6.4vw,40px);margin-bottom:14px}
+header h1 .g{background:var(--brand-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+header p.lede{color:var(--ink1);font-size:16.5px;max-width:64ch}
+.pledge{margin-top:22px;padding:15px 17px;border:1px solid var(--acc-line);background:var(--acc-bg);border-radius:var(--r3);
+  color:var(--ink0);font-size:14.5px;line-height:1.55}
+.pledge b{color:#fff}
+
+/* toc */
+nav.toc{margin:26px 0 0;padding:16px 18px;background:var(--s1);border:1px solid var(--line);border-radius:var(--r3)}
+nav.toc b{display:block;font:600 10.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+nav.toc ol{list-style:none;display:flex;flex-wrap:wrap;gap:7px}
+nav.toc a{display:block;padding:6px 11px;border:1px solid var(--line-hot);border-radius:var(--pill);
+  font-size:13px;color:var(--ink1);background:var(--s2)}
+nav.toc a:hover{border-color:var(--acc-line);color:var(--acc-t)}
+
+section{padding-top:52px}
+section>h2{font-size:clamp(22px,4.6vw,29px);margin-bottom:6px;scroll-margin-top:16px}
+section>.sub{color:var(--ink2);font-size:14.5px;margin-bottom:24px}
+h3{font-size:19px;margin:34px 0 10px}
+h4{font-size:15.5px;margin:22px 0 7px;color:var(--ink0)}
+p{margin:0 0 13px;color:var(--ink1)}
+p strong,li strong{color:var(--ink0)}
+ul,ol{margin:0 0 15px 20px;color:var(--ink1)}
+li{margin-bottom:7px}
+.kicker{display:inline-block;padding:4px 10px;border-radius:var(--pill);background:var(--acc-bg);
+  border:1px solid var(--acc-line);color:var(--acc-t);font:600 10.5px var(--sans);letter-spacing:.13em;
+  text-transform:uppercase;margin-bottom:12px}
+
+/* steps */
+.steps{counter-reset:st;margin:22px 0 0;list-style:none;padding:0}
+.steps>li{counter-increment:st;position:relative;padding:0 0 26px 46px;margin:0}
+.steps>li:before{content:counter(st);position:absolute;left:0;top:-1px;width:31px;height:31px;border-radius:var(--pill);
+  background:var(--s3);border:1px solid var(--acc-line);color:var(--acc-t);
+  font:600 14px var(--display);display:flex;align-items:center;justify-content:center}
+.steps>li:after{content:"";position:absolute;left:15px;top:35px;bottom:2px;width:1px;background:var(--line)}
+.steps>li:last-child:after{display:none}
+.steps h4{margin:2px 0 6px;font-size:16.5px}
+
+/* boxes */
+.note,.warn,.good{padding:13px 15px;border-radius:var(--r2);font-size:14px;margin:15px 0;line-height:1.55}
+.note{background:var(--s2);border:1px solid var(--line-hot);color:var(--ink1)}
+.warn{background:var(--gold-bg);border:1px solid rgba(251,191,36,.32);color:#F5E3B4}
+.good{background:var(--up-bg);border:1px solid rgba(74,222,128,.3);color:#C8F2D8}
+.note b,.warn b,.good b{color:#fff}
+
+/* contract cards */
+.cards{display:grid;gap:16px;margin-top:24px}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:var(--r3);overflow:hidden}
+.card>.hd{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:14px 16px;background:var(--s2);border-bottom:1px solid var(--line)}
+.card>.hd h3{margin:0;font-size:17px;flex:1 1 auto;min-width:150px}
+.tag{padding:3px 9px;border-radius:var(--pill);font:600 10px var(--sans);letter-spacing:.1em;text-transform:uppercase;
+  background:var(--s4);border:1px solid var(--line-hot);color:var(--ink2);white-space:nowrap}
+.tag.fn{background:var(--acc-bg);border-color:var(--acc-line);color:var(--acc-t);font-family:var(--mono);
+  letter-spacing:0;text-transform:none;font-size:11.5px}
+.tag.no{background:var(--up-bg);border-color:rgba(74,222,128,.3);color:var(--up)}
+.tag.cur{background:var(--up-bg);border-color:rgba(74,222,128,.3);color:var(--up)}
+.tag.old{background:var(--gold-bg);border-color:rgba(251,191,36,.3);color:var(--gold)}
+.when{font-size:12.5px;color:var(--ink2);margin:0 0 11px}
+.when b{color:var(--ink0)}
+.card>.bd{padding:15px 16px}
+.addr{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.addr code{background:var(--s0);border:1px solid var(--line);border-radius:var(--r1);padding:4px 8px;
+  font-size:11.5px;word-break:break-all;color:var(--ink1);flex:1 1 260px}
+.addr .vlabel{font-size:11px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r1);font:600 12.5px var(--sans);
+  border:1px solid var(--line-hot);background:var(--s3);color:var(--ink0);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--acc-line);color:var(--acc-t)}
+.btn.go{background:var(--acc-bg);border-color:var(--acc-line);color:var(--acc-t)}
+.btn.copy{padding:5px 9px;font-size:11.5px}
+.params{width:100%;border-collapse:collapse;margin:12px 0 0;font-size:13.5px}
+.params th,.params td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.params th{color:var(--ink3);font:600 10.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.params td:first-child{font-family:var(--mono);font-size:12.5px;color:var(--ink0);white-space:nowrap}
+.params td:nth-child(2){font-family:var(--mono);font-size:12.5px;color:var(--up);white-space:nowrap}
+.params td:last-child{color:var(--ink2);font-size:13px}
+.gets{margin-top:13px;padding:11px 13px;background:var(--s2);border-left:2px solid var(--up);border-radius:0 var(--r1) var(--r1) 0;font-size:13.5px;color:var(--ink1)}
+.gets b{color:var(--up)}
+
+/* blockscout mock */
+.mock{margin:18px 0;background:#0d1220;border:1px solid var(--line-hot);border-radius:var(--r2);overflow:hidden;font-family:var(--mono);font-size:12.5px}
+.mock .bar{padding:8px 12px;background:var(--s3);border-bottom:1px solid var(--line);color:var(--ink2);font-size:11.5px}
+.mock .body{padding:14px 13px}
+.mock .row{margin-bottom:12px}
+.mock .lab{color:var(--ink2);margin-bottom:5px;font-size:11.5px}
+.mock .inp{background:var(--s0);border:1px solid var(--line-hot);border-radius:var(--r1);padding:8px 10px;color:var(--ink0);word-break:break-all}
+.mock .inp.hl{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc-bg)}
+.mock .inp .ph{color:var(--ink3)}
+.mock .wbtn{display:inline-block;margin-top:4px;padding:7px 15px;border-radius:var(--r1);background:var(--brand-grad);color:#fff;font:600 12px var(--sans)}
+.mock .cmt{color:var(--ink3);font-size:11.5px;margin-top:6px}
+
+/* tables */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;border:1px solid var(--line);border-radius:var(--r2)}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+table.t th,table.t td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line-soft)}
+table.t thead th{background:var(--s2);color:var(--ink3);font:600 10.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+table.t tbody tr:last-child td{border-bottom:0}
+table.t td{color:var(--ink1)}
+table.t td code{color:var(--ink0)}
+table.t td:first-child{color:var(--ink0);font-weight:500}
+
+/* finder */
+.finder{background:var(--s1);border:1px solid var(--acc-line);border-radius:var(--r3);padding:18px 17px;margin:24px 0}
+.finder h3{margin:0 0 6px;font-size:18px}
+.finder p{font-size:13.5px;margin-bottom:14px}
+.frow{display:flex;flex-wrap:wrap;gap:9px}
+.frow input{flex:1 1 260px;min-width:0;background:var(--s0);border:1px solid var(--line-hot);border-radius:var(--r1);
+  padding:10px 12px;color:var(--ink0);font:400 14px var(--mono);outline:0}
+.frow input:focus{border-color:var(--acc)}
+.frow .btn{padding:10px 16px;font-size:13.5px}
+#fstatus{margin-top:13px;font-size:13px;color:var(--ink2);min-height:1.3em}
+#fout{margin-top:14px;display:grid;gap:9px}
+.hit{background:var(--s2);border:1px solid var(--line);border-radius:var(--r2);padding:12px 13px}
+.hit .top{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.hit .top b{font:600 14px var(--display)}
+.hit .id{display:block;background:var(--s0);border:1px solid var(--line);border-radius:var(--r1);padding:7px 9px;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink1);word-break:break-all;margin-bottom:9px}
+.hit .act{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.hit .how{font-size:12.5px;color:var(--ink2);margin-top:8px;font-family:var(--mono)}
+.badge-open{background:var(--up-bg);border:1px solid rgba(74,222,128,.3);color:var(--up)}
+.badge-closed{background:var(--s4);border:1px solid var(--line-hot);color:var(--ink3)}
+.badge-open,.badge-closed{padding:3px 9px;border-radius:var(--pill);font:600 10px var(--sans);letter-spacing:.09em;text-transform:uppercase}
+
+/* faq */
+details{background:var(--s1);border:1px solid var(--line);border-radius:var(--r2);margin-bottom:10px;overflow:hidden}
+details[open]{border-color:var(--line-hot)}
+summary{padding:13px 16px;cursor:pointer;font:500 15px var(--sans);color:var(--ink0);list-style:none;position:relative;padding-right:44px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";position:absolute;right:16px;top:11px;font:400 20px var(--mono);color:var(--ink3)}
+details[open] summary:after{content:"\2212"}
+summary:hover{color:var(--acc-t)}
+details .dbd{padding:0 16px 15px;font-size:14px;color:var(--ink1)}
+details .dbd p:last-child{margin-bottom:0}
+
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+footer a{color:var(--ink2)}
+.toplink{display:inline-block;margin-top:14px}
+@media(max-width:520px){
+  body{font-size:14.5px}
+  .steps>li{padding-left:40px}
+  .steps>li:before{width:27px;height:27px;font-size:13px}
+  .steps>li:after{left:13px;top:31px}
+  .card>.bd,.finder{padding:13px}
+}
+</style>
+<link rel="canonical" href="https://nlyra.xyz/desk/help">
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span><span class="the">The</span> Desk</div>
+    <h1>Your money is in the contract.<br><span class="g">Only your wallet can move it.</span></h1>
+    <p class="lede">This page explains how The Desk's trading bots hold your funds, and — first and most
+      importantly — the exact steps to take your money out yourself, straight from the smart contract,
+      using nothing but your wallet and a public block explorer.</p>
+    <div class="pledge">
+      <b>If The Desk disappears tomorrow — the website, the API, the bot engine, all of it — your money is
+      still yours and still reachable.</b> Every bot contract has a withdrawal function that only you, the
+      wallet that opened the bot, can call. It needs no permission from us, no server of ours, and it keeps
+      working even if we shut everything down. This guide shows you exactly how to use it.
+    </div>
+    <nav class="toc">
+      <b>On this page</b>
+      <ol>
+        <li><a href="#withdraw">1 · Withdraw from the contract</a></li>
+        <li><a href="#finder">2 · Find your bot ids</a></li>
+        <li><a href="#howtheywork">3 · How the bots work</a></li>
+        <li><a href="#eachbot">4 · What each bot does</a></li>
+        <li><a href="#risks">5 · Risks</a></li>
+        <li><a href="#faq">6 · FAQ</a></li>
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ================= 1. WITHDRAW ================= -->
+<section id="withdraw">
+  <span class="kicker">The important part</span>
+  <h2>1 · How to get your money out of a bot, yourself</h2>
+  <p class="sub">Works when The Desk is up. Works when The Desk is down. Works if The Desk never comes back.</p>
+
+  <p>Your bot's money sits inside a smart contract on Robinhood Chain. A smart contract is a program on the
+    blockchain that nobody — not us, not anyone — can edit or override once it is deployed. When you opened
+    the bot, the contract recorded your wallet address as the bot's <strong>owner</strong> (in the code it is
+    called the <em>maker</em>).</p>
+  <p>Every one of these contracts contains a function that does one thing: <strong>send everything in this
+    bot back to the wallet that owns it, immediately, without selling anything.</strong> The contract will
+    only run it if the person calling is you. We cannot call it for you, we cannot call it on your funds, and
+    we cannot stop you calling it.</p>
+
+  <div class="good"><b>You need three things:</b> your wallet (the same one that created the bot), your bot's
+    id (a long <code>0x…</code> string — section 2 finds it for you), and about <b>0.0002 ETH</b> for gas.
+    That is roughly a hundred times more than a withdrawal actually costs on this chain.</div>
+
+  <h3>The five steps</h3>
+  <ol class="steps">
+    <li>
+      <h4>Get your bot id</h4>
+      <p>Every bot has an id: a 66-character string starting with <code>0x</code>. If The Desk is online, it
+        is shown on the bot's detail page. If it is offline, use the <a href="#finder">finder in section 2</a>
+        — it reads the blockchain directly and lists every bot your wallet owns, or follow the manual
+        Blockscout method described there.</p>
+    </li>
+    <li>
+      <h4>Open your bot's contract on Blockscout</h4>
+      <p>Blockscout is the public block explorer for Robinhood Chain. It is not run by us. Find your bot type
+        in the cards below and press <strong>Open write form</strong> — it takes you straight to the page
+        where you can run contract functions.</p>
+      <p class="mono" style="font-size:12.5px;color:var(--ink2)">https://robinhoodchain.blockscout.com/address/&lt;contract&gt;?tab=write_contract</p>
+    </li>
+    <li>
+      <h4>Connect your wallet on that page</h4>
+      <p>Near the top of the "Write contract" tab there is a <strong>Connect wallet</strong> button. Press it
+        and approve in MetaMask (or whichever wallet you use). Make sure the wallet is on
+        <strong>Robinhood Chain (chain id 4663)</strong> and that it is the <em>same wallet that opened the
+        bot</em> — any other wallet will be rejected by the contract.</p>
+    </li>
+    <li>
+      <h4>Find the function and fill in the fields</h4>
+      <p>Scroll the list of functions to the one named in your bot's card below — <code>stop</code>,
+        <code>withdraw</code> or <code>cancel</code>. Expand it and paste your bot id into the
+        <code>id</code> field. Some functions have extra fields; the cards give you the exact value to type
+        into each one. They are always the same three values, so you can copy them blind:
+        <code>0x</code>, <code>0</code>, <code>false</code>.</p>
+      <div class="mock">
+        <div class="bar">robinhoodchain.blockscout.com &nbsp;·&nbsp; Write contract &nbsp;·&nbsp; ArchitectInfinityGrid</div>
+        <div class="body">
+          <div class="row" style="color:var(--acc-t)">5. stop</div>
+          <div class="row">
+            <div class="lab">id (bytes32)</div>
+            <div class="inp hl">0xf1dd7569911dac84b29e4446d373fac1195ee64df24601fa42ea55b703a03160</div>
+            <div class="cmt">&larr; your bot id goes here</div>
+          </div>
+          <div class="row">
+            <div class="lab">route (bytes)</div>
+            <div class="inp">0x</div>
+            <div class="cmt">&larr; literally the two characters 0x</div>
+          </div>
+          <div class="row">
+            <div class="lab">minOut (uint256)</div>
+            <div class="inp">0</div>
+          </div>
+          <div class="row">
+            <div class="lab">sellAll (bool)</div>
+            <div class="inp">false</div>
+            <div class="cmt">&larr; false = give me my tokens back, do not sell them</div>
+          </div>
+          <div class="wbtn">Write</div>
+        </div>
+      </div>
+      <div class="warn"><b>Do not put anything in the "Send native ETH" / value box.</b> Withdrawing costs
+        only gas. If a field asks for an amount to send, leave it at 0.</div>
+    </li>
+    <li>
+      <h4>Press Write and confirm in your wallet</h4>
+      <p>Your wallet pops up with the transaction. Confirm it. A few seconds later the transaction is mined
+        and <strong>everything the bot was holding is in your wallet</strong> — the ETH arrives as normal
+        native ETH, and any tokens the bot had bought arrive as those tokens. The bot is now closed and can
+        never be restarted; open a new one if you want to keep trading.</p>
+      <p>You can check it landed by opening your own address on Blockscout and looking at the newest
+        transaction.</p>
+    </li>
+  </ol>
+
+  <h3 id="cards">Your bot type, exactly</h3>
+  <p>Find your bot below. The <strong>address</strong> is the contract holding your money, the
+    <strong>function</strong> is what you run, and the table is what to type into each field.</p>
+  <p class="note">Some bot types have several contract versions live at once. The one tagged
+    <strong>current</strong> is what new bots use (Infinity Grid and Spot Grid moved to <strong>v3</strong> on
+    Aug 23, 2026 — the version with <em>Add funds</em> — and to the <strong>v4 · compound</strong> contracts, the
+    ones with a gas reserve that the site calls <em>Bots v3</em>, on Sep 11–12, 2026; <strong>Shadow</strong>, the
+    copy-trading bot, has its own contract since Sep 13, 2026); the ones tagged <strong>legacy</strong> still hold the
+    bots created before that, and each card says which dates it covers. The withdrawal call is identical on
+    every version. If you are not sure which one your bot is on, use the finder in section 2 — it checks all
+    of them — or simply try the current one first: if the id is not there, the transaction fails harmlessly
+    with <code>NotMaker</code> and costs you a fraction of a cent.</p>
+
+  <div class="cards" id="cardlist"></div>
+
+  <h3>If the transaction fails</h3>
+  <p>Blockscout will show a red error with a short name. Here is what each one means and what to do.</p>
+  <div class="tblwrap">
+    <table class="t">
+      <thead><tr><th>Error</th><th>What it means</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><code>NotMaker</code></td><td>The connected wallet is not the wallet that opened this bot — or this bot id does not exist on this contract.</td><td>Switch to the wallet that created the bot. If it is the right wallet, you are on the wrong contract version — try the other ones (v1 / v2 / v3) or another bot type.</td></tr>
+        <tr><td><code>NotOpen</code></td><td>This bot is already closed. Its money has already been sent back.</td><td>Nothing to do — check your wallet history, the funds are already there.</td></tr>
+        <tr><td><code>NothingToRefund</code></td><td>The bot is open but holds nothing (fully spent or fully delivered).</td><td>Nothing to withdraw. Leave it or let it expire.</td></tr>
+        <tr><td><code>NotExpired</code></td><td>You called <code>refundExpired</code>, but the bot has not reached its expiry date yet.</td><td>Use the normal function instead — <code>stop</code> / <code>withdraw</code> / <code>cancel</code>. Those work at any time. <code>refundExpired</code> is only the backup for third parties.</td></tr>
+        <tr><td><code>BadRouteHash</code></td><td>You set <code>sellAll</code> to <code>true</code>, which asks the contract to sell your tokens through a specific trading route.</td><td>Set <code>sellAll</code> to <code>false</code>, <code>route</code> to <code>0x</code> and <code>minOut</code> to <code>0</code>. You get your tokens back in kind and can sell them yourself, anywhere.</td></tr>
+        <tr><td><code>IsPaused</code></td><td>You are calling a function reserved for the bot engine.</td><td>You are on the wrong function. Withdrawals are never blocked by pausing — go back to the card above and use the exact function named there.</td></tr>
+        <tr><td>"insufficient funds for gas"</td><td>Your wallet has no ETH to pay the network fee.</td><td>Send about 0.0002 ETH to the wallet and retry.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The backup path: someone else can push your funds home</h3>
+  <p>Every bot has an <strong>expiry date</strong> set when you created it. Once it passes,
+    <code>refundExpired</code> becomes callable by <em>anybody</em> — and the contract still sends the money
+    <strong>to you</strong>, never to whoever called it. There is no way for a caller to redirect it.</p>
+  <p>That matters in one scenario: you can no longer send transactions yourself, but someone can help you.
+    They pay the gas, you receive the funds. For the grid bots the function is
+    <code>refundExpired(id, 0x)</code>; for all the others it is just <code>refundExpired(id)</code>.</p>
+
+  <div class="note"><b>Payment bounced?</b> Every contract sends ETH with a limited gas allowance. If your
+    wallet is a smart-contract wallet that rejects it, the contract does not lose the money — it credits it
+    to you internally. Call <code>withdrawEth()</code> on the same contract (no fields to fill in) and it
+    pays out. Check the amount first with the read function <code>pendingEth(&lt;your address&gt;)</code>.
+    On the <b>USDG</b> grids the same safety net is token-shaped, because a regulated stablecoin can also
+    refuse a transfer to a frozen address: read it with <code>pending(&lt;your address&gt;, &lt;token&gt;)</code>
+    and collect it with <code>withdrawPending(token, to)</code>, which also lets you name a different
+    destination address.</div>
+</section>
+
+<hr>
+
+<!-- ================= 2. FINDER ================= -->
+<section id="finder">
+  <h2>2 · Find your bot ids</h2>
+  <p class="sub">Two ways, both of which work with The Desk switched off.</p>
+
+  <h3>Option A — the finder on this page</h3>
+  <p>This tool talks straight to a public Robinhood Chain node. It does not touch any Desk server. Paste your
+    wallet address (or connect your wallet) and it lists every bot that address has ever owned, marks the ones
+    still holding money, and hands you the exact withdrawal link for each.</p>
+
+  <div class="finder">
+    <h3>Bot finder</h3>
+    <p>Reads the blockchain directly via <code class="mono">rpc.mainnet.chain.robinhood.com</code>. Nothing is
+      sent anywhere else, and no transaction is signed — this is read-only.</p>
+    <div class="frow">
+      <input id="faddr" placeholder="0x your wallet address" spellcheck="false" autocomplete="off">
+      <button class="btn" id="fconnect" type="button">Use my wallet</button>
+      <button class="btn go" id="fscan" type="button">Find my bots</button>
+    </div>
+    <div id="fstatus"></div>
+    <div id="fout"></div>
+  </div>
+
+  <h3>Option B — read it off Blockscout by hand</h3>
+  <p>If the finder cannot reach a node, you can get the same id out of the explorer in under a minute. The id
+    is recorded in the transaction that created the bot.</p>
+  <ol class="steps">
+    <li>
+      <h4>Open your own address on Blockscout</h4>
+      <p><code class="mono">https://robinhoodchain.blockscout.com/address/&lt;your wallet address&gt;</code></p>
+    </li>
+    <li>
+      <h4>Find the transaction that created the bot</h4>
+      <p>In the <strong>Transactions</strong> tab, look for the one sent to your bot's contract address (from
+        the cards in section 1) around the date you created the bot. Its method will be named
+        <code>openWithEth</code>, <code>openWithBase</code>, <code>open</code>, <code>openSL</code> or
+        <code>createLadder</code>. Click it.</p>
+    </li>
+    <li>
+      <h4>Open the Logs tab</h4>
+      <p>Look for the event called <code>GridOpened</code>, <code>DcaOpened</code>, <code>CycleOpened</code>,
+        <code>TwapOpened</code> or <code>LadderCreated</code> depending on the bot type.</p>
+    </li>
+    <li>
+      <h4>Copy the first indexed value</h4>
+      <p>The event's first indexed parameter is called <code>id</code> and is a 66-character
+        <code>0x…</code> value. <strong>That is your bot id.</strong> The second indexed parameter is your own
+        wallet address — a useful sanity check that you have the right event.</p>
+      <div class="mock">
+        <div class="bar">Transaction &nbsp;·&nbsp; Logs</div>
+        <div class="body">
+          <div class="row" style="color:var(--acc-t)">GridOpened</div>
+          <div class="row">
+            <div class="lab">[topic0] &nbsp;event signature</div>
+            <div class="inp"><span class="ph">0x695d3b1a859592b997383d9c9d76a025cbd1299207d61bebe4ba9173936a2265</span></div>
+          </div>
+          <div class="row">
+            <div class="lab">[topic1] &nbsp;id &nbsp;&larr; <span style="color:var(--acc-t)">this one</span></div>
+            <div class="inp hl">0xf1dd7569911dac84b29e4446d373fac1195ee64df24601fa42ea55b703a03160</div>
+          </div>
+          <div class="row">
+            <div class="lab">[topic2] &nbsp;maker</div>
+            <div class="inp"><span class="ph">0x…your wallet address, confirming this bot is yours</span></div>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ol>
+
+  <div class="note"><b>Is my bot still holding anything?</b> On the contract's <strong>Read contract</strong>
+    tab, call <code>isOpen</code> with your id. <code>true</code> means there is still money in it.
+    <code>false</code> means it is already closed and the funds have been returned. You can also call
+    <code>grid</code> / <code>plan</code> / <code>cycle</code> / <code>order</code> / <code>ladder</code> with
+    your id to see the exact amounts the contract is holding for you — no wallet connection needed to read.</div>
+</section>
+
+<hr>
+
+<!-- ================= 3. HOW THEY WORK ================= -->
+<section id="howtheywork">
+  <h2>3 · How the bots work</h2>
+  <p class="sub">Three moving parts, and only one of them is us.</p>
+
+  <h3>The escrow</h3>
+  <p>When you create a bot, your ETH goes into the bot's contract and is booked against your wallet address
+    and that bot's id. It is not pooled with anyone else's money in a way that lets it be spent on anyone
+    else's bot — each contract tracks a total called <code>escrowed</code>, and every user's share of it is
+    ring-fenced to their own bot record.</p>
+  <p>As the bot trades, the composition changes — some ETH becomes tokens, tokens become ETH again — but it
+    all stays inside that same record, under your address, until either the bot's rules send you a payout or
+    you withdraw.</p>
+  <p><strong>The USDG grids work the same way with dollars in place of ETH.</strong> Because USDG is an
+    ERC-20 rather than the native coin, funding one is <code>approve</code> and then open — two
+    transactions instead of one. Nothing about getting out changes: the same maker-only
+    <code>stop(id, 0x, 0, false)</code>, on the contract listed above with the <code>USDG</code> tag, and
+    it returns your tokens and your USDG without selling anything.</p>
+  <p><strong>The v3 · Compound bots and Shadow add a gas reserve to the record.</strong> It is your ETH too,
+    booked to your bot id, spent only on the gas of your own fills; <code>stop</code> returns whatever is left
+    of it together with everything else.</p>
+
+  <h3>The keeper</h3>
+  <p>Blockchains do not have alarm clocks: a contract cannot wake itself up when a price moves. So a program
+    of ours — the <strong>keeper</strong> — watches the market and pokes the contract when one of your bot's
+    conditions is met.</p>
+  <p>The keeper's power is deliberately tiny. It can only ask the contract to do the specific action your bot
+    already authorised, and the contract independently re-checks the price and the amounts before doing
+    anything. <strong>The keeper cannot choose a different price, cannot move funds to any address other than
+    yours, cannot close your bot and cannot withdraw anything.</strong> If the keeper goes offline, your bot
+    stops trading and simply sits there, holding your money, until you withdraw it. Nothing is lost.</p>
+
+  <h3>What the contract enforces, not us</h3>
+  <ul>
+    <li><strong>Who owns the money.</strong> Withdrawals always go to the stored maker address, which is set once when the bot is created and can never be changed.</li>
+    <li><strong>The price you get.</strong> Every fill must satisfy a minimum output calculated on-chain from your own parameters. A bad or manipulated trade reverts instead of executing.</li>
+    <li><strong>The trading route.</strong> The pool your bot trades through is fixed at creation by a hash. The keeper cannot reroute your trade through a pool of its choosing.</li>
+    <li><strong>The profit floor on grids.</strong> A grid sell is rejected unless it clears the spacing you configured, already net of fees. The keeper only picks the moment, never the terms.</li>
+    <li><strong>Your right to leave.</strong> The withdrawal functions carry no pause check and no time lock.</li>
+  </ul>
+
+  <h3>What we can and cannot do</h3>
+  <div class="tblwrap">
+    <table class="t">
+      <thead><tr><th>The Desk can</th><th>The Desk cannot</th></tr></thead>
+      <tbody>
+        <tr><td>Run the keeper that triggers your bot's actions</td><td>Move, spend or withdraw money in your bot</td></tr>
+        <tr><td>Pause new trading activity on a contract</td><td>Block, delay or pause your withdrawal</td></tr>
+        <tr><td>Collect the trading fee on each executed trade</td><td>Change the fee on a bot that is already open — it is fixed at creation</td></tr>
+        <tr><td>Sweep tokens sent to a contract by mistake, above what users escrowed</td><td>Touch a single unit of escrowed user funds — the code reverts if it would</td></tr>
+        <tr><td>Stop running the website and the API</td><td>Take the contracts down — they are immutable and have no upgrade switch</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>That last row is the whole point. The contracts are permanent deployments with no proxy and no upgrade
+    path. Nobody, including us, can change their code, change where the money goes, or delete them.</p>
+
+  <h3>Fees</h3>
+  <ul>
+    <li><strong>1% per executed trade</strong> (0.9% if you came through a referral), taken by the router at
+      the moment of the trade. A grid that buys and later sells pays it on each leg.</li>
+    <li><strong>0% performance fee.</strong> We do not take a cut of your profit.</li>
+    <li><strong>0% to open, 0% to withdraw.</strong> Closing a bot costs only the network gas — a fraction of
+      a cent on this chain.</li>
+    <li>Network gas is roughly <strong>$0.007</strong> per transaction on Robinhood Chain.</li>
+  </ul>
+</section>
+
+<hr>
+
+<!-- ================= 4. EACH BOT ================= -->
+<section id="eachbot">
+  <h2>4 · What each bot does</h2>
+  <p class="sub">Plain-language version. Each one names the withdrawal function you would use.</p>
+
+  <h3>Infinity Grid</h3>
+  <p>Buys a bit lower, sells a bit higher, forever, with no upper or lower boundary. It keeps a target value
+    of the token and rebalances toward it in steps: every time the price falls one step it buys, every time
+    it rises one step it sells, banking the difference. Designed for a token you are happy to hold while it
+    chops sideways. You can set a floor price to stop buying below, and a take-profit to close it out.</p>
+  <p><strong>Add funds</strong> (v3 grids, created from Aug 23, 2026): an open grid can take more ETH
+    without being restarted — <code>topUp(id, route, seedMinOut)</code>, called by you through the
+    <em>Add funds</em> button. Half of what you add buys the token at market and joins the position, the
+    other half goes into the reserve that funds the buys below. It counts as added investment, not profit,
+    and the money lands in the very same bot record, so the withdrawal below returns it too. Grids on the
+    older v1/v2 contracts cannot be topped up — open a new bot with the extra amount instead.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id, 0x, 0, false)</code> — you get the tokens it is currently
+    holding plus all the unspent ETH, including grid profit already banked. Same call on v1, v2 and v3.</p>
+
+  <h3>Spot Grid</h3>
+  <p>The same buy-low/sell-high idea, but inside a range you choose, split into a fixed number of levels.
+    Each level buys at its own price and sells at the next one up. It is more predictable than Infinity Grid
+    and better when you have a clear view on the range. The spacing is enforced on-chain to be profitable
+    after fees, so a level cannot be sold at a loss by the keeper.</p>
+  <p><strong>Add funds</strong> (v3 grids, created from Aug 23, 2026): <em>Add funds</em> on an open Spot
+    Grid spreads the extra ETH evenly across your levels — the levels currently holding the token get more of
+    it bought at market, the buy levels get more ETH waiting on them — with the same profit floor per level.
+    Same contract call as Infinity Grid, <code>topUp(id, route, seedMinOut)</code>, and the added money sits
+    in the same bot record. v1 grids cannot be topped up.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id, 0x, 0, false)</code> — same call on v1 and v3.</p>
+
+  <h3>Spot Grid v3 · Compound and Infinity Grid v3 · Compound (contracts ArchitectSpotGridV4 / ArchitectInfinityGridV4)</h3>
+  <p>The same two grids, plus two things the older contracts could not do. Each bot carries a small
+    <strong>gas reserve</strong> in ETH: every fill pays its own gas out of it, so nothing is subsidised and the
+    bot never stops for lack of gas while the reserve lasts (you can top it up with <code>topUpGas(id)</code>,
+    payable, and take the surplus back with <code>withdrawGas(id)</code>). And the profit <strong>compounds</strong>:
+    on the Spot Grid every closed level is reinvested into the next buy, on the Infinity Grid every realised gain
+    grows the position it keeps. The product name is <em>Bots v3</em>; the contract names say V4 because they are
+    the fourth escrow in each line.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id, 0x, 0, false)</code> — exactly the same call and the same
+    four fields as the older grids. You get the tokens the bot holds, all the unspent ETH including banked
+    profit, <strong>and what is left of the gas reserve</strong>, in one transaction. After expiry,
+    <code>refundExpired(id, 0x)</code> does the same and can be called by anyone (it always pays you).</p>
+
+  <h3>Shadow · Copy trading (contract ArchitectShadow)</h3>
+  <p>You pick a wallet to follow and fund an escrow. Every ETH-quoted swap that wallet makes is mirrored from
+    your escrow at your size (a fixed amount per trade, a cap per token, a maximum number of open positions),
+    with your own stop-loss and take-profit per position, paid for by a gas reserve like the v3 bots. The leader
+    never touches your money; the keeper can only call <code>mirrorBuy</code> / <code>mirrorSell</code> within
+    the limits the contract stores for your bot.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id)</code> — one field, the bot id. You get the ETH still in
+    the escrow plus the unused gas reserve, and <strong>every open position comes back as the tokens
+    themselves, not sold</strong>. If you want ETH instead, sell each position first (on the site: <em>Sell
+    positions &amp; stop</em>, or <code>sellPosition(id, token, route, minOut)</code> by hand), then stop.
+    After expiry, <code>refundExpired(id)</code> does the same and can be called by anyone.</p>
+
+  <h3>Sniper · Launches (contract ArchitectSniper)</h3>
+  <p>You fund an escrow with ETH plus a gas reserve and choose a strategy: which launches (Pons curves, a
+    watchlist of tokens you pick), when to enter, which filters, and how to exit. The keeper runs it within the
+    limits the contract stores for your bot (size per entry, cap per token, maximum open positions, stop-loss
+    and take-profit proven against cost, allowed sources). Curves must be registered in the Pons factory; the
+    keeper cannot send your ETH anywhere else.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id)</code> — one field, the bot id. You get the ETH still in the
+    escrow plus the unused gas reserve, and <strong>every open position comes back as the tokens themselves,
+    not sold</strong>. If a token refuses the transfer, the stop still goes through and that token stays
+    claimable with <code>claimToken(id, token)</code>. After expiry, anyone can call <code>stop(id)</code> for
+    you. To exit in ETH first, sell each position (<em>Sell</em> on the positions table, or
+    <code>sellPosition(id, token, route, minOut)</code> by hand), then stop.</p>
+
+  <h3>Martingale</h3>
+  <p>Buys a first amount, and if the price drops by a set step it buys again — bigger. It repeats for as many
+    levels as you configure, lowering the average entry each time, then sells the whole position when it is up
+    by your target percentage. Optionally it restarts and does it again.</p>
+  <p><strong>Withdraw with</strong> <code>withdraw(id)</code> — you get the tokens bought so far plus the ETH
+    still reserved for the levels that never triggered, without selling anything.</p>
+
+  <h3>DCA (dollar-cost averaging)</h3>
+  <p>Splits an amount of ETH into equal purchases spaced over time — every hour, day, week, whatever you set —
+    so your entry is an average instead of a single bet on one moment. It can either deliver each purchase
+    straight to your wallet or hold the position and take profit at a target.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id, 0x, 0, false)</code> — you get any tokens it is holding plus
+    every unspent instalment.</p>
+
+  <h3>TWAP</h3>
+  <p>One large order chopped into small slices executed at intervals, so you do not move the price against
+    yourself. Unlike DCA it is a single order you want completed, not an ongoing savings plan.</p>
+  <p><strong>Withdraw with</strong> <code>stop(id)</code> — you get back everything not yet executed. Slices
+    already executed were delivered to your wallet as they happened.</p>
+
+  <h3>Ladder</h3>
+  <p>Several buy orders stacked at descending prices. Each rung fills only if the price reaches it. Useful
+    when you want exposure on a dip without watching the chart.</p>
+  <p><strong>Withdraw with</strong> <code>cancel(id)</code> — you get back the ETH behind every rung that has
+    not filled. Filled rungs already delivered their tokens to you.</p>
+
+  <h3>Limit orders</h3>
+  <p>Different by design: <strong>your money never leaves your wallet.</strong> You sign an order, and it can
+    only ever be executed on the exact terms you signed, using a standard called Permit2. Nothing is escrowed,
+    so there is nothing to withdraw — if The Desk vanishes, an unfilled order simply never fills.</p>
+  <p>To be extra safe you can cancel on-chain, or invalidate the signature permanently by calling
+    <code>invalidateUnorderedNonces</code> on Permit2 yourself. Revoking your Permit2 allowance for the token
+    also kills any pending order instantly.</p>
+
+  <h3>Predict</h3>
+  <p>Short up/down rounds on a price. You stake on a side, the round locks, and after it settles the winning
+    side splits the pot. It is not an escrow bot: once a round is locked your stake is committed until it
+    resolves.</p>
+  <p><strong>Collect with</strong> <code>claim([epoch, epoch, …])</code>. If a round could not be settled — for
+    example the oracle stopped — it is cancelled and every stake in it becomes fully refundable through the
+    same <code>claim</code> call. Use the read functions <code>getUserRounds</code>,
+    <code>claimable</code> and <code>refundable</code> to see what you are owed.</p>
+</section>
+
+<hr>
+
+<!-- ================= 5. RISKS ================= -->
+<section id="risks">
+  <h2>5 · Risks, honestly</h2>
+  <p class="sub">The withdrawal guarantee protects your access to your funds. It does not protect their value.</p>
+
+  <div class="warn"><b>Nothing here removes market risk.</b> Every one of these bots can lose money. Grid and
+    martingale strategies in particular convert ETH into a token as the price falls — that is how they work —
+    so if the token keeps falling, you are holding a losing position, and withdrawing gives you back exactly
+    that position. Only put in what you can afford to lose.</div>
+
+  <div class="tblwrap">
+    <table class="t">
+      <thead><tr><th>Bot</th><th>The specific way it hurts</th></tr></thead>
+      <tbody>
+        <tr><td>Infinity Grid</td><td>A one-way fall keeps triggering buys all the way down. You end up holding the token with no rebound to sell into. Set a floor price.</td></tr>
+        <tr><td>Spot Grid</td><td>Price leaves your range and never comes back — above it you sold everything early, below it you are fully invested and idle.</td></tr>
+        <tr><td>Martingale</td><td>The worst of the family. Each level is larger than the last, so a sustained fall spends your whole budget near the top of the decline. A token that never recovers turns the whole budget into a loss.</td></tr>
+        <tr><td>DCA</td><td>Averaging into something in structural decline just buys more of a losing position, more slowly.</td></tr>
+        <tr><td>TWAP</td><td>Slow execution means the price can run away from you mid-order. Set the limit price.</td></tr>
+        <tr><td>Ladder</td><td>Rungs fill on the way down and nothing forces a recovery. Placing rungs too close together fills them all in one candle.</td></tr>
+        <tr><td>Limit orders</td><td>No escrow risk, but no execution guarantee either — an order can sit unfilled forever, and it fills only if a keeper submits it.</td></tr>
+        <tr><td>Predict</td><td>Negative expectation for the average participant after the fee. Treat it as entertainment sizing, not investing.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Risks that are not about price</h4>
+  <ul>
+    <li><strong>The token itself.</strong> Most tokens on any chain go to zero, and a token contract can have
+      a transfer tax, a blacklist or a mint switch. The bot contract cannot protect you from a hostile token.
+      Check the deployer's record before you commit.</li>
+    <li><strong>Thin liquidity.</strong> If the pool is small, a fill can move the price against you inside
+      your own trade. The on-chain minimum-output check stops the extreme cases by reverting, which means
+      your bot silently does nothing instead.</li>
+    <li><strong>Keeper downtime.</strong> Your bot pauses. Money is safe, opportunity is not: a take-profit
+      might not fire, a stop-loss might not fire. If the keeper stays down, withdraw and manage manually.</li>
+    <li><strong>Smart contract risk.</strong> These contracts are unaudited by a third party. They are
+      verified and readable on Blockscout, and the withdrawal paths in this guide have been tested with real
+      money on mainnet, but "no bug found" is never "no bug".</li>
+    <li><strong>Your keys.</strong> Nobody can recover the bot for you if you lose your wallet. The maker
+      address is permanent.</li>
+  </ul>
+</section>
+
+<hr>
+
+<!-- ================= 6. FAQ ================= -->
+<section id="faq">
+  <h2>6 · FAQ</h2>
+  <p class="sub">The questions people actually ask.</p>
+
+  <details><summary>What happens to my money if The Desk shuts down permanently?</summary>
+    <div class="dbd"><p>Nothing happens to it — it stays exactly where it is, inside the contract, booked to
+      your address. The bot stops trading because the keeper is gone, but the money is untouched and you
+      withdraw it with the steps in section 1. The contracts do not depend on our servers to exist, and there
+      is no expiry after which funds are forfeited or swept.</p>
+      <p>Bookmark or save this page now. It is a single file with no dependency on our API — save it to your
+        device with Ctrl+S / Cmd+S and it still works offline, since the finder talks to a public node
+        directly. There is also a copy hosted outside our servers, on GitHub, in case this domain itself
+        goes away:
+        <a href="https://nlyraproject.github.io/nlyra-desk-rescue/" target="_blank" rel="noopener">nlyraproject.github.io/nlyra-desk-rescue</a>.
+        The verified source and ABI of every contract are on GitHub too:
+        <a href="https://github.com/NlyraProject/nlyra-platform" target="_blank" rel="noopener">github.com/NlyraProject/nlyra-platform</a>.</p></div></details>
+
+  <details><summary>What if the keeper is down but the website still works?</summary>
+    <div class="dbd"><p>Your bot is frozen mid-strategy: no new buys, no new sells, no stop-loss, no
+      take-profit. That is a real risk if you were relying on a stop. Either wait for it to come back or
+      withdraw and manage the position yourself. Withdrawing does not need the keeper.</p></div></details>
+
+  <details><summary>My bot expired. Did I lose the money?</summary>
+    <div class="dbd"><p>No. Expiry only stops the bot from trading; it never forfeits anything. After expiry
+      you still withdraw with the normal function (<code>stop</code> / <code>withdraw</code> /
+      <code>cancel</code>) exactly as described — those functions do not care about the date. As a bonus,
+      after expiry <code>refundExpired</code> also becomes available, and anybody can call it to send the
+      funds to you.</p></div></details>
+
+  <details><summary>I lost my bot id. Can I still withdraw?</summary>
+    <div class="dbd"><p>Yes — the id is public information permanently recorded on the blockchain, not a
+      secret you can lose. Use the finder in section 2, which reconstructs the full list from your wallet
+      address alone, or read it off the creation transaction on Blockscout as shown in Option B. As long as
+      you have the wallet, you can always recover the id.</p></div></details>
+
+  <details><summary>How much gas do I need?</summary>
+    <div class="dbd"><p>A withdrawal costs between 71,000 and 103,000 gas depending on the bot type, which on
+      Robinhood Chain is roughly <strong>0.000002 ETH</strong>. Keeping <strong>0.0002 ETH</strong> in the
+      wallet covers dozens of withdrawals with room to spare. If you have zero ETH, you must send a small
+      amount in first — the contract cannot pay your gas for you.</p></div></details>
+
+  <details><summary>Will withdrawing sell my tokens at a bad price?</summary>
+    <div class="dbd"><p>No, and this is deliberate. The withdrawal described here never sells anything: it
+      hands you the tokens exactly as the bot holds them plus any unspent ETH. You then sell where and when
+      you like, or not at all. That is why <code>sellAll</code> must be <code>false</code> — the
+      <code>true</code> path asks the contract to sell for you and needs live routing data, which is exactly
+      the dependency a rescue should not have.</p></div></details>
+
+  <details><summary>Can you freeze my funds, or take them?</summary>
+    <div class="dbd"><p>No. There is no admin function that can move escrowed user funds — the only sweep
+      function is arithmetically limited to the surplus above what users escrowed and reverts if it would
+      ever dip below. Withdrawals go to the maker address recorded at creation, which no one can change. The
+      pause switch only stops the keeper's trading actions; it has no effect on withdrawals. And the
+      contracts have no upgrade mechanism, so this cannot be changed later.</p>
+      <p>You do not have to take our word for any of that: the contracts are verified on Blockscout, so you
+        can read the source on the <strong>Contract</strong> tab of any address in section 1.</p></div></details>
+
+  <details><summary>The Blockscout write form will not connect to my wallet.</summary>
+    <div class="dbd"><p>Check that your wallet is on Robinhood Chain (chain id 4663) and refresh the page
+      before pressing Connect. On mobile, open the Blockscout link inside your wallet app's built-in browser
+      rather than in Safari or Chrome. If Blockscout itself is down, any tool that can send a raw transaction
+      works — the function selectors and arguments are standard, and the finder in section 2 shows the exact
+      calldata for each of your bots so you can paste it into your wallet's advanced/hex field.</p></div></details>
+
+  <details><summary>Do I have to withdraw one bot at a time?</summary>
+    <div class="dbd"><p>Yes. Each bot is a separate record and needs its own transaction. At a fraction of a
+      cent each this is a non-issue in cost, just repetition. Run the finder, work down the list.</p></div></details>
+
+  <details><summary>Where is the 1% fee taken, and can it change on my open bot?</summary>
+    <div class="dbd"><p>It is taken by the router at the instant of each executed trade — not on your deposit
+      and not on your withdrawal. The rate is written into your bot's record when you create it, so it cannot
+      be raised on a bot that is already running. There is no performance fee.</p></div></details>
+</section>
+
+<footer class="wrap">
+  <p>The Desk · Robinhood Chain (chain id 4663) · non-custodial. This page is informational, not financial
+    advice. Trading bots can and do lose money.</p>
+  <p style="margin-top:8px">Explorer: <a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">robinhoodchain.blockscout.com</a>
+    &nbsp;·&nbsp; Public RPC: <code class="mono">https://rpc.mainnet.chain.robinhood.com</code>
+    &nbsp;·&nbsp; <a href="https://github.com/NlyraProject/nlyra-platform" target="_blank" rel="noopener">Contract source on GitHub</a>
+    &nbsp;·&nbsp; <a href="https://nlyraproject.github.io/nlyra-desk-rescue/" target="_blank" rel="noopener">Off-site mirror of this guide</a>
+    &nbsp;·&nbsp; <a href="https://nlyra.xyz/desk">Back to The Desk</a></p>
+  <a class="toplink" href="#">Back to top &uarr;</a>
+</footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var EXPLORER = "https://robinhoodchain.blockscout.com";
+  var RPCS = ["https://rpc.mainnet.chain.robinhood.com", "https://robinhood-rpc.publicnode.com"];
+
+  // selector + how to build calldata, per withdrawal shape
+  var SHAPE = {
+    idOnly:  { sel: null, args: 1 },          // fn(bytes32)
+    grid:    { sel: "0x81e9e1bb", args: 4 }   // stop(bytes32,bytes,uint256,bool)
+  };
+
+  // Every *Opened / *Created event puts id in topic1 and maker in topic2.
+  // `from` = deploy block of each contract (desk-addresses.json *Block keys). `when` = which bots it holds.
+  var CONTRACTS = [
+    /* LAUNCH-2026-09-14: Bots v3 (contracts V4) + Shadow */
+    { key: "spotV4", name: "Spot Grid", ver: "v4 · compound", addr: "0xF8ef52605FBcc968B24b7FdBD7e93c752A659D5f", from: 60380637,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", current: true,
+      when: "Spot Grid v3 · Compound bots — the ones with a gas reserve — created from Sep 11, 2026 onwards (public since Sep 14)",
+      gets: "The tokens sitting on your armed levels, all the ETH waiting on the buy levels, your realised profit, and whatever is left of the bot's gas reserve. Nothing is sold." },
+    { key: "infV4", name: "Infinity Grid", ver: "v4 · compound", addr: "0xBdC77e3D589D161489f7C986d8f654F30b88DDeb", from: 61248237,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", current: true,
+      when: "Infinity Grid v3 · Compound bots — the ones with a gas reserve — created from Sep 12, 2026 onwards (public since Sep 14)",
+      gets: "The tokens the grid is holding, every unspent ETH including banked profit, and whatever is left of the bot's gas reserve. Nothing is sold." },
+    { key: "shadow", name: "Shadow · Copy trading", ver: "", addr: "0xE26dd0A09Cd7bA2F7d0a31e4B625E983B0B1B3D2", from: 61679291,
+      fn: "stop", sel: "0x63c4f031", shape: "idOnly", ev: "ShadowOpened", current: true,
+      when: "Shadow bots (mirroring another wallet) created from Sep 13, 2026 onwards",
+      gets: "The ETH still in the escrow, whatever is left of the gas reserve, and every open position as the tokens themselves — they are NOT sold. Sell them from your wallet afterwards, or use \"Sell positions & stop\" on the site first if you want ETH." },
+    { key: "sniper", name: "Sniper · Launches", ver: "", addr: "0x6B30B0946743eF8A2D323127c8CfaC9966b5C84c", from: 67936369,
+      fn: "stop", sel: "0x63c4f031", shape: "idOnly", ev: "BotOpened", current: true,
+      when: "Sniper bots (launch sniping) created from Sep 20, 2026 onwards",
+      gets: "The ETH still in the escrow, whatever is left of the gas reserve, and every open position as the tokens themselves — they are NOT sold. A token that refuses the transfer does not block the stop: claim it later with claimToken(id, token). After expiry anyone can call stop(id) for you." },
+    { key: "infinity3", name: "Infinity Grid", ver: "v3", addr: "0x177a8837c0444e18677b618624C2a853573d2D7D", from: 44015662,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", current: true,
+      when: "bots created from Aug 23, 2026 (12:47 UTC) onwards — the version with Add funds",
+      gets: "The tokens the grid is holding, plus every unspent ETH including banked grid profit and anything you added with Add funds." },
+    { key: "infinityUsdg", name: "Infinity Grid", ver: "USDG", addr: "0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3", from: 50023519,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", current: true,
+      when: "USDG-quoted bots — the ones funded with dollars instead of ETH — created from Aug 30, 2026 onwards",
+      gets: "The tokens the grid is holding, plus every unspent USDG including banked grid profit and anything you added with Add funds. It pays out in USDG, not ETH." },
+    { key: "infinity2", name: "Infinity Grid", ver: "v2", addr: "0x6C56f98FF2A3867B43aFf8Cad47EC2b6da81E1ab", from: 43924625,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", legacy: true,
+      when: "bots created on Aug 23, 2026 between 10:15 and 12:47 UTC",
+      gets: "The tokens the grid is holding, plus every unspent ETH including banked grid profit." },
+    { key: "infinity1", name: "Infinity Grid", ver: "v1", addr: "0x5B8555f254AbD8c4B2a25ca6595Cc4025308584c", from: 43637735,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", legacy: true,
+      when: "bots created before Aug 23, 2026 10:15 UTC",
+      gets: "The tokens the grid is holding, plus every unspent ETH including banked grid profit." },
+    { key: "spot3", name: "Spot Grid", ver: "v3", addr: "0x994Cf0A4f0E876f52f3b76a2856D93924DA71511", from: 44015825,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", current: true,
+      when: "bots created from Aug 23, 2026 (12:47 UTC) onwards — the version with Add funds",
+      gets: "The tokens sitting on your armed levels, plus all the ETH waiting on the buy levels and your realised profit, including anything you added with Add funds." },
+    { key: "spotUsdg", name: "Spot Grid", ver: "USDG", addr: "0xdd13354cfE3E79a944d8F93476176F016f6311e4", from: 50023717,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", current: true,
+      when: "USDG-quoted bots — the ones funded with dollars instead of ETH — created from Aug 30, 2026 onwards",
+      gets: "The tokens sitting on your armed levels, plus all the USDG waiting on the buy levels and your realised profit. It pays out in USDG, not ETH." },
+    { key: "spot", name: "Spot Grid", ver: "v1", addr: "0xC0A3cE7e18FeE382432a18F750756E296D44dD4b", from: 43637506,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "GridOpened", legacy: true,
+      when: "bots created before Aug 23, 2026 12:47 UTC",
+      gets: "The tokens sitting on your armed levels, plus all the ETH waiting on the buy levels and your realised profit." },
+    { key: "dca2", name: "DCA", ver: "v2", addr: "0x630d58f9B8Cb55D8e246268F52596AFc3471fc1d", from: 43924832,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "DcaOpened", current: true,
+      when: "bots created from Aug 23, 2026 (10:15 UTC) onwards",
+      gets: "Any tokens bought so far and still held, plus every instalment that has not been spent yet." },
+    { key: "dca1", name: "DCA", ver: "v1", addr: "0x07D52Ced2EA760187Fa83D5AA96A4B8174124a0d", from: 43634716,
+      fn: "stop", sel: "0x81e9e1bb", shape: "grid", ev: "DcaOpened", legacy: true,
+      when: "bots created before Aug 23, 2026 10:15 UTC",
+      gets: "Any tokens bought so far and still held, plus every instalment that has not been spent yet." },
+    { key: "mart2", name: "Martingale", ver: "v2", addr: "0x056A87cB9974f78fa4185BCe2e14807cBE357F8F", from: 43925080,
+      fn: "withdraw", sel: "0x8e19899e", shape: "idOnly", ev: "CycleOpened", current: true,
+      when: "bots created from Aug 23, 2026 (10:15 UTC) onwards",
+      gets: "The tokens bought on the levels that triggered, plus the ETH reserved for the levels that never did. Nothing is sold." },
+    { key: "mart1", name: "Martingale", ver: "v1", addr: "0xad55Ab54B38F6eE5aB8408de627C0CE20aeF5Cef", from: 43619834,
+      fn: "withdraw", sel: "0x8e19899e", shape: "idOnly", ev: "CycleOpened", legacy: true,
+      when: "bots created before Aug 23, 2026 10:15 UTC",
+      gets: "The tokens bought on the levels that triggered, plus the ETH reserved for the levels that never did. Nothing is sold." },
+    { key: "twap", name: "TWAP", ver: "", addr: "0xF8bE45D8da70745B9Df1CF17848dfcDD4b4C2309", from: 43634825,
+      fn: "stop", sel: "0x63c4f031", shape: "idOnly", ev: "TwapOpened",
+      gets: "Everything not yet executed, as native ETH if you funded the order with ETH. Executed slices were already delivered to your wallet." },
+    { key: "ladder", name: "Ladder", ver: "", addr: "0x9730274e9aB060eB2C9CC3417f85A323aeF7bB6C", from: 43580834,
+      fn: "cancel", sel: "0xc4d252f5", shape: "idOnly", ev: "LadderCreated",
+      gets: "The ETH behind every rung that has not filled. Filled rungs already sent you their tokens." }
+  ];
+
+  var EXTRA = [
+    { name: "Limit orders", ver: "v2", addr: "0xAd100f712FA482938adCe1dc08B3B30C8834cBBb", none: true,
+      body: "Nothing to withdraw — your funds never left your wallet. These orders use Permit2, so the contract only ever pulls tokens at the instant a valid fill happens on the terms you signed. To make sure an old order can never fill, either call <code>cancel</code> with the order fields, or call <code>invalidateUnorderedNonces</code> on Permit2 yourself, or simply revoke your Permit2 allowance for that token." },
+    { name: "Predict", ver: "", addr: "0x688c265886776005eaF321c7121bF2D1b76676A1", none: true,
+      body: "Not an escrow bot. Use <code>claim</code> with a list of round numbers (epochs) to collect winnings, and to collect <b>full refunds</b> on any round that was cancelled because it could not be settled. Find your rounds with the read function <code>getUserRounds</code>, then check each with <code>claimable</code> and <code>refundable</code>. A bet on a round that has not resolved yet cannot be pulled back — that is how the game works, not a stuck fund." }
+  ];
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function writeUrl(a) { return EXPLORER + "/address/" + a + "?tab=write_contract"; }
+  function readUrl(a) { return EXPLORER + "/address/" + a + "?tab=read_contract"; }
+
+  /* ---------- render the contract cards ---------- */
+  function paramRows(c) {
+    if (c.shape === "grid") {
+      return '<table class="params"><thead><tr><th>Field</th><th>Type exactly</th><th>Why</th></tr></thead><tbody>' +
+        '<tr><td>id</td><td>your bot id</td><td>The 0x… value from section 2.</td></tr>' +
+        '<tr><td>route</td><td>0x</td><td>Empty. Only used when selling, and you are not selling.</td></tr>' +
+        '<tr><td>minOut</td><td>0</td><td>Unused when sellAll is false.</td></tr>' +
+        '<tr><td>sellAll</td><td>false</td><td><b>Must be false.</b> Gives your tokens back as tokens instead of selling them.</td></tr>' +
+        '</tbody></table>';
+    }
+    return '<table class="params"><thead><tr><th>Field</th><th>Type exactly</th><th>Why</th></tr></thead><tbody>' +
+      '<tr><td>id</td><td>your bot id</td><td>The 0x… value from section 2. It is the only field.</td></tr>' +
+      '</tbody></table>';
+  }
+
+  function cardHtml(c) {
+    return '<div class="card"><div class="hd">' +
+      '<h3>' + esc(c.name) + '</h3>' +
+      (c.ver ? '<span class="tag">' + esc(c.ver) + '</span>' : '') +
+      (c.current ? '<span class="tag cur">current</span>' : '') +
+      (c.legacy ? '<span class="tag old">legacy</span>' : '') +
+      '<span class="tag fn">' + esc(c.fn) + '(…)</span>' +
+      '</div><div class="bd">' +
+      '<div class="addr"><span class="vlabel">Contract</span><code>' + esc(c.addr) + '</code>' +
+      '<button class="btn copy" data-copy="' + esc(c.addr) + '" type="button">Copy</button>' +
+      '<a class="btn go plain" href="' + writeUrl(c.addr) + '" target="_blank" rel="noopener">Open write form &rarr;</a>' +
+      '<a class="btn plain" href="' + readUrl(c.addr) + '" target="_blank" rel="noopener">Read / verify</a></div>' +
+      (c.when ? '<p class="when"><b>Holds:</b> ' + esc(c.when) + '.</p>' : '') +
+      '<p style="font-size:13.5px;margin:0">On the write form, open the function named <code>' + esc(c.fn) +
+      '</code> and fill it in like this:</p>' + paramRows(c) +
+      '<div class="gets"><b>What lands in your wallet:</b> ' + esc(c.gets) + '</div>' +
+      '</div></div>';
+  }
+
+  function extraHtml(c) {
+    return '<div class="card"><div class="hd"><h3>' + esc(c.name) + '</h3>' +
+      (c.ver ? '<span class="tag">' + esc(c.ver) + '</span>' : '') +
+      '<span class="tag no">no escrow</span></div><div class="bd">' +
+      '<div class="addr"><span class="vlabel">Contract</span><code>' + esc(c.addr) + '</code>' +
+      '<button class="btn copy" data-copy="' + esc(c.addr) + '" type="button">Copy</button>' +
+      '<a class="btn plain" href="' + writeUrl(c.addr) + '" target="_blank" rel="noopener">Open on Blockscout &rarr;</a></div>' +
+      '<p style="font-size:13.5px;margin:0">' + c.body + '</p></div></div>';
+  }
+
+  var list = document.getElementById("cardlist");
+  if (list) {
+    list.innerHTML = CONTRACTS.map(cardHtml).join("") + EXTRA.map(extraHtml).join("");
+  }
+
+  /* ---------- copy buttons ---------- */
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("[data-copy]") : null;
+    if (!b) return;
+    var txt = b.getAttribute("data-copy"), done = function () {
+      var old = b.textContent; b.textContent = "Copied"; setTimeout(function () { b.textContent = old; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(done, function () {});
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (err) {}
+      document.body.removeChild(ta);
+    }
+  });
+
+  /* ---------- the finder ---------- */
+  var elAddr = document.getElementById("faddr"),
+      elScan = document.getElementById("fscan"),
+      elConn = document.getElementById("fconnect"),
+      elStat = document.getElementById("fstatus"),
+      elOut  = document.getElementById("fout");
+
+  var rpcIdx = 0, reqId = 1;
+
+  function rpc(method, params) {
+    var body = JSON.stringify({ jsonrpc: "2.0", id: reqId++, method: method, params: params });
+    function attempt(i) {
+      if (i >= RPCS.length) return Promise.reject(new Error("no RPC reachable"));
+      return fetch(RPCS[(rpcIdx + i) % RPCS.length], {
+        method: "POST", headers: { "content-type": "application/json" }, body: body
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j.error) throw new Error(j.error.message || "rpc error");
+        rpcIdx = (rpcIdx + i) % RPCS.length;
+        return j.result;
+      }).catch(function (e) { if (i + 1 < RPCS.length) return attempt(i + 1); throw e; });
+    }
+    return attempt(0);
+  }
+
+  function pad32(hexNo0x) { while (hexNo0x.length < 64) hexNo0x = "0" + hexNo0x; return hexNo0x; }
+  function topicFor(addr) { return "0x" + pad32(addr.toLowerCase().replace(/^0x/, "")); }
+  function hex(n) { return "0x" + n.toString(16); }
+
+  // calldata for the withdrawal, so a user can paste it into any wallet if Blockscout is down
+  function calldata(c, id) {
+    var raw = id.replace(/^0x/, "").toLowerCase();
+    if (c.shape === "grid") {
+      // stop(bytes32 id, bytes route, uint256 minOut, bool sellAll) with route = empty
+      return c.sel + pad32(raw) +
+        pad32("80") +   // offset to the bytes arg
+        pad32("0") +    // minOut = 0
+        pad32("0") +    // sellAll = false
+        pad32("0");     // bytes length = 0
+    }
+    return c.sel + pad32(raw);
+  }
+
+  function scanContract(c, makerTopic, head) {
+    var ids = [], STEP = 100000;
+    function chunk(b) {
+      if (b > head) return Promise.resolve(ids);
+      var hi = Math.min(b + STEP - 1, head);
+      return rpc("eth_getLogs", [{
+        address: c.addr, fromBlock: hex(b), toBlock: hex(hi), topics: [null, null, makerTopic]
+      }]).then(function (logs) {
+        for (var i = 0; i < logs.length; i++) {
+          var t = logs[i].topics && logs[i].topics[1];
+          if (t && ids.indexOf(t) === -1) ids.push(t);
+        }
+        return chunk(hi + 1);
+      });
+    }
+    return chunk(c.from);
+  }
+
+  function isOpen(addr, id) {
+    return rpc("eth_call", [{ to: addr, data: "0x7c35be7a" + pad32(id.replace(/^0x/, "")) }, "latest"])
+      .then(function (r) { return /1$/.test(String(r || "")); })
+      .catch(function () { return null; });
+  }
+
+  function hitHtml(c, id, open) {
+    var badge = open === null ? '<span class="badge-closed">unknown</span>'
+      : open ? '<span class="badge-open">holds funds</span>'
+             : '<span class="badge-closed">already closed</span>';
+    var how = c.shape === "grid"
+      ? c.fn + "(id, 0x, 0, false)"
+      : c.fn + "(id)";
+    return '<div class="hit"><div class="top"><b>' + esc(c.name) + '</b>' +
+      (c.ver ? '<span class="tag">' + esc(c.ver) + '</span>' : '') + badge + '</div>' +
+      '<span class="id">' + esc(id) + '</span>' +
+      '<div class="act">' +
+      '<button class="btn copy" data-copy="' + esc(id) + '" type="button">Copy id</button>' +
+      (open === false ? '' :
+        '<a class="btn go plain" href="' + writeUrl(c.addr) + '" target="_blank" rel="noopener">Withdraw on Blockscout &rarr;</a>' +
+        '<button class="btn copy" data-copy="' + calldata(c, id) + '" type="button">Copy raw calldata</button>') +
+      '</div>' +
+      '<div class="how">call <b>' + esc(how) + '</b> on ' + esc(c.addr) + '</div></div>';
+  }
+
+  function run() {
+    var a = (elAddr.value || "").trim();
+    if (!/^0x[0-9a-fA-F]{40}$/.test(a)) { elStat.textContent = "That does not look like a wallet address."; return; }
+    elOut.innerHTML = ""; elScan.disabled = true;
+    elStat.textContent = "Reading the chain…";
+    var makerTopic = topicFor(a), found = 0;
+
+    rpc("eth_blockNumber", []).then(function (h) {
+      var head = parseInt(h, 16), i = 0;
+      function next() {
+        if (i >= CONTRACTS.length) {
+          elScan.disabled = false;
+          elStat.textContent = found
+            ? "Done. Found " + found + " bot" + (found === 1 ? "" : "s") + " for this wallet."
+            : "Done. No bots found for this wallet on any contract.";
+          return;
+        }
+        var c = CONTRACTS[i++];
+        elStat.textContent = "Checking " + c.name + (c.ver ? " " + c.ver : "") + "… (" + i + "/" + CONTRACTS.length + ")";
+        scanContract(c, makerTopic, head).then(function (ids) {
+          if (!ids.length) return next();
+          var j = 0;
+          function each() {
+            if (j >= ids.length) return next();
+            var id = ids[j++];
+            isOpen(c.addr, id).then(function (open) {
+              found++;
+              elOut.insertAdjacentHTML(open ? "afterbegin" : "beforeend", hitHtml(c, id, open));
+              each();
+            });
+          }
+          each();
+        }).catch(function (e) {
+          elOut.insertAdjacentHTML("beforeend",
+            '<div class="hit"><div class="top"><b>' + esc(c.name) + '</b>' +
+            '<span class="badge-closed">could not read</span></div>' +
+            '<div class="how">' + esc(e.message || "network error") +
+            ' &mdash; use the manual Blockscout method below for this one.</div></div>');
+          next();
+        });
+      }
+      next();
+    }).catch(function (e) {
+      elScan.disabled = false;
+      elStat.textContent = "Could not reach a public node (" + (e.message || "network error") +
+        "). Use the manual Blockscout method in Option B below — it needs no node of its own.";
+    });
+  }
+
+  if (elScan) elScan.addEventListener("click", run);
+  if (elAddr) elAddr.addEventListener("keydown", function (e) { if (e.key === "Enter") run(); });
+
+  if (elConn) elConn.addEventListener("click", function () {
+    if (!window.ethereum) { elStat.textContent = "No browser wallet detected. Paste your address instead."; return; }
+    window.ethereum.request({ method: "eth_requestAccounts" }).then(function (accs) {
+      if (accs && accs[0]) { elAddr.value = accs[0]; run(); }
+    }).catch(function (e) { elStat.textContent = "Wallet connection refused."; });
+  });
+
+  // ?account=0x… runs the finder read-only on load
+  var q = new URLSearchParams(location.search).get("account");
+  if (q && /^0x[0-9a-fA-F]{40}$/.test(q)) { elAddr.value = q; run(); }
+})();
+</script>
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/desk/help" style="color:inherit">nlyra.xyz/desk/help</a>.</div>
+</body>
+</html>

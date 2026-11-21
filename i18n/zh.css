@@ -1,0 +1,16 @@
+/* Chinese — no direction change, only the face and a little more line height,
+   because Han glyphs are denser than Latin at the same size. */
+[lang="zh-Hans"] body,
+[lang="zh-Hans"] h1, [lang="zh-Hans"] h2, [lang="zh-Hans"] h3, [lang="zh-Hans"] h4,
+[lang="zh-Hans"] p, [lang="zh-Hans"] li, [lang="zh-Hans"] dd, [lang="zh-Hans"] summary {
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0;
+}
+[lang="zh-Hans"] p, [lang="zh-Hans"] li, [lang="zh-Hans"] dd { line-height: 1.9; }
+[lang="zh-Hans"] code, [lang="zh-Hans"] pre, [lang="zh-Hans"] .addr { font-family: ui-monospace, monospace; }
+
+/* Los kickers y labels llevan letter-spacing:.16em, pensado para versales
+   latinas. En Han abre huecos entre glifos: se anula. (reportado 2026-08-27) */
+[lang="zh-Hans"] .kicker, [lang="zh-Hans"] .sec-kicker, [lang="zh-Hans"] .crumb,
+[lang="zh-Hans"] .lbl, [lang="zh-Hans"] .side .grp > a.top,
+[lang="zh-Hans"] .stat-tile .lbl, [lang="zh-Hans"] .chip { letter-spacing: 0; }

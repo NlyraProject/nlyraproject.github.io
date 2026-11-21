@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NLYRA Bridge — Robinhood Chain ↔ Arbitrum One · BNB Chain</title>
+<meta name="description" content="Official NLYRA bridge between Robinhood Chain, Arbitrum One and BNB Chain, powered by LayerZero V2. Same token, same supply, non-custodial.">
+<link rel="canonical" href="https://nlyra.xyz/bridge/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nlyra.xyz/bridge/">
+<meta property="og:site_name" content="NERON &amp; LYRA">
+<meta property="og:title" content="NLYRA Bridge — Robinhood Chain ↔ Arbitrum One · BNB Chain">
+<meta property="og:description" content="Move NLYRA between Robinhood Chain, Arbitrum One and BNB Chain in 1–5 minutes. LayerZero V2, two independent verifiers, 1:1 supply, you sign in your own wallet.">
+<meta property="og:image" content="https://nlyra.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070B18">
+<link rel="icon" href="https://nlyra.xyz/brand/dual-core.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=bnb3">
+</head>
+<body class="nl">
+<div class="glow g1" aria-hidden="true"></div>
+<div class="glow g2" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="https://nlyra.xyz/" aria-label="NLYRA home">
+      <img src="https://nlyra.xyz/brand/dual-core.svg" alt="" width="34" height="34">
+      <span>NLYRA <b>Bridge</b></span>
+    </a>
+    <nav class="nav" aria-label="NLYRA">
+      <a href="https://nlyra.xyz/desk/">Desk</a>
+      <a href="https://nlyra.xyz/docs/#bridge-arbitrum">Docs</a>
+      <a href="https://t.me/NeronWakeUp" rel="noopener" target="_blank">Telegram</a>
+    </nav>
+    <button id="connectTop" class="btn ghost small" type="button">Connect wallet</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+   <div class="hero-copy">
+    <div class="live-chip"><span class="dot"></span>Live · LayerZero V2 · <b>2 verifiers</b></div>
+    <h1 id="heroH1">NLYRA, now on <span class="grad">Arbitrum</span>.</h1>
+    <p class="sub" id="heroSub">One token, one supply, two chains. Your NLYRA is locked on Robinhood Chain and the exact same amount is minted on Arbitrum One. Coming back burns it there and unlocks it here. Nothing wrapped, nothing custodial: you sign in your own wallet.</p>
+    <div class="stats" aria-label="Live bridge numbers">
+      <div class="stat"><span class="v num" id="stLocked">—</span><span class="k">NLYRA locked on Robinhood Chain</span><span class="s">read live from the bridge adapter</span></div>
+      <div class="stat"><span class="v num" id="stMinted">—</span><span class="k" id="stMintedLabel">NLYRA on Arbitrum One · BNB Chain</span><span class="s">backed 1 : 1 by what is locked</span></div>
+      <div class="stat"><span class="v num">20M</span><span class="k">daily cap, each direction</span><span class="s">about 1–5 minutes per transfer</span></div>
+    </div>
+   </div>
+   <div class="hero-art" aria-hidden="true">
+    <svg id="art" viewBox="0 86 520 166" width="520" height="166">
+      <defs>
+        <linearGradient id="agrad" x1="0" x2="1"><stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#E84FE0"/></linearGradient>
+        <linearGradient id="railgrad" gradientUnits="userSpaceOnUse" x1="148" y1="0" x2="372" y2="0"><stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#E84FE0"/></linearGradient>
+        <linearGradient id="railgradR" gradientUnits="userSpaceOnUse" x1="372" y1="0" x2="148" y2="0"><stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#E84FE0"/></linearGradient>
+        <filter id="aglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <clipPath id="cL"><circle cx="92" cy="150" r="44"/></clipPath>
+        <clipPath id="cR"><circle cx="428" cy="150" r="44"/></clipPath>
+      </defs>
+      <line class="rail" x1="148" y1="150" x2="372" y2="150"/>
+      <path id="railF" class="lit" d="M148 150H372"/>
+      <path id="railR" class="lit" d="M372 150H148"/>
+      <g class="vf" id="vA" transform="translate(200,150)">
+        <circle class="ring" r="16"/>
+        <path class="shield" d="M0-8 -6-5.5v4.5c0 3.5 2.6 6.5 6 7.5 3.4-1 6-4 6-7.5v-4.5Z"/>
+        <path class="check" d="m-3 .5 2.2 2.2 4-4.4"/>
+        <text y="-30" text-anchor="middle" class="vl">LayerZero Labs</text>
+      </g>
+      <g class="vf" id="vB" transform="translate(320,150)">
+        <circle class="ring" r="16"/>
+        <path class="shield" d="M0-8 -6-5.5v4.5c0 3.5 2.6 6.5 6 7.5 3.4-1 6-4 6-7.5v-4.5Z"/>
+        <path class="check" d="m-3 .5 2.2 2.2 4-4.4"/>
+        <text y="-30" text-anchor="middle" class="vl">Nethermind</text>
+      </g>
+      <g class="pill" transform="translate(260,196)"><rect x="-30" y="-12" width="60" height="24" rx="12"/><text y="4.5" text-anchor="middle" class="pt">1 : 1</text></g>
+      <g id="nL"><circle cx="92" cy="150" r="52" class="halo rh"/><circle cx="92" cy="150" r="44" fill="#0F1528"/><image href="img/robinhood.png" x="48" y="106" width="88" height="88" clip-path="url(#cL)"/>
+        <g class="badge lock" transform="translate(126,184)"><circle r="13"/><rect class="body" x="-5.5" y="-1.5" width="11" height="8" rx="1.6"/><path class="shackle" d="M-3.5-1.5v-2.5a3.5 3.5 0 0 1 7 0v2.5"/></g>
+        <text x="92" y="224" text-anchor="middle" class="nl1">Robinhood Chain</text><text x="92" y="241" text-anchor="middle" class="nl2" id="tagL">locked</text></g>
+      <g id="nR"><circle id="nRring" cx="428" cy="150" r="52" fill="rgba(47,180,255,.12)"/><circle cx="428" cy="150" r="44" fill="#0F1528"/><image id="nRimg" href="img/arbitrum.png" x="384" y="106" width="88" height="88" clip-path="url(#cR)"/>
+        <g class="badge mint" transform="translate(394,184)"><circle r="13"/><path class="plus" d="M-4 0h8M0-4v8"/><path class="minus" d="M-4 0h8"/></g>
+        <text x="428" y="224" text-anchor="middle" class="nl1" id="nRname">Arbitrum One</text><text x="428" y="241" text-anchor="middle" class="nl2" id="tagR">minted</text></g>
+      <g class="tok"><circle r="14" class="tokc"/><image href="https://nlyra.xyz/brand/dual-core.svg" x="-9" y="-9" width="18" height="18"/></g>
+    </svg>
+   </div>
+  </section>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <div class="grid">
+    <section class="card bridge" aria-label="Bridge">
+      <div class="route">
+        <div class="chain" id="fromBox">
+          <span class="lbl">From</span>
+          <span class="cl" aria-hidden="true"></span>
+          <span class="cname" id="fromName">Robinhood Chain</span>
+          <span class="cbal">Balance <b id="balance">-</b> NLYRA</span>
+        </div>
+        <div class="mid">
+          <span class="line" aria-hidden="true"></span>
+          <button id="flip" class="flip" type="button" aria-label="Switch direction" title="Switch direction">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 4v13m0 0-3-3m3 3 3-3M17 20V7m0 0-3 3m3-3 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="chain" id="toBox">
+          <span class="lbl">To</span>
+          <span class="cl" aria-hidden="true"></span>
+          <span class="cname" id="toName">Arbitrum One</span>
+          <span class="cbal">Balance <b id="balanceDst">-</b> NLYRA</span>
+        </div>
+      </div>
+      <div class="dstpick" id="dstPick" hidden></div>
+
+      <label class="amount" for="amount">
+        <span class="row"><span>Amount</span><span class="usd" id="amountUsd"></span></span>
+        <span class="inrow">
+          <input id="amount" inputmode="decimal" autocomplete="off" placeholder="0.0" spellcheck="false">
+          <button id="max" class="btn ghost small" type="button">Max</button>
+          <span class="tick"><img src="https://nlyra.xyz/brand/dual-core.svg" alt="" width="18" height="18">NLYRA</span>
+        </span>
+      </label>
+
+      <details class="recip" id="recipBox">
+        <summary>Recipient: <span id="recipShort">your connected address</span></summary>
+        <p class="hint">Leave empty to receive at your own address on the destination chain (recommended). If you use a smart-contract wallet (for example a Safe), it may not exist at the same address on the other chain: enter an address you control there.</p>
+        <input id="recipient" placeholder="0x... (optional)" autocomplete="off" spellcheck="false">
+      </details>
+
+      <dl class="summary">
+        <div><dt>You receive</dt><dd><b id="receive">-</b> NLYRA</dd></div>
+        <div id="dustRow" hidden><dt>Dust kept in your wallet <a href="#dust" class="q" aria-label="What is dust?">?</a></dt><dd id="dust">-</dd></div>
+        <div><dt>LayerZero fee</dt><dd id="fee">-</dd></div>
+        <div><dt>Approval</dt><dd id="approvalInfo">-</dd></div>
+        <div><dt>Daily limit available</dt><dd id="limit">-</dd></div>
+        <div><dt>Estimated time</dt><dd id="eta">~1-5 min</dd></div>
+      </dl>
+
+      <button id="action" class="btn primary big" type="button" disabled>Coming soon</button>
+      <p id="msg" class="msg" role="status" aria-live="polite"></p>
+
+      <div id="track" class="track" hidden>
+        <h3>Transfer status</h3>
+        <ol id="steps" class="steps">
+          <li id="stSrc">Source transaction</li>
+          <li id="stLz">LayerZero verification and delivery</li>
+          <li id="stDst">Received on destination</li>
+        </ol>
+        <p class="links" id="trackLinks"></p>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="card how" aria-label="How it works">
+        <h2>How it works</h2>
+        <ol class="flow3">
+          <li><span class="ic">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span>
+            <b>Lock</b><span>Your NLYRA goes into the bridge adapter on Robinhood Chain. It never leaves the chain.</span></li>
+          <li><span class="ic">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <b>Verify</b><span>LayerZero Labs and Nethermind each confirm the message. Both are required, every time.</span></li>
+          <li><span class="ic">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8.5 12h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <b>Mint</b><span>The same amount appears in your wallet on Arbitrum One or BNB Chain. Coming back burns it and unlocks the original.</span></li>
+        </ol>
+      </section>
+
+      <section class="card warn">
+        <h2><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5M12 16v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Only these contracts are official</h2>
+        <p>Any other token called "NLYRA" on Arbitrum or BNB Chain is <b>fake</b>. Check the address before you buy, add a token to your wallet or approve anything.</p>
+        <ul class="addrs" id="addrs"></ul>
+      </section>
+
+      <section class="card info faq" aria-label="Questions">
+        <details open>
+          <summary>Daily limit</summary>
+          <p>Each direction has a cap of <b id="capText">20,000,000</b> NLYRA per 24 hours. The cap frees up gradually as time passes, so if a transfer is above what is available now, try a smaller amount or wait. A transfer over the limit is rejected before it is sent, so nothing is lost.</p>
+        </details>
+        <details id="dust">
+          <summary>What is dust?</summary>
+          <p>NLYRA has 18 decimals, but LayerZero bridges carry amounts with 6 decimals (the OFT "shared decimals"). Anything smaller than 0.000001 NLYRA cannot cross and simply stays in your wallet. There is no other slippage: you receive exactly the amount shown.</p>
+        </details>
+        <details>
+          <summary>Fees</summary>
+          <p>The bridge charges no NLYRA fee. You pay the LayerZero messaging fee in the gas token of the source chain (about 0.0001 ETH from Robinhood Chain or Arbitrum, about 0.0004 BNB from BNB Chain) plus normal network gas. On Robinhood Chain you first approve the bridge to move your NLYRA (one extra transaction). On Arbitrum no approval is needed.</p>
+        </details>
+        <details>
+          <summary>Security</summary>
+          <p>Both contracts are open source and verified. Two independent verifiers must confirm every message, and the message libraries are pinned so a change on LayerZero's side cannot silently affect NLYRA. Nobody at NLYRA can move your tokens: the adapter only releases NLYRA against a verified message. Bridging still carries smart-contract risk; bridge only what you can afford to lose.</p>
+        </details>
+      </section>
+    </aside>
+  </div>
+
+  <section class="verified" aria-label="Verified on">
+    <span class="vt">Verified source code</span>
+    <a href="https://arbiscan.io/address/0x834e80509b23dC82d79F982510a32348986B06b5#code" rel="noopener" target="_blank"><i>✓</i>Arbiscan</a>
+    <a id="vBsc" href="https://bscscan.com" rel="noopener" target="_blank" hidden><i>✓</i>BscScan</a>
+    <a href="https://robinhoodchain.blockscout.com/address/0xe7b3171b76B959Db805874926aA0D62b1A5d3264?tab=contract" rel="noopener" target="_blank"><i>✓</i>Blockscout</a>
+    <a href="https://robin.etherscan.io/address/0xe7b3171b76B959Db805874926aA0D62b1A5d3264#code" rel="noopener" target="_blank"><i>✓</i>RobinScan</a>
+    <a href="https://layerzeroscan.com/" rel="noopener" target="_blank"><i>↗</i>LayerZero Scan</a>
+    <a href="https://nlyra.xyz/docs/#bridge-arbitrum"><i>↗</i>Step-by-step docs</a>
+  </section>
+
+  <footer class="foot">
+    <p>Smart contracts are non-custodial: nobody at NLYRA can move your tokens. Bridging always carries smart-contract risk; bridge only what you can afford to lose. Not available to U.S. persons.</p>
+    <p><a href="https://nlyra.xyz/">nlyra.xyz</a> · <a href="https://x.com/nlyraproject" rel="noopener" target="_blank">X</a> · <a href="https://t.me/NeronWakeUp" rel="noopener" target="_blank">Telegram</a> · <a href="mailto:nlyraproject@gmail.com">Email</a></p>
+  </footer>
+</main>
+
+<div id="walletPick" class="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+    <h3 id="pickTitle">Choose a wallet</h3>
+    <ul id="pickList"></ul>
+    <button class="btn ghost small" type="button" id="pickClose">Cancel</button>
+  </div>
+</div>
+
+<script src="/brand/nlyra-wc.js?v=1"></script>
+<script src="abi.js?v=arb2"></script>
+<script src="app.js?v=arb2"></script>
+<script src="live.js?v=bnb3"></script>
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/bridge/" style="color:inherit">nlyra.xyz/bridge/</a>.</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/* RTL — Arabic. Loaded only when dir="rtl".
+   The site was written LTR-first with ~744 physical direction rules, so this
+   sheet flips the ones that actually show, rather than rewriting every file. */
+:root[dir="rtl"], [dir="rtl"] body { direction: rtl; }
+
+[dir="rtl"] body,
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4,
+[dir="rtl"] p, [dir="rtl"] li, [dir="rtl"] dd, [dir="rtl"] dt, [dir="rtl"] summary {
+  font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  letter-spacing: 0;
+}
+
+/* text alignment: anything explicitly left becomes start */
+[dir="rtl"] .a, [dir="rtl"] p, [dir="rtl"] li, [dir="rtl"] dd,
+[dir="rtl"] .note, [dir="rtl"] .card, [dir="rtl"] .qa { text-align: right; }
+[dir="rtl"] .t th, [dir="rtl"] .t td, [dir="rtl"] table th, [dir="rtl"] table td { text-align: right; }
+
+/* lists and quotes hang off the other edge */
+[dir="rtl"] ul, [dir="rtl"] ol { padding-right: 1.35em; padding-left: 0; }
+[dir="rtl"] blockquote, [dir="rtl"] .note { border-left: 0; border-right: 3px solid rgba(139,124,246,.55); }
+
+/* the docs shell: index sits on the right */
+[dir="rtl"] .side, [dir="rtl"] #side { left: auto; right: 0; }
+[dir="rtl"] .wrap, [dir="rtl"] .shell { direction: rtl; }
+
+/* nav: the row reverses, the dropdown anchors on the left */
+[dir="rtl"] .nl-nav .links { flex-direction: row-reverse; }
+[dir="rtl"] .nl-nav details .menu { right: auto; left: 0; }
+[dir="rtl"] .nl-nav details.lang .menu { left: 0; right: auto; }
+
+/* anything that is a number, an address, a selector or code stays LTR —
+   Arabic must not reorder a hex string or a function signature */
+[dir="rtl"] code, [dir="rtl"] pre, [dir="rtl"] .addr, [dir="rtl"] .ca,
+[dir="rtl"] .mono, [dir="rtl"] .num, [dir="rtl"] .v, [dir="rtl"] input,
+[dir="rtl"] .price, [dir="rtl"] time {
+  /* isolate aisla el texto LTR sin forzar display, que aplastaba los .num
+     y .v de bloque (las fichas de stats perdian 24px de alto). */
+  direction: ltr; unicode-bidi: isolate; text-align: left;
+}
+/* solo los que de verdad son en linea llevan inline-block */
+[dir="rtl"] code, [dir="rtl"] .addr, [dir="rtl"] .ca, [dir="rtl"] .mono { display: inline-block; }
+[dir="rtl"] pre, [dir="rtl"] .tw { text-align: left; }
+
+/* arrows written for LTR point the wrong way once flipped */
+[dir="rtl"] .more::after, [dir="rtl"] .links a::after { transform: scaleX(-1); display: inline-block; }
+
+/* mismo caso que en chino: el letter-spacing latino separa las ligaduras
+   arabes y rompe la union de las letras */
+[dir="rtl"] .kicker, [dir="rtl"] .sec-kicker, [dir="rtl"] .crumb,
+[dir="rtl"] .lbl, [dir="rtl"] .side .grp > a.top,
+[dir="rtl"] .stat-tile .lbl, [dir="rtl"] .chip { letter-spacing: 0; }
+
+/* ───────── correcciones tras la revision visual del arabe (2026-08-27) ───────── */
+
+/* 1. El lockup de marca es un flex row: en RTL se leia "LYRA × NERON".
+      La marca no se invierte nunca. */
+[dir="rtl"] .nl-nav .lockup { direction: ltr; }
+
+/* 2. Las flechas de las listas de agentes quedaban pegadas al borde fisico
+      izquierdo y apuntando al lado equivocado. */
+[dir="rtl"] .agent li { padding: 5px 22px 5px 0; }
+[dir="rtl"] .agent li::before { left: auto; right: 0; transform: scaleX(-1); }
+
+/* 3. Simbolos de token: el bidi los daba vuelta como "NFA$" y "CASHCAT$".
+      Todo ticker, precio o direccion se mantiene LTR. */
+[dir="rtl"] .sym, [dir="rtl"] .r-token, [dir="rtl"] .tkr, [dir="rtl"] .ticker {
+  direction: ltr; unicode-bidi: embed; display: inline-block;
+}
+
+/* 4. .qa .a ul tiene mas especificidad que la regla generica de arriba y
+      dejaba 20px muertos del lado izquierdo. */
+[dir="rtl"] .qa .a ul, [dir="rtl"] .qa .a ol,
+[dir="rtl"] .note ul, [dir="rtl"] .a ul {
+  padding-left: 0; padding-right: 20px;
+}
+
+/* 5. Las secciones que siguen en ingles NO deben heredar RTL: el punto final
+      saltaba al borde izquierdo y las tablas invertian el orden de columnas.
+      Se marcan tambien en el HTML con dir="ltr"; esto es el cinturon. */
+[dir="rtl"] section.ch[data-en], [dir="rtl"] [dir="ltr"] { direction: ltr; text-align: left; }
+[dir="rtl"] [dir="ltr"] ul, [dir="rtl"] [dir="ltr"] ol { padding-left: 1.35em; padding-right: 0; }
+
+
+/* BUG 2: el honeypot del formulario se esconde con left:-9999px. En LTR el
+   desbordamiento negativo no genera scroll; en RTL si — /ar/report daba
+   10.389px de scroll horizontal. clip-path lo esconde sin ocupar espacio. */
+[dir="rtl"] .hp {
+  left: auto !important; right: auto !important;
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}

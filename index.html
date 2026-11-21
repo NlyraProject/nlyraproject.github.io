@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NLYRA · backup pages</title>
+<meta name="description" content="Backup copies of the NLYRA pages that work without our servers. The live site is nlyra.xyz.">
+<link rel="icon" href="/brand/dual-core.svg">
+<link rel="canonical" href="https://nlyra.xyz/">
+<link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+<style>
+:root { --bg: #070B18; --card: #0F1528; --ink: #E9EEF8; --muted: #9AA7BD; --line: #1E2742; --neron: #8B7CF6; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; padding: 32px 16px 48px; }
+main { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+header { display: flex; flex-direction: column; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 12px; font: 600 20px/1 "Space Grotesk", Inter, system-ui, sans-serif; }
+.brand img { width: 40px; height: auto; }
+h1 { margin: 0; font: 600 30px/1.15 "Space Grotesk", Inter, system-ui, sans-serif; letter-spacing: -0.4px; text-wrap: balance; }
+.lead { margin: 0; color: var(--muted); max-width: 62ch; }
+.lead a, .l a, footer a { color: var(--neron); }
+ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+.t { font: 600 18px/1.25 "Space Grotesk", Inter, system-ui, sans-serif; }
+li p { margin: 0; color: var(--muted); }
+.l { font-weight: 500; }
+footer { color: var(--muted); font-size: 14px; display: flex; flex-direction: column; gap: 6px; }
+a:focus-visible { outline: 2px solid var(--neron); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="brand"><img src="/brand/dual-core.svg" alt="">NLYRA</div>
+<h1>Backup pages</h1>
+<p class="lead">Copies of the NLYRA pages that work without our servers: they read the chain directly from your browser and your wallet. The live site is <a href="https://nlyra.xyz/">nlyra.xyz</a>, and everything is still there.</p>
+</header>
+<ul>
+<li><div class="t">Documentation</div><p>How NLYRA works: products, contracts, fees, staking, the launchpad.</p><div class="l"><a href="/docs">English</a> · <a href="/ar/docs">العربية</a> · <a href="/zh/docs">中文</a></div></li>
+<li><div class="t">FAQ</div><p>Short answers to the common questions.</p><div class="l"><a href="/faq">English</a> · <a href="/ar/faq">العربية</a> · <a href="/zh/faq">中文</a></div></li>
+<li><div class="t">The Desk manual</div><p>How to use The Desk.</p><div class="l"><a href="/desk/docs">English</a></div></li>
+<li><div class="t">Bots help</div><p>How the trading bots work, read straight from the chain.</p><div class="l"><a href="/desk/help">English</a></div></li>
+<li><div class="t">Bridge</div><p>Move NLYRA between Robinhood Chain, Arbitrum and BNB Chain (LayerZero).</p><div class="l"><a href="/bridge/">Open</a></div></li>
+<li><div class="t">Staking v2 · Real Yield app</div><p>Stake, claim and withdraw directly on the contract.</p><div class="l"><a href="/newstake/app/">Open</a></div></li>
+<li><div class="t">Staking v1 app</div><p>The first staking contract: withdraw directly on the contract.</p><div class="l"><a href="/staking/app">English</a> · <a href="/ar/staking/app">العربية</a> · <a href="/zh/staking/app">中文</a></div></li>
+<li><div class="t">Wiki</div><p>Guides with pictures.</p><div class="l"><a href="/wiki/">Open</a></div></li>
+<li><div class="t">Verify</div><p>Check the official links.</p><div class="l"><a href="/verify">English</a> · <a href="/ar/verify">العربية</a> · <a href="/zh/verify">中文</a></div></li>
+<li><div class="t">For search engines and AI</div><p>Plain-text descriptions of NLYRA.</p><div class="l"><a href="/llms.txt">llms.txt</a> · <a href="/beacon.txt">beacon.txt</a></div></li>
+</ul>
+<footer>
+<span>Also on GitHub: <a href="https://nlyraproject.github.io/nlyra-desk-rescue/">withdraw your bot funds without our site</a> · <a href="https://github.com/NlyraProject/nlyra-platform">contracts and code</a>.</span>
+<span>The Desk, the launchpad, the explorer and anything that needs live data stay on nlyra.xyz.</span>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文档 — NLYRA · 整个生态的说明书</title>
+<meta name="description" content="NLYRA 文档中心：怎么添加 Robinhood Chain、怎么搞到 gas、每个产品做什么和收多少、每一个合约地址、不通过网站怎么把资金取出来，以及每周更新日志。">
+<!--OG-->
+<meta property="og:title" content="NLYRA 文档 — 从这里开始">
+<meta property="og:description" content="添加这条链、搞到 gas、挑一个产品、读每一个合约。Robinhood Chain 上 NERON &amp; LYRA 生态的完整手册。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nlyra.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<!--/OG-->
+<link rel="icon" href="/brand/dual-core.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { line-height: 1.6; }
+  a:hover { text-decoration: none; }
+
+  /* ── shell ───────────────────────────────────────────── */
+  .doc { display: grid; grid-template-columns: 262px minmax(0,1fr); gap: 40px;
+         max-width: 1220px; margin: 0 auto; padding: 0 20px 80px; align-items: start; }
+
+  /* ── left index ──────────────────────────────────────── */
+  .side { position: sticky; top: 56px; max-height: calc(100vh - 56px); overflow-y: auto;
+          padding: 22px 0 60px; scrollbar-width: thin; }
+  .side::-webkit-scrollbar { width: 6px; }
+  .side::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+  .srchwrap { position: relative; margin-bottom: 16px; }
+  body.nl .srchwrap input[type=search] { width: 100%; padding: 10px 34px 10px 34px; font-size: 14px; -webkit-appearance: none; appearance: none; }
+  body.nl .srchwrap input[type=search]::-webkit-search-cancel-button { display: none; }
+  .srchwrap .mag { position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+                   width: 15px; height: 15px; color: var(--text-3); pointer-events: none; }
+  .srchwrap .clr { position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+                   width: 24px; height: 24px; border: 0; background: none; color: var(--text-3);
+                   cursor: pointer; border-radius: var(--radius-sm); font-size: 16px; line-height: 1; display: none; }
+  .srchwrap .clr:hover { color: var(--text); background: var(--nested); }
+  .srchwrap.has .clr { display: block; }
+  .hits { font: 500 11.5px var(--font-body); color: var(--text-3); margin: -8px 0 14px; letter-spacing: .04em; }
+
+  .side .grp { margin-bottom: 18px; }
+  .side .grp > a.top { display: block; font: 600 11px var(--font-body); letter-spacing: .13em;
+       text-transform: uppercase; color: var(--text-3); padding: 6px 10px; border-radius: var(--radius-sm); }
+  .side .grp > a.top:hover { color: var(--text-2); background: var(--nested); }
+  .side .grp ul { list-style: none; margin-top: 3px; }
+  .side .grp li a { display: block; padding: 6px 10px 6px 12px; border-left: 2px solid var(--line);
+       color: var(--text-2); font: 400 13.5px var(--font-body); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+  .side .grp li a:hover { color: var(--text); background: var(--nested); border-left-color: var(--line-strong); }
+  .side .grp li a.on { color: var(--text); border-left-color: var(--neron); background: var(--nested); }
+  .side .grp li a.hide, .side .grp.hide { display: none; }
+
+  /* ── content ─────────────────────────────────────────── */
+  .main { padding: 22px 0 0; min-width: 0; }
+  .crumb { font: 600 11.5px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--text-3); }
+  .main > h1 { font-size: clamp(28px,4.4vw,40px); letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 12px; }
+  .lead { color: var(--text-2); font-size: 16.5px; max-width: 660px; }
+  .heroact { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 10px; }
+
+  .ch { padding-top: 46px; scroll-margin-top: 66px; }
+  .ch > h2 { font-size: 25px; letter-spacing: -.015em; padding-bottom: 10px; border-bottom: 1px solid var(--line-strong); }
+  .ch > .chsub { color: var(--text-3); font-size: 13.5px; margin-top: 10px; }
+
+  .blk { padding-top: 30px; scroll-margin-top: 66px; }
+  .blk > h3 { font-size: 18px; margin-bottom: 9px; letter-spacing: -.01em; }
+  .blk > h4 { font-size: 14.5px; margin: 18px 0 7px; color: var(--text); font-family: var(--font-display); }
+  .blk p { font-size: 15px; color: var(--text-2); margin-bottom: 11px; }
+  .blk ul, .blk ol { padding-left: 20px; margin: 0 0 12px; }
+  .blk li { font-size: 15px; color: var(--text-2); margin: 6px 0; }
+  .blk b, .blk strong { color: var(--text); font-weight: 600; }
+  .blk code { font-family: var(--font-mono); font-size: 12.5px; color: var(--text);
+              background: var(--nested); padding: 1px 5px; border-radius: 4px; word-break: break-word; }
+  .blk.hide { display: none; }
+  .ch.hide { display: none; }
+
+  /* ── components ──────────────────────────────────────── */
+  .tw { overflow-x: auto; background: var(--card); border: 1px solid var(--line);
+        border-radius: var(--radius-lg); margin: 4px 0 14px; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.t th { text-align: left; font: 600 10.5px var(--font-body); letter-spacing: .1em;
+        text-transform: uppercase; color: var(--text-3); padding: 11px 12px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  table.t td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--text-2); }
+  table.t tr:last-child td { border-bottom: 0; }
+  table.t td b { color: var(--text); }
+  table.t code { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-2); word-break: break-all; }
+  table.t code.cp { cursor: pointer; }
+  table.t code.cp:hover { color: var(--accent); }
+  .what { color: var(--text-3); font-size: 12px; margin-top: 3px; display: block; }
+
+  .vbadge { display: inline-block; font: 600 10px var(--font-body); letter-spacing: .06em;
+        padding: 3px 9px; border-radius: var(--radius-pill); background: var(--safe-bg); color: var(--safe); white-space: nowrap; }
+  .vbadge.n { background: var(--nested); color: var(--text-3); }
+  .lgc { display: inline-block; font: 600 9.5px var(--font-body); letter-spacing: .08em; text-transform: uppercase;
+        padding: 2px 7px; border-radius: var(--radius-pill); background: var(--nested); color: var(--text-3); margin-left: 6px; vertical-align: middle; }
+  .cur { display: inline-block; font: 600 9.5px var(--font-body); letter-spacing: .08em; text-transform: uppercase;
+        padding: 2px 7px; border-radius: var(--radius-pill); background: var(--accent-bg); color: var(--neron); margin-left: 6px; vertical-align: middle; }
+
+  .note { border-left: 3px solid var(--neron); background: var(--nested); border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        padding: 13px 16px; margin: 4px 0 14px; }
+  .note p { font-size: 14px; margin: 0; }
+  .note p + p { margin-top: 8px; }
+  .note.warn { border-left-color: var(--caution); }
+  .note.bad { border-left-color: var(--danger); }
+  .note .lbl { display: block; font: 600 10.5px var(--font-body); letter-spacing: .12em; text-transform: uppercase;
+        color: var(--neron); margin-bottom: 5px; }
+  .note.warn .lbl { color: var(--caution); }
+  .note.bad .lbl { color: var(--danger); }
+
+  .todo { border: 1px dashed var(--caution); background: var(--caution-bg); border-radius: var(--radius-md);
+        padding: 11px 14px; margin: 4px 0 14px; }
+  .todo p { font-size: 13.5px; color: var(--caution); margin: 0; }
+
+  .pcards { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .pc { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 12px; }
+  .pc h4 { font-family: var(--font-display); font-size: 16.5px; font-weight: 600; color: var(--text); margin: 0 0 4px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .pc .price { margin-left: auto; font: 600 11px var(--font-body); letter-spacing: .05em; padding: 3px 9px;
+        border-radius: var(--radius-pill); background: var(--nested); color: var(--text-2); white-space: nowrap; }
+  .pc p { font-size: 14.5px; color: var(--text-2); margin: 0 0 9px; }
+  .pc dl { display: grid; grid-template-columns: 86px minmax(0,1fr); gap: 4px 12px; font-size: 13.5px; margin: 10px 0 0; }
+  .pc dt { color: var(--text-3); font: 600 10.5px var(--font-body); letter-spacing: .1em; text-transform: uppercase; padding-top: 3px; }
+  .pc dd { color: var(--text-2); }
+  .pc .links { margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; font-weight: 600; }
+
+  .netbox { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 14px; }
+  .netbox dl { display: grid; grid-template-columns: 128px minmax(0,1fr); gap: 8px 14px; font-size: 13.5px; }
+  .netbox dt { color: var(--text-3); font: 600 10.5px var(--font-body); letter-spacing: .1em; text-transform: uppercase; padding-top: 2px; }
+  .netbox dd { color: var(--text); font-family: var(--font-mono); font-size: 12.5px; word-break: break-all; }
+  #addnet-msg { font-size: 13px; margin-top: 10px; color: var(--text-2); min-height: 19px; }
+  #addnet-msg.ok { color: var(--safe); } #addnet-msg.err { color: var(--danger); }
+
+  .wrapd details { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
+  .wrapd details > summary { padding: 15px 17px; font-weight: 600; font-size: 15px; cursor: pointer; list-style: none;
+        display: flex; justify-content: space-between; align-items: center; gap: 14px; font-family: var(--font-display); color: var(--text); }
+  .wrapd details > summary::-webkit-details-marker { display: none; }
+  .wrapd details > summary::after { content: '+'; color: var(--text-3); font-size: 20px; font-weight: 400; flex: none; }
+  .wrapd details[open] > summary::after { content: '\2212'; }
+  .wrapd details .a { padding: 0 17px 15px; color: var(--text-2); font-size: 14.5px; }
+  .wrapd details .a p { font-size: 14.5px; }
+  .wrapd details .a ul { padding-left: 20px; margin: 8px 0; }
+  .yes { color: var(--safe); font-weight: 600; } .no { color: var(--danger); font-weight: 600; }
+
+  /* ── changelog ───────────────────────────────────────── */
+  .cl { border-left: 2px solid var(--line-strong); padding-left: 22px; margin-left: 6px; }
+  .cle { position: relative; padding-bottom: 30px; }
+  .cle::before { content: ''; position: absolute; left: -29px; top: 6px; width: 11px; height: 11px;
+        border-radius: 50%; background: var(--neron); box-shadow: 0 0 0 4px var(--bg); }
+  .cle .when { font: 600 11px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .cle h3 { font-size: 18px; margin: 4px 0 4px; }
+  .cle .tag { margin-bottom: 12px; }
+  .cle .grp2 { margin-top: 12px; }
+  .cle .grp2 h4 { font: 600 10.5px var(--font-body); letter-spacing: .12em; text-transform: uppercase; margin: 0 0 5px; }
+  .cle .grp2.fixed h4 { color: var(--safe); }
+  .cle .grp2.improved h4 { color: var(--neron); }
+  .cle .grp2.new h4 { color: var(--lyra); }
+  .cle .grp2.known h4 { color: var(--caution); }
+  .cle .grp2.contracts h4 { color: var(--text-2); }
+  .cle .grp2 ul { padding-left: 18px; margin: 0; }
+  .cle .grp2 li { font-size: 14.5px; color: var(--text-2); margin: 4px 0; }
+
+  /* ── footer ──────────────────────────────────────────── */
+  footer.dfoot { border-top: 1px solid var(--line); padding: 24px 20px 56px; margin-top: 20px; font-size: 13px; color: var(--text-3); }
+  footer.dfoot .inner { max-width: 1220px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer.dfoot a { color: var(--text-2); }
+  .bugbtn { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* ── mobile ──────────────────────────────────────────── */
+  body.nl .sidetoggle { display: none; }
+  @media (max-width: 900px) {
+    .doc { grid-template-columns: minmax(0,1fr); gap: 0; padding: 0 16px 60px; }
+    .side { position: static; max-height: none; overflow: visible; padding: 14px 0 0; order: -1; }
+    body.nl .sidetoggle { display: inline-flex; width: 100%; }
+    .side .nav { display: none; }
+    .side.open .nav { display: block; padding-top: 12px; }
+    .main { padding-top: 16px; }
+    .main > h1 { font-size: 27px; }
+    .pc dl { grid-template-columns: 1fr; gap: 1px 0; }
+    .pc dt { padding-top: 8px; }
+    .netbox dl { grid-template-columns: 1fr; gap: 2px 0; }
+    .netbox dt { padding-top: 9px; }
+    .ch > h2 { font-size: 21px; }
+    table.t th, table.t td { padding: 9px 10px; }
+  }
+</style>
+<style id="lang-css">
+.nl-nav details.lang{position:relative}
+.nl-nav details.lang>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border:1px solid rgba(255,255,255,.14);border-radius:9px;font-size:13px;
+  color:var(--text-2,#9aa4b2);background:rgba(255,255,255,.03);white-space:nowrap}
+.nl-nav details.lang>summary::-webkit-details-marker{display:none}
+.nl-nav details.lang>summary:hover{color:#fff;border-color:rgba(139,124,246,.5)}
+.nl-nav details.lang .menu{position:absolute;top:calc(100% + 6px);right:0;min-width:172px;z-index:70;
+  background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.nl-nav details.lang .menu a{display:flex;justify-content:space-between;gap:12px;padding:9px 11px;
+  border-radius:8px;font-size:14px;color:#e6e9ef;text-decoration:none}
+.nl-nav details.lang .menu a:hover{background:rgba(139,124,246,.16)}
+.nl-nav details.lang .menu a[aria-current]{color:#8B7CF6;font-weight:600}
+.nl-nav details.lang .menu a i{font-style:normal;opacity:.5;font-size:12px}
+@media(max-width:900px){.nl-nav details.lang .menu{right:auto;left:0}}
+.i18n-partial{background:rgba(139,124,246,.12);border-bottom:1px solid rgba(139,124,246,.3);
+  padding:9px 16px;font-size:13.5px;color:#cfd5e1;text-align:center}
+.i18n-partial a{color:#8B7CF6;text-decoration:none;margin:0 5px}
+</style><link rel="alternate" hreflang="en" href="https://nlyra.xyz/docs"><link rel="alternate" hreflang="ar" href="https://nlyra.xyz/ar/docs"><link rel="alternate" hreflang="zh-Hans" href="https://nlyra.xyz/zh/docs"><link rel="alternate" hreflang="x-default" href="https://nlyra.xyz/docs"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/i18n/zh.css"><link rel="canonical" href="https://nlyra.xyz/zh/docs">
+</head>
+<body class="nl">
+<nav class="nl-nav" id="nlnav" aria-label="NLYRA">
+  <a class="lockup" href="https://nlyra.xyz/zh/" aria-label="NERON × LYRA 首页"><img class="mark" src="/brand/dual-core-mark.svg" alt="" aria-hidden="true" width="34" height="22">NERON<span class="x">×</span><span class="lyra">LYRA</span></a>
+  <div class="links">
+    <details data-nav="intel"><summary>情报 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/">扫描器 <small>粘贴合约地址</small></a>
+        <a href="https://nlyra.xyz/zh/wallet">钱包检查</a>
+        <a href="https://nlyra.xyz/zh/map">Constellation <small>持币者地图</small></a>
+        <a href="/faq#agents">AI 智能体</a>
+        <a href="https://nlyra.xyz/zh/premium">The Key</a>
+      </div></details>
+    <details data-nav="trade"><summary>交易与 DeFi <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/desk">The Desk <small>终端</small></a>
+        <a href="https://nlyra.xyz/desk/bots">Bots</a>
+        <a href="https://nlyra.xyz/zh/explorer">The Explorer <small>区块与交易</small></a>
+        <a href="https://nlyra.xyz/newstake/">质押 v2 <small>真实收益</small></a><a href="https://nlyra.xyz/bsc">BNB Chain 机器人 <small>infinity grid · usdt</small></a>
+        <a href="https://nlyra.xyz/zh/staking">质押 v1 <small>至 10 月 17 日</small></a>
+      </div></details>
+    <details data-nav="build"><summary>构建 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/launch">Launchpad</a>
+        <a href="https://nlyra.xyz/zh/api-docs">API</a>
+      </div></details>
+    <details data-nav="community"><summary>社区 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/chat">聊天 <small>和 LYRA 对话</small></a>
+        <a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram ↗</a>
+        <a href="/zh/docs">文档 <small>使用手册</small></a>
+        <a href="/zh/faq">常见问题</a>
+        <a href="https://nlyra.xyz/zh/stats">数据</a>
+      </div></details>
+  </div>
+  <span class="spacer"></span>
+  <details class="lang" data-nav="lang"><summary aria-label="Language"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>中</summary><div class="menu"><a href="/docs" hreflang="en">English<i>EN</i></a><a href="/ar/docs" hreflang="ar">العربية<i>AR</i></a><a href="/zh/docs" aria-current="true" hreflang="zh-Hans">中文<i>中</i></a></div></details><a class="cta" href="https://nlyra.xyz/desk2/">打开 The Desk</a>
+  <button class="burger" type="button" aria-label="菜单" aria-expanded="false" onclick="var n=document.getElementById('nlnav');var o=n.classList.toggle('open');this.setAttribute('aria-expanded',String(o));"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</nav>
+<script>(function(){var n=document.getElementById('nlnav');if(!n)return;var p=location.pathname;var map={'/':'intel','/wallet':'intel','/map':'intel','/premium':'intel','/desk':'trade','/desk2':'trade','/dex':'trade','/stake':'trade','/staking':'trade','/invest':'trade','/launch':'build','/api-docs':'build','/bounties':'build','/gov':'build','/chat':'community','/faq':'community','/docs':'community','/report':'community','/stats':'community','/roulette':'play','/slots':'play','/game':'play'};var k=map[p.replace(/\/$/,'')||'/'];if(k){var a=n.querySelector('[data-nav="'+k+'"]');if(a){if(a.tagName==='A')a.setAttribute('aria-current','page');else a.querySelector('summary').setAttribute('aria-current','page');}}document.addEventListener('click',function(e){n.querySelectorAll('details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});})();</script>
+
+
+<div class="doc">
+
+<aside class="side" id="side">
+  <button class="btn-secondary sidetoggle" type="button" onclick="var s=document.getElementById('side');var o=s.classList.toggle('open');this.textContent=(o?'✕ 关闭目录':'☰ 目录与搜索');">&#9776; 目录与搜索</button>
+  <div class="nav">
+  <div class="srchwrap" id="srchwrap">
+    <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input type="search" id="srch" placeholder="搜索文档&hellip;" autocomplete="off" aria-label="搜索文档">
+    <button class="clr" type="button" id="srchclr" aria-label="清除搜索">&times;</button>
+  </div>
+  <div class="hits" id="hits"></div>
+  <nav id="toc" aria-label="文档目录"></nav>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="crumb">NLYRA &middot; 文档</div>
+  <h1 class="brand-headline">一切，都有文档。</h1>
+  <p class="lead">Robinhood Chain 上的两个 AI 智能体，加上一整套 DeFi 技术栈。这里是地图：怎么接入这条链、每个产品做什么、收多少钱、每个合约在哪里、不经过我们怎么把钱取出来，以及这周改了什么。</p>
+  <div class="heroact">
+    <a class="btn-primary" href="#add-network">添加 Robinhood Chain</a>
+    <a class="btn-secondary" href="#which-product">我需要哪个产品？</a>
+    <a class="btn-secondary bugbtn" href="https://nlyra.xyz/report?from=docs"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6a4 4 0 018 0v1H8z"/><path d="M6 11a6 6 0 0112 0v3a6 6 0 01-12 0z"/><path d="M3 10h3M18 10h3M3 18h3M18 18h3M12 7v13"/></svg>报告问题</a>
+  </div>
+
+<section class="ch" id="start" data-t="开始上手">
+  <h2>1 &middot; 开始上手</h2>
+  <p class="chsub">从「我有一个钱包」到「我完成了第一笔交易」，五步走完。</p>
+
+  <article class="blk" id="what-is" data-t="NLYRA 是什么">
+    <h3>NLYRA 是什么</h3>
+    <p>NLYRA 是一套建立在 <b>Robinhood Chain</b>（链 ID <code>4663</code>）上的链上产品生态，前台由两个 AI 智能体撑着：</p>
+    <ul>
+      <li><b>NERON</b> —— 观察者。他读链：合约权限、所有权、流动性锁仓、持币者取证。他给出对一个代币的判定 —— SAFE、CAUTION、DANGER、RUG。</li>
+      <li><b>LYRA</b> —— 阅读者。她下载合约已验证的 Solidity 源码并逐行阅读，把受约束的权力和开放的权力分开。</li>
+    </ul>
+    <p>围绕这两位的是各个产品：一个免费的代币扫描器、一个交易终端（<b>The Desk</b>）、一个 DEX、一个 launchpad、质押、赏金板、链上治理、一个隐私池，还有几个游戏。所有东西都跑在你可以自己读的公开合约上 —— <a href="#contracts">每一个地址都列在 §3</a>。</p>
+    <p><b>$NLYRA</b> 是生态代币。它用于质押、用于游戏，也是 Predict 里两种结算资产之一。使用 The Desk、扫描器、DEX 或 launchpad <b>不</b>需要它。</p>
+    <div class="note">
+      <span class="lbl">老实说清楚</span>
+      <p>不同的产品有不同的托管形态。一次市价兑换是一笔原子交易 &mdash; 同一个区块里进出，如果 revert 了什么也不会留下。限价单不托管任何资金：在你签名指定的那一笔成交发生之前，你的代币一直待在你自己的钱包里。<b>而一个机器人、一个 ladder 或一个 martingale，在运行期间确实会把你的资金放在一个托管合约里</b> —— 你随时可以不经过我们、自己把它们取出来，但在这期间它们并不在你的钱包里。<a href="#custody">§3 会逐项说明哪个是哪个。</a></p>
+    </div>
+  </article>
+
+  <article class="blk" id="add-network" data-t="把 Robinhood Chain 加进你的钱包">
+    <h3>第 1 步 &middot; 把 Robinhood Chain 加进你的钱包</h3>
+    <p>任何 EVM 钱包都可以 —— MetaMask、Rabby、Coinbase Wallet、Trust，或者手机钱包内置的浏览器。大多数钱包默认没有这条链，所以你需要手动添加一次。</p>
+    <div class="netbox">
+      <dl>
+        <dt>网络名称</dt><dd>Robinhood Chain</dd>
+        <dt>链 ID</dt><dd>4663 <span style="color:var(--text-3)">（十六进制 <code>0x1237</code>）</span></dd>
+        <dt>原生代币</dt><dd>ETH &middot; 18 位小数</dd>
+        <dt>RPC URL</dt><dd>https://rpc.mainnet.chain.robinhood.com</dd>
+        <dt>区块浏览器</dt><dd>https://robinhoodchain.blockscout.com</dd>
+      </dl>
+      <p style="margin-top:16px"><button class="btn-primary" type="button" id="addnet">把 Robinhood Chain 加进我的钱包</button></p>
+      <p id="addnet-msg" role="status"></p>
+    </div>
+    <p>这个按钮会用上表里完全一样的值去调用 <code>wallet_addEthereumChain</code>。你的钱包会弹窗让你确认 —— 请读一下那个弹窗，它应该显示链 ID 4663 和上面那个 RPC。如果你更喜欢手动，把这五个值自己敲进去也一样；这个按钮没有任何特别之处。</p>
+    <div class="note warn">
+      <span class="lbl">如果按钮没反应</span>
+      <p>说明这个浏览器里没有检测到注入式钱包。请在你钱包自带的浏览器里打开 <b>nlyra.xyz/docs</b>（MetaMask → Browser，Trust → DApps），或者装一个桌面端插件。在 iPhone 上 Safari 没有钱包插件 —— 请用钱包 App 的浏览器。</p>
+    </div>
+  </article>
+
+  <article class="blk" id="get-gas" data-t="搞到 gas —— Robinhood Chain 上的 ETH">
+    <h3>第 2 步 &middot; 搞到 gas —— Robinhood Chain 上的 ETH</h3>
+    <p><b>以太坊、Arbitrum 或 Base 上的 ETH，不是 Robinhood Chain 上的 ETH。</b>它必须先跨链到这条链上，你才能在这里做任何事。这是新用户卡住的头号原因。</p>
+    <h4>三条进来的路</h4>
+    <div class="tw"><table class="t">
+      <tr><th>路线</th><th>怎么做</th><th>适合谁</th></tr>
+      <tr><td><b>Robinhood 手机 App</b></td><td>在 App 里买 ETH，然后提现到 Robinhood Chain。从 <a href="https://robinhood.com/chain" target="_blank" rel="noopener">robinhood.com/chain</a> 开始。<span class="what">如果你已经有 Robinhood 账户，这是最直接的一条路。</span></td><td>法币 &rarr; 链上，不用碰跨链桥界面</td></tr>
+      <tr><td><b>从 Arbitrum 或以太坊跨链过来</b></td><td>Robinhood Chain 是一条基于 Arbitrum 技术栈的链。可以通过 <a href="https://portal.arbitrum.io/bridge" target="_blank" rel="noopener">portal.arbitrum.io/bridge</a> 跨链，或者用 <a href="https://robinhood.com/chain" target="_blank" rel="noopener">robinhood.com/chain</a> 上链接的那个桥。<span class="what">从 L1 存入需要通常的跨链等待时间；提回 L1 要经过标准的挑战期。</span></td><td>你已经在别的 EVM 链上持有 ETH</td></tr>
+      <tr><td><b>直接问</b></td><td><a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram 群</a>会带你走一遍。<span class="what">每天都有人这么做；总会有人回你。</span></td><td>任何卡住的人</td></tr>
+    </table></div>
+    <h4>你到底需要多少</h4>
+    <ul>
+      <li>这条链上的 gas 大约是<b>每笔交易 $0.007</b>。很少的一点就能用很久。</li>
+      <li>限价单、ladder 的一档或机器人一次成交的最小规模是 <b>0.00085 ETH</b> —— 大约 $2。</li>
+      <li>市价兑换没有额外的最低限额，只受池子本身能接受的下限约束。</li>
+      <li>The Desk 的 MAX 按钮总会留下 <b>0.0002 ETH</b> 当作 gas —— 大约够七十笔交易。</li>
+    </ul>
+    <div class="note">
+      <span class="lbl">USDG 也可以</span>
+      <p>USDG（Paxos Global Dollar，<code>0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168</code>）是这条链上的美元稳定币。限价单可以用它计价，发行也可以拿它做交易对。你仍然需要一点 ETH 来付 gas —— USDG 付不了 gas。</p>
+    </div>
+  </article>
+
+  <article class="blk" id="buy-nlyra" data-t="买入 $NLYRA">
+    <h3>第 3 步 &middot; 买入 $NLYRA</h3>
+    <p>$NLYRA 是生态代币。固定总量 1,000,000,000，在 Pons 上发行。LP 头寸由一个没有 owner 的锁仓合约持有，该合约没有转移、减少流动性或销毁的路径 —— 是被永久固定住，而不是字面意义上的销毁。</p>
+    <div class="tw"><table class="t">
+      <tr><th>在哪买</th><th>你得到什么</th></tr>
+      <tr><td><b>The Desk</b> &mdash; <a href="https://nlyra.xyz/desk">nlyra.xyz/desk</a></td><td>用自动路由做市价买入、实时行情图、限价单。手续费：每笔成交 1%（被推荐则 0.9%）。<a href="/desk/docs#market-orders">市价单是怎么运作的 &rarr;</a></td></tr>
+      <tr><td><b>Architect Swap</b> &mdash; <a href="https://nlyra.xyz/zh/dex">nlyra.xyz/dex</a></td><td>朴素的兑换框，同时给 V2 和 V3 报价，哪边拿到的更多就在哪边成交。只收池子手续费，没有 Desk 手续费。</td></tr>
+      <tr><td><b>链上任何 DEX 聚合器</b></td><td>NLYRA/ETH 池是公开的：<code class="cp" data-c="0x8f03A4C4e885Ca80Cc585f26a7FA6A16F2e77956">0x8f03A4C4e885Ca80Cc585f26a7FA6A16F2e77956</code></td></tr>
+    </table></div>
+    <p><b>买任何东西之前，先核对代币地址。</b>唯一官方的 $NLYRA 合约是 <code class="cp" data-c="0xb9d3824149ad8ac984153ceec91d5a2405d1fb95">0xb9d3824149ad8ac984153ceec91d5a2405d1fb95</code>。任何其他带这个代号的都不是我们 —— <a href="#addresses">见完整地址表</a>。</p>
+  </article>
+
+  <article class="blk" id="which-product" data-t="我该用哪个产品？">
+    <h3>第 4 步 &middot; 我该用哪个产品？</h3>
+    <p>在左边一列里找到你的目标。</p>
+    <div class="tw"><table class="t">
+      <tr><th>你的目标</th><th>用这个</th><th>为什么是它</th><th>要花多少</th></tr>
+      <tr><td><b>现在就买入或卖出一个代币</b></td><td><a href="#p-desk">The Desk</a></td><td>在 V2、V3 和 V4 池之间自动路由，实时行情图，持币者和部署者取证都在同一页上。</td><td>每笔交易 1%（被推荐 0.9%）</td></tr>
+      <tr><td><b>只在价格来到我的位置时才买</b></td><td><a href="#p-desk">The Desk &middot; 限价单</a></td><td>你签一个 Permit2 订单。什么都不会被托管；在你签名指定的那一笔成交发生之前，没有任何东西离开你的钱包。</td><td>挂单免费 &middot; 成交时收 1%</td></tr>
+      <tr><td><b>我睡觉的时候也跑策略</b></td><td><a href="#p-desk">The Desk &middot; 机器人</a></td><td>六种策略（Infinity Grid、Spot Grid、DCA、Martingale、Smart Rebalance、TWAP），由 Keeper 按链上规则执行。</td><td>每次成交 1% &middot; <b>资金存放在托管合约里</b></td></tr>
+      <tr><td><b>只想换一下，不要多余的东西</b></td><td><a href="#p-swap">Architect Swap</a></td><td>原封不动部署的 Uniswap V2 + V3。一个框，没有终端。</td><td>只收池子手续费（0.05% / 0.3% / 1%）</td></tr>
+      <tr><td><b>发一个代币</b></td><td><a href="#p-nlyra-launch">NLYRA Launch</a></td><td>每个币都签下五条固定规则。前 10 分钟所有人同一价格。每笔交易 1%。</td><td>见 <a href="#p-nlyra-launch">§2 NLYRA Launch</a></td></tr>
+      <tr><td><b>用 $NLYRA 赚真实收益</b></td><td><a href="https://nlyra.xyz/newstake/app/">真实收益质押 v2</a></td><td>NLYRA 创作者交易手续费的 50%，以 WETH 和 NLYRA 支付。灵活或 7/14/30 天锁仓。经 Coinsult 审计。</td><td>存入和提取都不收费</td></tr>
+      <tr><td><b>用 $NLYRA 赚收益</b></td><td><a href="#p-staking">$NLYRA Staking</a></td><td>单币质押，奖励按秒流入，不锁仓，<code>exit()</code> 永远可用。</td><td>存入和提取都不收费</td></tr>
+      <tr><td><b>用别的代币赚收益</b></td><td><a href="#p-stakepools">Architect Stake 矿池</a></td><td>由创建者开设的固定 APY 矿池。每一笔质押都会预先把全额奖励锁进托管，所以标示的利率没法凭空变出来。</td><td>只花 gas</td></tr>
+      <tr><td><b>靠提供流动性赚钱</b></td><td><a href="#p-swap">Architect Swap</a> &middot; <a href="#p-invest">Liquidity Desk</a></td><td>V2 经典池，或者 V3 的集中流动性头寸。Liquidity Desk 是架在上面的分析层。</td><td>gas &middot; 无常损失风险</td></tr>
+      <tr><td><b>查一个代币安不安全</b></td><td><a href="#p-scanner">扫描器</a> + <a href="#p-constellation">Constellation</a></td><td>合约权限、LP 状态、持币者取证，以及一张「谁持有什么」的可视化地图。</td><td>免费</td></tr>
+      <tr><td><b>查一个钱包干不干净</b></td><td><a href="#p-wallet">钱包检查</a></td><td>读一个钱包的历史和持仓，把可疑的模式标出来。</td><td>免费</td></tr>
+      <tr><td><b>干活拿钱</b></td><td><a href="#p-bounties">赏金任务</a></td><td>用 USDG 支付的任务，资金放在一个非托管的托管合约里。被拒绝会自动退款。</td><td>参与免费</td></tr>
+      <tr><td><b>在这之上做开发</b></td><td><a href="#p-api">API</a></td><td>扫描流水线和市场数据，通过 HTTP 提供。</td><td>见 <a href="#p-api">§2 API</a></td></tr>
+    </table></div>
+    <div class="note warn">
+      <span class="lbl">在你挑之前，先记住一条</span>
+      <p>会把你的资金<b>托管</b>起来的产品（机器人、ladder、martingale、Predict 下注），和不托管的产品风险性质不一样。在你往其中任何一个里放大额之前，先读 <a href="#custody">§3 · Custody model</a>。</p>
+    </div>
+  </article>
+</section>
+
+<section class="ch" id="products" data-t="产品">
+  <h2>2 &middot; 产品</h2>
+  <p class="chsub">nlyra.xyz 上跑着十四样东西。每张卡片说明它做什么、给谁用、要花多少，以及详细文档在哪。价格是运行中的代码里的真实数字，不是宣传册上的说法。</p>
+
+  <div class="pcards">
+
+  <article class="blk pc" id="p-scanner" data-t="扫描器">
+    <h4>扫描器 <span class="price">免费</span></h4>
+    <p>粘贴任意代币地址，得到一个判定 &mdash; <b>SAFE、CAUTION、DANGER 或 RUG</b> &mdash; 附带 0&ndash;100 的威胁分、支撑这个分数的标记，以及在存在已验证源码时 LYRA 的逐行解读。合约权限、所有权、流动性锁仓、持币者取证。支持 Solana 加 25 条 EVM 链，Robinhood Chain 包含在内。</p>
+    <dl>
+      <dt>适合谁</dt><dd>任何准备买入某个代币的人。不用钱包，不用注册。</dd>
+      <dt>费用</dt><dd><b>对所有人免费。</b>用限流而不是定价来控制：<b>每个 IP 每 10 分钟 6 次扫描</b>，持有 Architect's Key 则是<b>每 10 分钟 60 次</b>。</dd>
+      <dt>备注</dt><dd>每一次扫描都会生成一个可分享的页面 <code>nlyra.xyz/t/&lt;address&gt;</code>，带它自己的社交卡片。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/">扫描一个代币 &rarr;</a><a href="https://nlyra.xyz/zh/api-docs">从代码里调用 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-wallet" data-t="钱包检查">
+    <h4>钱包检查 <span class="price">免费</span></h4>
+    <p>扫描一整个钱包而不是单个代币：哪些是干净的、哪些是 rug、哪些卖不掉。支持 EVM <code>0x&hellip;</code> 和 Solana 地址。</p>
+    <dl>
+      <dt>适合谁</dt><dd>要审一整个仓位的持币者，以及任何要核查交易对手的人。</dd>
+      <dt>费用</dt><dd><b>免费。</b><b>每个 IP 每 10 分钟 4 次检查</b>，持有 Architect's Key 则是<b>每 10 分钟 20 次</b>。命中缓存的报告（10 分钟内）不计入限额。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/wallet">检查一个钱包 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-constellation" data-t="Constellation">
+    <h4>Constellation <span class="price">免费</span></h4>
+    <p>一张持币者地图。每一个持币钱包是一颗星，而聚类是从<b>资金来源取证</b>画出来的 &mdash; 谁给谁打的钱 &mdash; 而不只是看它们相互之间的转账。它能让你看出一个把自己拆到三十个地址上的内部人团体。</p>
+    <dl>
+      <dt>适合谁</dt><dd>买入之前查集中度和内部人聚类。</dd>
+      <dt>费用</dt><dd><b>免费。</b>为一个还没人看过的代币构建星空，限制为<b>每个 IP 每 10 分钟 4 个新代币</b>；已经画过的代币随时都可以免费打开。</dd>
+      <dt>URL</dt><dd><code>nlyra.xyz/map/&lt;token address&gt;</code>。直接打开 <code>/map</code> 是 $NLYRA 的星空。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/map">打开地图 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-desk" data-t="The Desk">
+    <h4>The Desk <span class="price">每笔交易 1% &middot; 被推荐 0.9%</span></h4>
+    <p>交易终端：横跨六个榜单的实时行情板，带行情图、成交、持币者、顶级交易者和安全解读的代币页，市价单、限价单、Ladder、Martingale、六种机器人策略、Predict、MY BAG 和排行榜。它是这里体量最大的产品，而且甩开其他产品一大截，它有自己完整的一本手册。</p>
+    <dl>
+      <dt>适合谁</dt><dd>Robinhood Chain 上的活跃交易者，以及任何希望自己睡觉时也有策略在跑的人。</dd>
+      <dt>费用</dt><dd><b>每一笔已成交交易的 1%</b>（如果你是被推荐来的则是 0.9%），在兑换发生的那一刻由手续费路由收取。<b>0% 业绩提成</b> &mdash; 不从你的利润里拿任何东西。挂一个限价单是免费的；取消只花 gas（约 $0.001）。Predict 的 NLYRA 池抽取奖池的 3%，而且只在一轮结算出赢家时才抽。</dd>
+      <dt>托管</dt><dd>市价单和限价单<b>不做托管（escrow）</b>。<b>Ladder、martingale 和机器人会</b> &mdash; 在你把资金取出来之前，它们待在该策略的合约里。<a href="#custody">§3 &middot; 托管模型</a>。</dd>
+    </dl>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--text-3)">完整手册在 <a href="/desk/docs"><b>/desk/docs</b></a> &mdash; 共 15 章。直接跳进去：</p>
+    <div class="tw"><table class="t">
+      <tr><th>如果你想&hellip;</th><th>读这些</th></tr>
+      <tr><td>从零开始配置</td><td><a href="/desk/docs#start">§1 开始上手</a> &middot; <a href="/desk/docs#chain">网络</a> &middot; <a href="/desk/docs#funding">入金</a> &middot; <a href="/desk/docs#name">领一个 @name</a></td></tr>
+      <tr><td>看懂行情板</td><td><a href="/desk/docs#board">§2 行情板</a> &middot; <a href="/desk/docs#boards">六个榜单</a> &middot; <a href="/desk/docs#rapsheet">RAP SHEET</a></td></tr>
+      <tr><td>读懂一个代币页</td><td><a href="/desk/docs#token">§3 代币页</a> &middot; <a href="/desk/docs#verdict">判定检查了什么</a> &middot; <a href="/desk/docs#tab-holders">持币者</a></td></tr>
+      <tr><td>下一笔市价单</td><td><a href="/desk/docs#market-orders">§4</a> &middot; <a href="/desk/docs#quote-line">报价行</a> &middot; <a href="/desk/docs#warnings">三条警告</a> &middot; <a href="/desk/docs#refused">"refused:"</a></td></tr>
+      <tr><td>下一笔限价单</td><td><a href="/desk/docs#limit-orders">§5</a> &middot; <a href="/desk/docs#limit-prep">实际被签名的是什么</a> &middot; <a href="/desk/docs#limit-cancel">取消</a></td></tr>
+      <tr><td>使用 Ladder</td><td><a href="/desk/docs#ladder">§6</a> &middot; <a href="/desk/docs#ladder-fills">每一档是怎么成交的</a></td></tr>
+      <tr><td>使用 Martingale</td><td><a href="/desk/docs#martingale">§7</a> &middot; <a href="/desk/docs#mart-preview">模拟推演</a> &middot; <a href="/desk/docs#mart-stop">结束一个周期</a></td></tr>
+      <tr><td>跑一个机器人</td><td><a href="/desk/docs#bots">§8</a> &middot; <a href="/desk/docs#bots-six">六种策略</a> &middot; <a href="/desk/docs#bots-sltp">止损与止盈</a> &middot; <a href="/desk/docs#bots-stop">停掉一个</a></td></tr>
+      <tr><td>在 Predict 上下注</td><td><a href="/desk/docs#predict">§9</a> &middot; <a href="/desk/docs#predict-payout">手续费和赔付</a> &middot; <a href="/desk/docs#predict-refunds">退款</a></td></tr>
+      <tr><td>看懂你的盈亏</td><td><a href="/desk/docs#mybag">§10 MY BAG</a> &middot; <a href="/desk/docs#pnl-math">PnL 是怎么算的</a></td></tr>
+      <tr><td>搞清每一项费用</td><td><a href="/desk/docs#fees">§13 费用与经济模型</a> &middot; <a href="/desk/docs#hook-fees">hook 手续费池</a> &middot; <a href="/desk/docs#referral-economics">推荐机制</a></td></tr>
+      <tr><td>理解托管</td><td><a href="/desk/docs#security">§14 安全与自托管</a> &middot; <a href="/desk/docs#withdraw-yourself">提取保证</a></td></tr>
+      <tr><td>修点什么</td><td><a href="/desk/docs#faq">§15 FAQ 与故障排查</a> &middot; <a href="#troubleshooting">或者本页的 §4</a></td></tr>
+    </table></div>
+    <div class="links"><a href="/desk/docs">完整的 Desk 手册 &rarr;</a><a href="https://nlyra.xyz/desk/help/bots">不通过本站把钱取出来 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-swap" data-t="Architect Swap">
+    <h4>Architect Swap <span class="price">V2 0.3% &middot; V3 分档</span></h4>
+    <p>生态自己的 DEX：Uniswap V2 和 V3 部署在 Robinhood Chain 上，路由会同时向两边询价，哪边你收到的更多就在哪边成交。在 Liquidity 里你可以选 V2 CLASSIC（一个简单池子）或 V3 CONCENTRATED（一个自定义价格区间，以 NFT 形式持有）。</p>
+    <dl>
+      <dt>适合谁</dt><dd>不需要终端、只想单纯做兑换的人，以及流动性提供者。</dd>
+      <dt>费用</dt><dd><b>V2：每一跳 0.3%</b> &mdash; 0.25% 给流动性提供者，0.05% 给协议金库。<b>V3：池子所在的费率档</b> &mdash; 0.05%（稳定币）、0.3%（标准）或 1%（冷门）&mdash; 四分之三给 LP，四分之一给协议。<b>这里没有 Desk 手续费</b>；这是 DEX，不是终端。</dd>
+      <dt>要留意</dt><dd>一笔通过 ETH 自动路由的 V2 兑换会穿过两个池子，所以手续费收两次。当存在直连池时，路由会走它，手续费减半。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/dex">打开 DEX &rarr;</a><a href="#addresses">路由与工厂地址 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-nlyra-launch" data-t="NLYRA Launch">
+    <h4>NLYRA Launch <span class="price">发行免费 &middot; 每笔交易 1%</span></h4>
+    <p>NLYRA 在 Robinhood Chain 上的发射台，自 <b>2026 年 11 月 19 日</b>起上线。任何人都可以用一个名字、一个代号和一张图片发一个币，一笔交易完成，不需要我们批准。每个币都签下同样的五条规则，规则写在合约里：创建者改不了，我们也改不了。</p>
+    <dl>
+      <dt>适合谁</dt><dd>想发币的人，以及想从第一分钟起、以和所有人相同的价格参与的人。</dd>
+      <dt>费用</dt><dd><b>没有发行费。</b>创建者留下 <b>0.002 ETH 押金</b>，币开盘时退回，没开盘则不退。创建者买自己的币是可选的：可以用 0% 买入来发行。</dd>
+      <dt>交易对</dt><dd>人们用什么来买卖这个币：<b>ETH、USDG、NLYRA</b>，或 Robinhood Chain 上的代币化股票（NVDA、TSLA、AAPL、SPY、QQQ、META、MSTR）。</dd>
+      <dt>1 &middot; 开盘期</dt><dd>前 <b>10 分钟没有人交易</b>。大家加入，每个钱包有上限，结束时<b>为所有人以同一价格执行一次买入</b>。只有来自 <b>5 个钱包（不算创建者）</b>的金额达到最低要求才会开盘；否则所有人取回 <b>100%</b>。开盘期买到的币在 6 小时内逐步解锁，或者持有 7 天多得 10%。</dd>
+      <dt>2 &middot; 创建者的币</dt><dd>创建者的钱包在同一个开盘期、以同样的价格买入，<b>最多 5%</b>，这些币<b>锁定 7 天</b>。这个上限针对的是创建者自己的钱包：一个钱包不等于一个人。</dd>
+      <dt>3 &middot; 创建者卖出</dt><dd>7 天之后，每一次卖出都要<b>提前 24 小时公告</b>：每次公告最多 1% 的币，每周一次公告。</dd>
+      <dt>4 &middot; 创建者的收入</dt><dd>每笔交易付 <b>1%</b>：<b>0.5% 给创建者</b>，约 14 天后支付；<b>0.2% 给 NLYRA 质押者</b>；<b>0.3% 给 NLYRA</b>。如果公告了卖出或币被关闭，尚未支付的创建者收入归 NLYRA 金库，分给质押者。</dd>
+      <dt>5 &middot; 死掉的币会退钱</dt><dd>如果一个币连续 3 天交易太少，<b>任何人都可以关闭它</b>：创建者被锁定的币和未售出的币被销毁，持币者平分池子里的钱，不收费。</dd>
+      <dt>池子</dt><dd>每个币都在<b>它自己的 Uniswap v4 池子</b>里交易，池子由我们的 hook 创建，里面放着这个币的供应量。这部分流动性是锁定的：没有人能添加或撤出。价格不会低于起始价，也不会超过发行时设定的上限。</dd>
+      <dt>唯一的开关</dt><dd>NLYRA 只持有一把钥匙：一个暂停开关，可以<b>暂停新发行和买入 72 小时</b>。卖出和取回你的钱始终可用，暂停时正在进行的开盘期会全额退款。没有 owner，也没有升级路径。</dd>
+    </dl>
+    <div class="note" style="margin-top:12px">
+      <span class="lbl">这些币在哪里交易</span>
+      <p>NLYRA Launch 的币可以在<b>我们的页面</b>（<a href="https://nlyra.xyz/zh/launch">nlyra.xyz/launch</a>）和 <b>The Desk</b>（<a href="https://nlyra.xyz/desk">nlyra.xyz/desk</a>）买卖；从 2026 年 11 月 21 日起，也可以在 <b>Uniswap 应用</b>里买卖，它现在会通过这些币的池子路由交易。无论在哪里交易，每一笔都经过该币自己的 Uniswap v4 池子和我们的 hook，所以规则都一样。如果 Uniswap 显示「no route」，说明没有任何东西坏掉，也没有人的币被卡住：池子就在链上，你在我们的页面或 The Desk 上买卖即可。</p>
+    </div>
+    <div class="links"><a href="https://nlyra.xyz/zh/launch">打开 NLYRA Launch &rarr;</a><a href="#launch-contracts">五个合约 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-launch" data-t="Architect Launch">
+    <h4>Architect Launch <small style="font-weight:500;opacity:.7">&middot; 旧版发射台</small> <span class="price">只花 gas &middot; 约 $0.30</span></h4>
+    <div class="note" style="margin:0 0 12px">
+      <span class="lbl">旧版发射台</span>
+      <p>这是 NLYRA 在 2026 年 11 月 19 日之前运行的发射台。它的币照常运作，页面搬到了 <a href="https://nlyra.xyz/zh/launch-v1">nlyra.xyz/launch-v1</a>，那里已暂停新的发行。新币请用上面的 <a href="#p-nlyra-launch">NLYRA Launch</a> 发行，它的规则不同。</p>
+    </div>
+    <p>一笔交易发一个代币。它诞生在一个真实的池子里，流动性头寸被永久锁定，代币本身没有任何 owner 权限 &mdash; 总量是一个编译期常量，所以根本不存在可被滥用的 mint 函数。创建者永久保留池子交易手续费的大部分。</p>
+    <dl>
+      <dt>适合谁</dt><dd>代币创建者，包括钱包是空的那些。</dd>
+      <dt>费用</dt><dd><b>没有平台部署费 &mdash; 你付 gas，大约 $0.30。</b>或者用 <b>LAUNCH FREE</b>，由我们来付：上限是全局<b>每天 25 次发行，每个钱包 2 次，每个 IP 2 次</b>，并且一次免费发行不能带 dev buy。</dd>
+      <dt>你分到多少</dt><dd>每一笔交易都会付<b>1% 的池子手续费</b>。诞生在 <b>Architect Swap V3</b> 上，创建者拿 <b>90%</b>；在 <b>Uniswap V3</b> 上是 <b>80%</b>。还有第三个场地 <b>Holder Rewards</b>，它把这 1% 拆成 <b>30% 给创建者 / 50% 撒给持币者 / 20% 给协议</b>。</dd>
+      <dt>场地说明</dt><dd>Holder Rewards 场地在 <b>2026 年 8 月 27 日</b>重建完成，现在重新开放。它的奖励分发器原本有一个可以被绕过的 swap 回调防护；现在这个防护改为从合约存储里读取，新的发行使用工厂 <code>0xc641a5bD946290cA1905A68c4BA3b1d969169398</code>（<a href="https://robinhoodchain.blockscout.com/address/0xc641a5bD946290cA1905A68c4BA3b1d969169398" target="_blank" rel="noopener">已验证</a>）。从来没有用户资金暴露过 &mdash; 旧工厂上唯一一次发行是我们自己的测试，它里面什么都没有。</dd>
+      <dt>Dev buy</dt><dd>可选，在创建交易内部原子执行，并且<b>硬性上限为总量的 5%</b>。把这意味着什么说清楚：那些代币是<b>未锁仓、未线性释放、可以立刻卖掉</b>的，而且没有任何东西能阻止创建者在一个区块之后从池子里再买更多。这个模板杀掉的是经典的 rug &mdash; 抽走流动性 &mdash; 它并不能阻止一个创建者把自己手里的仓位砸给自己的持币者。</dd>
+      <dt>附带</dt><dd>发行一次即可免费获得 Architect's Key。</dd>
+    </dl>
+    <div class="note warn" style="margin-top:12px">
+      <span class="lbl">「Quick Intel 显示 Mintable: Yes」</span>
+      <p>那是一个按关键词匹配的扫描器给出的误报。ArchitectToken 模板<b>没有 mint 函数</b> &mdash; 总量是 <code>uint256 public constant totalSupply</code>，在构造函数里赋值一次。被标记出来的其实是 <code>function mint(MintParams&hellip;)</code>，那是 <b>Uniswap V3 PositionManager 的接口</b>，它存在是因为金库要用它来创建那个被锁定的头寸。自己去读已验证的源码：<a href="#addresses">模板地址在 §3</a>。</p>
+    </div>
+    <div class="links"><a href="https://nlyra.xyz/zh/launch-v1">旧版发射台 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-staking" data-t="$NLYRA Staking">
+    <h4>$NLYRA Staking <span class="price">无手续费 &middot; 无锁仓</span></h4>
+    <p>基于 Synthetix StakingRewards 设计的 $NLYRA 单币质押 &mdash; 和 Uniswap 当年做 UNI 流动性挖矿用的是同一套。奖励每一秒都在流入。没有锁仓：你在任何时候调用 <code>exit()</code>，它都会把你的本金和已累积的奖励一起退给你。</p>
+    <dl>
+      <dt>适合谁</dt><dd>$NLYRA 持币者。</dd>
+      <dt>费用</dt><dd><b>没有存入费，没有提取费，没有锁仓。</b>只花 gas。</dd>
+      <dt>收益</dt><dd><b>它发放的是一个固定的流，不是一个固定的利率。</b>合约每秒释放固定数量的代币，并在那一刻所有质押者之间分配 &mdash; 所以那个百分比是一个结果，不是一个设定值。<b>2026 年 8 月 27 日</b>的链上读数：<code>rewardRate</code> 2.4694 NLYRA/s，<b>在 2026 年 10 月 17 日结束的 60 天周期内共 12,801,393 NLYRA</b>，对应<b>已质押的 292,377,580 NLYRA</b> &rarr; <b>&asymp;26.6% APR</b>。质押的人多了它就降，少了它就升。你随时可以自己从质押合约上的 <code>rewardRate()</code> 和 <code>totalSupply()</code> 算一遍 &mdash; 不要相信任何一个标题式的百分比，包括这一个，它只是一个快照。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/staking">关于质押 &rarr;</a><a href="/zh/staking/app">打开应用 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-stakepools" data-t="Architect Stake —— 创建者矿池">
+    <h4>Architect Stake &mdash; 创建者矿池 <span class="price">只花 gas</span></h4>
+    <p>面向任意代币的自助式固定 APY 质押池。创建者锁入一笔自己代币的奖励储备并选定利率；<b>合约会在每个质押者质押的那一刻，就把他的全额奖励锁进托管</b>，一旦储备被认领完，矿池就对新的质押关闭。没有 owner，没有暂停，没有升级，没有管理员。</p>
+    <dl>
+      <dt>适合谁</dt><dd>开设矿池的代币创建者，以及质押进去的持币者。</dd>
+      <dt>费用</dt><dd><b>在这个产品的代码里没有找到任何协议费</b> &mdash; 创建者和质押者都只花 gas。</dd>
+      <dt>利率</dt><dd>由创建者从 10% / 20% / 30% / 40% 里选。创建者的最大敞口恰好就是他锁进去的那笔储备；没有被质押占用掉的部分，会在结束时回到他手里。</dd>
+      <dt>现实核对</dt><dd>预先锁定奖励意味着<b>在你质押进去之前，那个标示的利率就已经有资金支撑了</b>。它并不说明代币本身将来值多少钱。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/stake">浏览矿池 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-invest" data-t="Liquidity Desk">
+    <h4>Liquidity Desk <span class="price">利润的 20% + 退出 0.5%</span></h4>
+    <p>存入 ETH，由 LYRA 把它作为集中流动性部署到 Robinhood Chain 的真实池子里，赚取交易手续费。持仓会向存入者公开。你随时可以提取。</p>
+    <dl>
+      <dt>适合谁</dt><dd>想要 LP 敞口但不想自己管理价格区间的人 &mdash; 并且承受得起下面那段风险的人。</dd>
+      <dt>费用</dt><dd><b>只收利润的 20%，外加退出时的 0.5%。</b>两者都进回购销毁。<b>没有管理费。</b></dd>
+      <dt>托管</dt><dd><b>存入的资金放在金库合约里</b>，并被部署进池子。这不是一个待在你钱包里的头寸。</dd>
+    </dl>
+    <div class="note bad" style="margin-top:12px">
+      <span class="lbl">高风险 &mdash; 而且请读第二段</span>
+      <p>无常损失可能跑赢赚到的手续费。<b>你可能损失一部分、甚至全部存入的资金。</b>这是生态里风险最高的产品，页面在你存入之前就是这么写的。</p>
+      <p><b>合约保证了什么。</b>没有 owner，没有暂停，没有升级路径。Keeper 不能把资金发到任意地址，不能更改 Keeper 是谁，也不能停止或拖延你的提取 &mdash; <code>withdraw</code> 只属于你，而且永远开着。它做的每一个动作都是一笔你可以读到的公开链上交易。</p>
+      <p><b>什么留给了人的判断。</b>在上面那几堵墙之内，Keeper 自己挑进哪个池子、跟哪个代币配对，并设定它在一笔兑换里能接受的最小收到量。合约并没有把这两项选择收窄到一份固定清单上，所以这一部分是运营者的判断，而不是代码强制执行的规则。产品页早前的措辞 &mdash;「由代码强制执行，而不是靠信任」&mdash; 说过头了，我们已经改掉。在你决定投多少之前，值得知道这一点。</p>
+    </div>
+
+  </article>
+
+  <article class="blk pc" id="p-shield" data-t="Lyra Shield">
+    <h4>Lyra Shield <span class="price">0% 手续费 &middot; 约 0.0003 ETH 预付</span></h4>
+    <p>私密的 $NLYRA 转账。从一个钱包存入，提取到一个全新的钱包，两者在链上无法被关联起来。零知识证明是在你自己的浏览器里生成的。基于 0xbow Privacy Pools 的设计，采用关联集（association set），而不是一个盲的混币器。</p>
+    <dl>
+      <dt>适合谁</dt><dd>不希望自己每一笔转账都能被公开归因的 $NLYRA 持币者。</dd>
+      <dt>费用</dt><dd><b>以 $NLYRA 计的手续费是 0%</b> &mdash; 你存进去的每一个代币都会出来。你预付<b>约 0.0003 ETH</b>（几美分），它用来支付你将来提取时中继者的 gas，并往那个全新钱包里放一点 ETH，让它能动起来。</dd>
+      <dt>托管</dt><dd><b>资金放在池子合约里。</b>它没有 owner，也没有提取函数 &mdash; 只有一个有效的 zk 证明才能移动资金，另外还有 <code>ragequit</code>，直接退回存入的那个钱包。</dd>
+      <dt>可升级</dt><dd><b>Shield 的入口合约是一个 ERC-1967 代理</b> &mdash; 和这里其他所有东西不一样，它是可以被升级的。持有资金的那个池子不是代理。在你决定要经它转移多少之前，值得知道这一点。</dd>
+      <dt>那个 0%</dt><dd>诚实的说明：中继手续费是<b>一个后端设置，不是合约里的上限</b>。它今天是 0，要改它只需要重启一次，不需要重新部署。如果它哪天变了，页面会在你签名之前把数字报给你。</dd>
+      <dt>历史说明</dt><dd>7 月 31 日之前的存入曾经付过 1% 的审查费。新的不再收。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/shield">打开 Shield &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-gov" data-t="治理">
+    <h4>治理 &mdash; The NLYRA Republic <span class="price">免费</span></h4>
+    <p>Architect 的创建者手续费构成本期的公共预算，公民用一个百分比拨盘来分配它。公民可以提案、可以支持，也可以担任公职。第 1 阶段跑在签名消息上：免费、即时，任何人都可以验证。</p>
+    <dl>
+      <dt>谁可以投票</dt><dd>任何持有至少 <b>10,000 $NLYRA</b> 的人。低于这个数就不能投票、提案、支持或批准。</dd>
+      <dt>投票权重</dt><dd>你的 $NLYRA 余额，<b>上限 2,000,000</b> &mdash; 所以没有任何单个钱包能压过整个共和国。预算结果是各个类别上的加权平均，不是赢家通吃的投票。</dd>
+      <dt>提案</dt><dd>任何越过 10,000 门槛的人都可以提案。提案随后交由 President 批准或否决。</dd>
+      <dt>费用</dt><dd><b>免费。</b>投票是密码学签名 &mdash; 它们不花钱，也不移动任何东西。</dd>
+      <dt>不可触碰</dt><dd>扫描器的判定永远不可以被投票决定，而且扫描器对所有人保持免费。</dd>
+    </dl>
+    <!--TODO-VERIFY: there is NO quorum constant or quorum copy anywhere in govEngine.js or gov.html. Either governance genuinely has no quorum rule (in which case say so outright and explain what happens on a low-turnout period) or it exists somewhere not yet found. Do not state a quorum number. Also: Phase 1 is off-chain signed messages held server-side — the page says it graduates to an on-chain Governor with a timelock later, with no date. -->
+    <div class="todo"><p><b>这里还有两件事没有写进文档：</b>代码里没有法定人数（quorum）规则，所以在一个投票率很低的周期里会发生什么是未定义的；而且第 1 阶段的投票是在链下统计的签名消息，不是一个链上的 Governor。两件事都在补写中。</p></div>
+    <div class="links"><a href="https://nlyra.xyz/zh/gov">打开治理 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-api" data-t="API">
+    <h4>API <span class="price">免费档 &middot; $29 / 30 天</span></h4>
+    <p>把扫描器作为服务提供。<code>GET /api/scan?address=0x&hellip;</code> 返回 <code>{verdict, score, flags, warnings, positives, name, symbol, chain}</code>，覆盖 Solana 和 25 条 EVM 链。</p>
+    <dl>
+      <dt>适合谁</dt><dd>Telegram 和 Discord 机器人、组合与钱包类应用、launchpad、DEX 前端。</dd>
+      <dt>费用</dt><dd><b>不带 key 也免费：每个 IP 每 10 分钟 6 次扫描。</b><b>Starter key 是 30 天 $29</b>，用 Robinhood Chain 上的 USDG 支付，大约两分钟内生效：<b>每月 3,000 次扫描</b>（可持续每天 100 次），没有按 IP 的限流。</dd>
+      <dt>鉴权</dt><dd><code>?key=nl_&hellip;</code> 或者 <code>X-Api-Key</code> 请求头。</dd>
+      <dt>如果它坏了</dt><dd>一个周期内停机超过 24 小时，key 会被延期。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/api-docs">API 文档 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-bounties" data-t="赏金任务">
+    <h4>赏金任务 <span class="price">仅在成功时收 2%</span></h4>
+    <p>任何人都可以发布一个任务，把用 USDG 计价的奖励锁进一个<b>没有管理员提取权</b>的托管合约。每一个赏金上线前都会经过人工审核，被拒绝会自动退款，过了截止时间仍然无人认领的，发布者可以取回。</p>
+    <dl>
+      <dt>适合谁</dt><dd>任何想雇社区干活的人，以及任何来干活的人。</dd>
+      <dt>费用</dt><dd><b>2% 协议费，而且只在这个赏金真的付给了赢家时才收。</b>被退款或被取回的赏金不收任何费用。</dd>
+      <dt>限制</dt><dd>截止时间最长 30 天。每个 IP 每小时 6 次提案和 6 次提交。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/bounties">打开赏金板 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-premium" data-t="The Architect's Key">
+    <h4>The Architect's Key <span class="price">持有即可，不用付钱</span></h4>
+    <p>架在扫描器之上的一个「持有即解锁」等级。没有订阅，也没有账单 &mdash; 你签一条消息来证明自己持有代币，这把钥匙在那台设备上有效 24 小时，然后再重新证明一次。把代币卖掉，门会自己关上。</p>
+    <dl>
+      <dt>解锁什么</dt><dd><b>每 10 分钟 60 次扫描</b>（原本 6 次）&middot; <b>每 10 分钟 20 次钱包检查</b>（原本 4 次）&middot; <b>每天 20 次全新的 LYRA 代码解读</b> &middot; 一个会持续跑下去的自选列表 &middot; 扫描器繁忙时的优先级。</dd>
+      <dt>要求</dt><dd>在 Robinhood Chain 上持有 <b>1,000,000 $NLYRA</b> &mdash; <b>或者</b>在 Architect Launch 上发一个代币，那会免费授予这把钥匙。</dd>
+      <dt>费用</dt><dd><b>不用付款。</b>签名是免费的。</dd>
+    </dl>
+    <div class="links"><a href="https://nlyra.xyz/zh/premium">这把钥匙 &rarr;</a></div>
+  </article>
+
+  <article class="blk pc" id="p-games" data-t="游戏 —— Roulette、Slots、Predict">
+    <h4>游戏 &mdash; Roulette、Slots、Predict <span class="price">各自不同</span></h4>
+    <p>「play」下面放着三样很不一样的东西。三者都在链上结算，而且都不会在两轮之间托管你的余额。</p>
+    <h4 style="margin-top:16px;font-size:14.5px">Lyra Roulette &mdash; <a href="https://nlyra.xyz/zh/roulette">/roulette</a></h4>
+    <p>用真实的 $NLYRA 玩的欧式轮盘，一次转轮可以下很多个筹码。通过 commit-reveal 做到可证明公平：在你的下注存在之前，庄家就先签下一个秘密值的哈希，而球的落点是 <code>keccak(secret, blockhash)</code>，哪一边都没法操控它。合约自己付给赢家，如果荷官不出声了，你可以用 <code>refundBet</code> 把自己的本金拿回来。</p>
+    <p><b>庄家优势 2.70%</b> &mdash; 就是那一个绿色的零，上面没有额外抽水。</p>
+    <p style="color:var(--text-3);font-size:13.5px">免费筹码水龙头（给新玩家的 20,000 $NLYRA 外加一点付 gas 的零头）<b>目前是关着的</b>。</p>
+    <h4 style="margin-top:16px;font-size:14.5px">Lyra Slots &mdash; <a href="https://nlyra.xyz/zh/slots">/slots</a></h4>
+    <p>用真实的 $NLYRA 玩的三轴老虎机。转轮权重和每一档赔付都是合约里的公开常量，所以在你坐下之后没有人能重新调它们。一次签名可以买最多 10 次拉杆，用的是同一套 commit-reveal 引擎。</p>
+    <p><b>RTP 95.62%，庄家优势 4.38%。</b>三个月亮赔 228.9&times;。</p>
+    <h4 style="margin-top:16px;font-size:14.5px">Predict &mdash; 在 <a href="https://nlyra.xyz/desk">The Desk</a> 里面</h4>
+    <p>BTC 在 5 分钟一轮里涨还是跌，彩池制：赢家瓜分奖池。结算使用一个受 Chainlink 约束的链上预言机 &mdash; 一个与 Chainlink 自己的 BTC/USD 答案相差超过 10% 的价格，根本就发布不上去。</p>
+    <p><b>奖池的 3%</b>，只在一轮结算出赢家时收取。平局或者被取消的一轮全额退款，不收任何费用。最小下注 0.0004 ETH（约 $1）。还有第二个池子路由到 Polymarket，builder fee 为 0%。<a href="/desk/docs#predict">完整规则 &rarr;</a></p>
+    <h4 style="margin-top:16px;font-size:14.5px">Seeking the Architect &mdash; <a href="https://nlyra.xyz/zh/game">/game</a></h4>
+    <p>不是赌博，也不是代币产品：一个浏览器里的下潜游戏。免费，不用钱包，不下注，也不赔付。</p>
+    <div class="note warn" style="margin-top:14px">
+      <span class="lbl">这些是游戏</span>
+      <p>庄家优势是真实存在的，而且是冲着你来的。Roulette 和 Slots 是用一个波动很大的代币计价的娱乐，不是收益产品。不要把它们中的任何一个当成收益产品。</p>
+    </div>
+    <div class="links"><a href="https://nlyra.xyz/zh/roulette">Roulette &rarr;</a><a href="https://nlyra.xyz/zh/slots">Slots &rarr;</a><a href="/desk/docs#predict">Predict 规则 &rarr;</a></div>
+  </article>
+
+  </div>
+</section>
+
+<section class="ch" id="contracts" data-t="合约与安全">
+  <h2>3 &middot; 合约与安全</h2>
+  <p class="chsub">每一个官方地址、每一把管理员密钥能做什么和不能做什么、你的钱实际放在哪里，以及还剩下哪些风险。点击任意地址即可复制。</p>
+
+  <article class="blk" id="addresses" data-t="官方合约地址">
+    <h3>官方合约地址 &mdash; 生态</h3>
+    <p>如果一个地址不在本页、也不在 <a href="/zh/faq">FAQ</a> 上，那它就不是我们的。每个链接都会打开 Blockscout，你可以在那里自己读已验证的源码。</p>
+    <div class="tw"><table class="t">
+      <tr><th>合约</th><th>地址</th><th>源码</th></tr>
+      <tr><td><b>$NLYRA</b> 代币<span class="what">固定总量 1,000,000,000 &middot; 在 Pons 上发行 &middot; 没有 owner，没有 mint 函数，没有转账税（已在链上验证）</span></td>
+        <td><code class="cp" data-c="0xb9d3824149ad8ac984153ceec91d5a2405d1fb95">0xb9d3824149ad8ac984153ceec91d5a2405d1fb95</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xb9d3824149ad8ac984153ceec91d5a2405d1fb95">查看</a></td></tr>
+      <tr><td><b>桥适配器</b> <span class="cur">当前</span><span class="what">Robinhood Chain 上的 NlyraOFTAdapter &middot; NLYRA 在 Arbitrum 流通期间锁在这里 &middot; owner：金库 &middot; 每个方向每天上限 2000 万</span></td>
+        <td><code class="cp" data-c="0xe7b3171b76B959Db805874926aA0D62b1A5d3264">0xe7b3171b76B959Db805874926aA0D62b1A5d3264</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xe7b3171b76B959Db805874926aA0D62b1A5d3264?tab=contract">VERIFIED</a></td></tr>
+      <tr><td><b>Arbitrum One 上的 $NLYRA</b> <span class="cur">当前</span><span class="what">NlyraOFT &middot; 按适配器里锁定的 NLYRA 1:1 铸造 &middot; 已在 Arbiscan 和 Sourcify 验证 &middot; Arbitrum 上任何其他"NLYRA"都是假的</span></td>
+        <td><code class="cp" data-c="0x834e80509b23dC82d79F982510a32348986B06b5">0x834e80509b23dC82d79F982510a32348986B06b5</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://arbiscan.io/address/0x834e80509b23dC82d79F982510a32348986B06b5#code">VERIFIED</a></td></tr>
+      <tr><td><b>NLYRA/WETH 池</b><span class="what">Uniswap v3，1% 费率 &middot; 官方 Arbitrum 市场 &middot; 流动性来自金库</span></td>
+        <td><code class="cp" data-c="0xd072E589D5E3506d40d547787853a143AADD1c14">0xd072E589D5E3506d40d547787853a143AADD1c14</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://arbiscan.io/address/0xd072E589D5E3506d40d547787853a143AADD1c14">查看</a></td></tr>
+      <tr><td><b>Real Yield Staking v2</b> <span class="cur">current</span><span class="what">带锁仓的 $NLYRA 质押，收益来自交易手续费 &middot; 经 Coinsult 审计</span></td>
+        <td><code class="cp" data-c="0x5CB0Cb16cA019bcff4E494b32575848E4CdB5aF8">0x5CB0Cb16cA019bcff4E494b32575848E4CdB5aF8</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x5CB0Cb16cA019bcff4E494b32575848E4CdB5aF8?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Fee Splitter</b> <span class="cur">current</span><span class="what">每天收取一次 NLYRA 的创作者手续费，按 50/50 分给质押者和金库 &middot; 无所有者</span></td>
+        <td><code class="cp" data-c="0x8300Ef5cC02cAb1D141dBE1c0B33d8Ac115F2D48">0x8300Ef5cC02cAb1D141dBE1c0B33d8Ac115F2D48</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x8300Ef5cC02cAb1D141dBE1c0B33d8Ac115F2D48?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Position Market</b> <span class="cur">current</span><span class="what">买卖锁定的质押仓位，0.5% 手续费 &middot; 无所有者</span></td>
+        <td><code class="cp" data-c="0x3BcA70536aC7FfB44023e971d204dAb7c23E95D7">0x3BcA70536aC7FfB44023e971d204dAb7c23E95D7</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x3BcA70536aC7FfB44023e971d204dAb7c23E95D7?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Staking</b>（StakingRewards）<span class="what">$NLYRA 单币质押 &middot; solc 0.5.16</span></td>
+        <td><code class="cp" data-c="0x5e63228add4390f77BbcDb364F6A7b42bA7Aa3ef">0x5e63228add4390f77BbcDb364F6A7b42bA7Aa3ef</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x5e63228add4390f77BbcDb364F6A7b42bA7Aa3ef?tab=contract">已验证</a></td></tr>
+      <tr><td><b>DEX Factory</b>（UniswapV2Factory）<span class="what">创建每一个 V2 交易对</span></td>
+        <td><code class="cp" data-c="0xfa6253ee74F7956b022998F7bfa271990C8A82a8">0xfa6253ee74F7956b022998F7bfa271990C8A82a8</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xfa6253ee74F7956b022998F7bfa271990C8A82a8?tab=contract">已验证</a></td></tr>
+      <tr><td><b>DEX Router</b>（UniswapV2Router02）<span class="what">执行 V2 兑换与流动性操作 &mdash; /dex 对话的就是它</span></td>
+        <td><code class="cp" data-c="0xA5deC66ECa62AE363dC47965bB790C3B8870b6B6">0xA5deC66ECa62AE363dC47965bB790C3B8870b6B6</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xA5deC66ECa62AE363dC47965bB790C3B8870b6B6?tab=contract">已验证</a></td></tr>
+      <tr><td><b>V3 Factory</b>（UniswapV3Factory）</td>
+        <td><code class="cp" data-c="0x3FdaBf7AB5d871B89F1d9DA04Dc2E0733dB70CaF">0x3FdaBf7AB5d871B89F1d9DA04Dc2E0733dB70CaF</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x3FdaBf7AB5d871B89F1d9DA04Dc2E0733dB70CaF">查看</a></td></tr>
+      <tr><td><b>V3 SwapRouter</b><span class="what">当 V3 赢下报价时，执行 V3 兑换</span></td>
+        <td><code class="cp" data-c="0x4D0d17F66d1da788da50CF5217894F36684F958E">0x4D0d17F66d1da788da50CF5217894F36684F958E</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x4D0d17F66d1da788da50CF5217894F36684F958E">查看</a></td></tr>
+      <tr><td><b>V3 Positions NFT</b>（NonfungiblePositionManager）<span class="what">你的集中流动性头寸以 NFT 的形式住在这里</span></td>
+        <td><code class="cp" data-c="0x4b71BE063E72b0BE36F690535C9C0cE533A9FB5C">0x4b71BE063E72b0BE36F690535C9C0cE533A9FB5C</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x4b71BE063E72b0BE36F690535C9C0cE533A9FB5C">查看</a></td></tr>
+      <tr><td><b>V3 QuoterV2</b><span class="what">只读的价格报价 &mdash; 自动路由靠它驱动</span></td>
+        <td><code class="cp" data-c="0x7346b0435f165D33c5b8166fA227A3224646891F">0x7346b0435f165D33c5b8166fA227A3224646891F</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x7346b0435f165D33c5b8166fA227A3224646891F">查看</a></td></tr>
+      <tr><td><b>Launchpad Factory v4</b><span class="cur">当前</span><span class="what">ArchitectLaunchFactoryV4 &mdash; /launch 今天部署的就是它：支持 ETH 以外的交易对（USDG），以及一个在诞生时就固定下来、由创建者指定的手续费钱包</span></td>
+        <td><code class="cp" data-c="0x4e4AD39E1A38104F8f74C3aF8d3F8c8E27f8836f">0x4e4AD39E1A38104F8f74C3aF8d3F8c8E27f8836f</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x4e4AD39E1A38104F8f74C3aF8d3F8c8E27f8836f?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Launchpad Factory HR</b><span class="cur">当前</span><span class="what">ArchitectLaunchHR &mdash; Holder Rewards 场地，在发现其奖励分发器的 swap 回调守卫可以被绕过之后，于 <b>2026-08-27</b> 重建并重新部署。此后每一次 Holder Rewards launch 都跑在这个工厂上。场地说明见 <a href="#p-launch">&sect;2</a>。</span></td>
+        <td><code class="cp" data-c="0xc641a5bD946290cA1905A68c4BA3b1d969169398">0xc641a5bD946290cA1905A68c4BA3b1d969169398</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xc641a5bD946290cA1905A68c4BA3b1d969169398?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Launchpad Factory v2</b><span class="lgc">历史版本</span><span class="what">第一代 &mdash; 在它上面发行的代币和 v4 上的并行运行着</span></td>
+        <td><code class="cp" data-c="0x5fedb61690513D9EA1E0123c39f2E02CDAfEb720">0x5fedb61690513D9EA1E0123c39f2E02CDAfEb720</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x5fedb61690513D9EA1E0123c39f2E02CDAfEb720?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Token Template</b>（ArchitectToken）<span class="what">每一个发行出来的代币都是这份字节码：10 亿固定总量，没有 owner 权限 &mdash; 验证一次，被每一次发行继承</span></td>
+        <td>&mdash;</td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x4e4AD39E1A38104F8f74C3aF8d3F8c8E27f8836f?tab=contract">SOURCE</a></td></tr>
+      <tr><td><b>Launch Vault</b>（ArchitectPoolVault）<span class="what">每次发行一个 &mdash; 它持有那个被锁定的头寸，并把池子手续费按 90/10 分给创建者。</span></td>
+        <td>&mdash;</td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x4e4AD39E1A38104F8f74C3aF8d3F8c8E27f8836f?tab=contract">SOURCE</a></td></tr>
+      <tr><td><b>Buyback Burner</b><span class="what">launchpad 的金库：没有 owner &mdash; 50% 用于运营 / 50% 在市场上买入 $NLYRA 并直接送到 0xdEaD，任何人都可以触发它</span></td>
+        <td><code class="cp" data-c="0x371bB2107f6E021EF2a5a980a9204F5a73151926">0x371bB2107f6E021EF2a5a980a9204F5a73151926</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x371bB2107f6E021EF2a5a980a9204F5a73151926?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Stake Factory</b>（StakePoolFactory）<span class="what">Architect Stake &mdash; 为每个代币部署一个固定 APY 矿池；每一笔质押都会从创建者托管的储备里预先锁定它的全额奖励</span></td>
+        <td><code class="cp" data-c="0x8347e6CD205C0D5CA68A0481B8292992A46519c2">0x8347e6CD205C0D5CA68A0481B8292992A46519c2</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x8347e6CD205C0D5CA68A0481B8292992A46519c2?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Bounty Escrow</b>（BountyEscrow）<span class="what">以 USDG 计价的社区赏金 &mdash; 没有管理员提取权，被拒绝自动退款</span></td>
+        <td><code class="cp" data-c="0xf01a4bD90aeF8dD75FCb1EA6a3865Ac4b72DFF2c">0xf01a4bD90aeF8dD75FCb1EA6a3865Ac4b72DFF2c</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xf01a4bD90aeF8dD75FCb1EA6a3865Ac4b72DFF2c?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Lyra Roulette</b>（LyraRouletteV2）<span class="what">commit-reveal 赌桌，合约自己付给赢家 &middot; solc 0.8.26</span></td>
+        <td><code class="cp" data-c="0x4556051598F568f2626809552d25F8d44BdE0394">0x4556051598F568f2626809552d25F8d44BdE0394</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x4556051598F568f2626809552d25F8d44BdE0394?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Lyra Slots</b>（LyraSlotsV2）<span class="what">转轮权重和赔付都是公开常量 &middot; solc 0.8.26</span></td>
+        <td><code class="cp" data-c="0xC1854d1f194FD38A5A8F3F32432fF97c83C380B3">0xC1854d1f194FD38A5A8F3F32432fF97c83C380B3</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xC1854d1f194FD38A5A8F3F32432fF97c83C380B3?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Shield Entrypoint</b>（Privacy Pools）<span class="what">路由存款，持有关联集的根，中继提取</span></td>
+        <td><code class="cp" data-c="0x9c03515e1C7Aa04ADccCD1293bE4EA0Dd8f522F2">0x9c03515e1C7Aa04ADccCD1293bE4EA0Dd8f522F2</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x9c03515e1C7Aa04ADccCD1293bE4EA0Dd8f522F2?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Shield Pool</b>（PrivacyPoolComplex）<span class="what">持有被屏蔽的 $NLYRA &mdash; 没有 owner，也没有提取函数；只有 zk 证明才能移动资金，另外还有 ragequit 退回你自己的钱包</span></td>
+        <td><code class="cp" data-c="0x6e179E19e594e82AB732646b898268F6Fb569E58">0x6e179E19e594e82AB732646b898268F6Fb569E58</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x6e179E19e594e82AB732646b898268F6Fb569E58?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Shield Withdrawal Verifier</b>（Groth16）<span class="what">零知识验证器 &mdash; 电路来自 0xbow Privacy Pools 项目，Apache-2.0</span></td>
+        <td><code class="cp" data-c="0xe8868719Dc0aaCa1f7c8aef0dfe9304AF57cA1Cb">0xe8868719Dc0aaCa1f7c8aef0dfe9304AF57cA1Cb</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xe8868719Dc0aaCa1f7c8aef0dfe9304AF57cA1Cb?tab=contract">已验证</a></td></tr>
+      <tr><td><b>WETH</b><span class="what">Robinhood Chain 上标准的 wrapped ETH &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73">0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73">查看</a></td></tr>
+      <tr><td><b>USDG</b><span class="what">标准的 Paxos Global Dollar &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168">0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168">查看</a></td></tr>
+      <tr><td><b>Permit2</b><span class="what">Uniswap 官方的 Permit2，在每条链上都是同一个地址 &mdash; 不是我们的。限价单是对着它签名的。</span></td>
+        <td><code class="cp" data-c="0x000000000022D473030F116dDEE9F6B43aC78BA3">0x000000000022D473030F116dDEE9F6B43aC78BA3</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x000000000022D473030F116dDEE9F6B43aC78BA3">查看</a></td></tr>
+      <tr><td><b>池子</b> NLYRA/ETH</td>
+        <td><code class="cp" data-c="0x8f03A4C4e885Ca80Cc585f26a7FA6A16F2e77956">0x8f03A4C4e885Ca80Cc585f26a7FA6A16F2e77956</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x8f03A4C4e885Ca80Cc585f26a7FA6A16F2e77956">查看</a></td></tr>
+      <tr><td><b>池子</b> USDG/ETH</td>
+        <td><code class="cp" data-c="0xd7651dE51f1da10Fe813F2b69C4B8C0Fe2F70daA">0xd7651dE51f1da10Fe813F2b69C4B8C0Fe2F70daA</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xd7651dE51f1da10Fe813F2b69C4B8C0Fe2F70daA">查看</a></td></tr>
+      <tr><td><b>池子</b> USDe/ETH<span class="what">USDe = 标准的 Ethena 稳定币</span></td>
+        <td><code class="cp" data-c="0xDd705e50836119D8B31C42F8D2B702EF251Eb9a6">0xDd705e50836119D8B31C42F8D2B702EF251Eb9a6</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xDd705e50836119D8B31C42F8D2B702EF251Eb9a6">查看</a></td></tr>
+      <tr><td><b>BNB Smart Chain 上的 $NLYRA</b> <span class="cur">当前</span><span class="what">NlyraOFT &middot; BNB Chain 上的官方 NLYRA &middot; 按 Robinhood Chain 适配器里锁定的 NLYRA 1:1 铸造 &middot; 已在 BscScan 验证 &middot; BNB Chain 上任何其他"NLYRA"都是假的</span></td>
+        <td><code class="cp" data-c="0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec">0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://bscscan.com/address/0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec#code">VERIFIED</a></td></tr>
+    </table></div>
+  </article>
+
+  <article class="blk" id="arbitrum-contracts" data-t="Arbitrum 上的 NLYRA — 合约">
+    <h3>Arbitrum 上的 NLYRA &mdash; 合约</h3>
+    <p>$NLYRA 原生在 Robinhood Chain。在 Arbitrum One 上它以 OFT（LayerZero V2）流通：Robinhood Chain 上的适配器锁定 NLYRA，Arbitrum 合约铸造等量代币；转回时在 Arbitrum 销毁、在 Robinhood Chain 解锁。总量相同，1:1，我们不收费。桥在 <a href="https://nlyra.xyz/zh/bridge/">nlyra.xyz/bridge</a>。</p>
+    <p>只有前两行是我们的。池子和头寸 NFT 是 Arbitrum 上的 Uniswap v3，列出来供你核对。</p>
+    <div class="tw"><table class="t">
+      <tr><th>合约</th><th>地址</th><th>源码</th></tr>
+      <tr><td><b>桥适配器</b> <span class="cur">当前</span><span class="what">Robinhood Chain 上的 NlyraOFTAdapter &middot; NLYRA 在 Arbitrum 流通期间锁在这里 &middot; owner：金库 &middot; 每个方向每天上限 2000 万</span></td>
+        <td><code class="cp" data-c="0xe7b3171b76B959Db805874926aA0D62b1A5d3264">0xe7b3171b76B959Db805874926aA0D62b1A5d3264</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xe7b3171b76B959Db805874926aA0D62b1A5d3264?tab=contract">VERIFIED</a></td></tr>
+      <tr><td><b>Arbitrum One 上的 $NLYRA</b> <span class="cur">当前</span><span class="what">NlyraOFT &middot; 按适配器里锁定的 NLYRA 1:1 铸造 &middot; 已在 Arbiscan 和 Sourcify 验证 &middot; Arbitrum 上任何其他"NLYRA"都是假的</span></td>
+        <td><code class="cp" data-c="0x834e80509b23dC82d79F982510a32348986B06b5">0x834e80509b23dC82d79F982510a32348986B06b5</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://arbiscan.io/address/0x834e80509b23dC82d79F982510a32348986B06b5#code">VERIFIED</a></td></tr>
+      <tr><td><b>NLYRA/WETH 池</b><span class="what">Uniswap v3，1% 费率 &middot; 官方 Arbitrum 市场 &middot; 流动性来自金库</span></td>
+        <td><code class="cp" data-c="0xd072E589D5E3506d40d547787853a143AADD1c14">0xd072E589D5E3506d40d547787853a143AADD1c14</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://arbiscan.io/address/0xd072E589D5E3506d40d547787853a143AADD1c14">查看</a></td></tr>
+      <tr><td><b>金库头寸 NFT #5734299</b><span class="what">金库在该池中的流动性，以 Uniswap v3 头寸形式存在</span></td>
+        <td><code class="cp" data-c="0xC36442b4a4522E871399CD717aBDD847Ab11FE88">0xC36442b4a4522E871399CD717aBDD847Ab11FE88</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://arbiscan.io/nft/0xC36442b4a4522E871399CD717aBDD847Ab11FE88/5734299">查看</a></td></tr>
+      <tr><td><b>Arbitrum 上的 WETH</b><span class="what">标准 wrapped ETH &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0x82aF49447D8a07e3bd95BD0d56f35241523fBab1">0x82aF49447D8a07e3bd95BD0d56f35241523fBab1</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://arbiscan.io/address/0x82aF49447D8a07e3bd95BD0d56f35241523fBab1">查看</a></td></tr>
+      <tr><td><b>Uniswap v3 Positions NFT</b><span class="what">Arbitrum 上的 NonfungiblePositionManager &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0xC36442b4a4522E871399CD717aBDD847Ab11FE88">0xC36442b4a4522E871399CD717aBDD847Ab11FE88</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://arbiscan.io/address/0xC36442b4a4522E871399CD717aBDD847Ab11FE88">查看</a></td></tr>
+    </table></div>
+  </article>
+
+  <article class="blk" id="bnb-contracts" data-t="BNB Chain 上的 NLYRA — 合约">
+    <h3>BNB Chain 上的 NLYRA &mdash; 合约</h3>
+    <p>The Desk 的机器人自 2026 年 10 月 24 日起在 BNB Chain 运行：PancakeSwap 上的 Infinity Grid 和 Spot Grid，用 BNB、USDT 或 USDC，可以纸面模拟也可以实盘。页面在 <a href="https://nlyra.xyz/zh/bsc">nlyra.xyz/bsc</a>。每个实盘机器人都是这些合约之一里的一个仓位，归你的钱包所有：我们的 keeper 负责交易，只有你能关闭它。每个合约都不可修改，没有代理、没有升级路径，并已在 BscScan 验证。</p>
+    <p><b>$NLYRA 自 2026 年 10 月 27 日起在 BNB Chain 上。</b> 官方合约是 <code class="cp" data-c="0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec">0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec</code>（NlyraOFT，LayerZero V2），按 Robinhood Chain 桥适配器里锁定的 NLYRA 1:1 铸造。用 <a href="https://nlyra.xyz/zh/bridge/">nlyra.xyz/bridge</a> 转移。BNB Chain 上任何其他叫 NLYRA 的代币都是假的。官方市场是 PancakeSwap v3 NLYRA/WBNB 池 <code class="cp" data-c="0x818DFf9130c4882e4A947F167aFbd6A834c8b3cd">0x818DFf9130c4882e4A947F167aFbd6A834c8b3cd</code>。</p>
+    <div class="tw"><table class="t">
+      <tr><th>合约</th><th>地址</th><th>源码</th></tr>
+      <tr><td><b>BNB Smart Chain 上的 $NLYRA</b> <span class="cur">当前</span><span class="what">NlyraOFT &middot; BNB Chain 上的官方 NLYRA &middot; 按 Robinhood Chain 适配器里锁定的 NLYRA 1:1 铸造 &middot; 已在 BscScan 验证 &middot; BNB Chain 上任何其他"NLYRA"都是假的</span></td>
+        <td><code class="cp" data-c="0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec">0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://bscscan.com/address/0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec#code">VERIFIED</a></td></tr>
+      <tr><td><b>Fee Router BSC</b> <span class="cur">当前</span><span class="what">ArchitectFeeRouterBSC &middot; 每笔机器人兑换都经过它，走 PancakeSwap v2 和 v3 &middot; 每笔成交收 1% 费用</span></td>
+        <td><code class="cp" data-c="0x0e86a190F7D92031CA181A50E5E21DaBB530c0E6">0x0e86a190F7D92031CA181A50E5E21DaBB530c0E6</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://bscscan.com/address/0x0e86a190F7D92031CA181A50E5E21DaBB530c0E6#code">VERIFIED</a></td></tr>
+      <tr><td><b>Infinity Grid v4 BSC</b> <span class="cur">当前</span><span class="what">ArchitectInfinityGridV4BSC &middot; 以 BNB 计价的无限网格，带底价、止盈和止损，每个机器人有自己的 gas 储备</span></td>
+        <td><code class="cp" data-c="0xE878aa6bE4c5429a5006A516C720A1232Bf18a8a">0xE878aa6bE4c5429a5006A516C720A1232Bf18a8a</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://bscscan.com/address/0xE878aa6bE4c5429a5006A516C720A1232Bf18a8a#code">VERIFIED</a></td></tr>
+      <tr><td><b>Infinity Grid v4.1 BSC</b> <span class="cur">当前</span><span class="what">ArchitectInfinityGridV41BSC &middot; 同样的网格，以 USDT 或 USDC 计价</span></td>
+        <td><code class="cp" data-c="0x354Ade1eE04D44B21c037Af8A61189d647027cBE">0x354Ade1eE04D44B21c037Af8A61189d647027cBE</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://bscscan.com/address/0x354Ade1eE04D44B21c037Af8A61189d647027cBE#code">VERIFIED</a></td></tr>
+      <tr><td><b>Spot Grid v4 BSC</b> <span class="cur">当前</span><span class="what">ArchitectSpotGridV4BSC &middot; 带价格区间的现货网格，2&ndash;60 格，以 BNB 计价</span></td>
+        <td><code class="cp" data-c="0x8a678c93f745A853865F5718F9fbb6239e1837e1">0x8a678c93f745A853865F5718F9fbb6239e1837e1</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://bscscan.com/address/0x8a678c93f745A853865F5718F9fbb6239e1837e1#code">VERIFIED</a></td></tr>
+      <tr><td><b>Keeper</b><span class="what">执行成交的钱包 &middot; 只能在机器人自己的规则内交易，永远不能提款</span></td>
+        <td><code class="cp" data-c="0xfBc9CFf9579578C942cf9E7ab30189EAb8c0714B">0xfBc9CFf9579578C942cf9E7ab30189EAb8c0714B</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0xfBc9CFf9579578C942cf9E7ab30189EAb8c0714B">查看</a></td></tr>
+      <tr><td><b>手续费收集地址</b><span class="what">路由器的费用去向 &middot; 正在设置：费用换成 BNB，桥到 Robinhood Chain，与质押者 50/50 分配</span></td>
+        <td><code class="cp" data-c="0xbf98Df1Ff6072C7278c58536Ac6dd8C155198d62">0xbf98Df1Ff6072C7278c58536Ac6dd8C155198d62</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0xbf98Df1Ff6072C7278c58536Ac6dd8C155198d62">查看</a></td></tr>
+      <tr><td><b>WBNB</b><span class="what">标准 wrapped BNB &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c">0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c">查看</a></td></tr>
+      <tr><td><b>USDT</b><span class="what">BNB Chain 上的 Tether &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0x55d398326f99059fF775485246999027B3197955">0x55d398326f99059fF775485246999027B3197955</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0x55d398326f99059fF775485246999027B3197955">查看</a></td></tr>
+      <tr><td><b>USDC</b><span class="what">BNB Chain 上的 USD Coin &mdash; 不是我们的</span></td>
+        <td><code class="cp" data-c="0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d">0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d">查看</a></td></tr>
+      <tr><td><b>PancakeSwap v2 Router</b><span class="what">不是我们的</span></td>
+        <td><code class="cp" data-c="0x10ED43C718714eb63d5aA57B78B54704E256024E">0x10ED43C718714eb63d5aA57B78B54704E256024E</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0x10ED43C718714eb63d5aA57B78B54704E256024E">查看</a></td></tr>
+      <tr><td><b>PancakeSwap v3 Factory</b><span class="what">不是我们的</span></td>
+        <td><code class="cp" data-c="0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865">0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865">查看</a></td></tr>
+      <tr><td><b>PancakeSwap Smart Router</b><span class="what">不是我们的</span></td>
+        <td><code class="cp" data-c="0x13f4EA83D0bd40E75C8222255bc855a974568Dd4">0x13f4EA83D0bd40E75C8222255bc855a974568Dd4</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://bscscan.com/address/0x13f4EA83D0bd40E75C8222255bc855a974568Dd4">查看</a></td></tr>
+    </table></div>
+  </article>
+
+  <article class="blk" id="launch-contracts" data-t="NLYRA Launch — 合约">
+    <h3>NLYRA Launch &mdash; 合约</h3>
+    <p><a href="#p-nlyra-launch">NLYRA Launch</a> 的五个合约，自 2026 年 11 月 18 日起部署在 Robinhood Chain（chain id 4663）上。五个都是不可变的：没有 owner，没有代理，没有升级路径，源码已在 <a href="https://robin.etherscan.io/address/0x12c864a64F812BfaDE4e0b1D95EC18dAa45A2acC#code" target="_blank" rel="noopener">RobinScan</a>、该链的浏览器和 Sourcify 上验证。永远不要向这些地址发送 ETH 或代币：请使用页面。每个发行的币都是它自己的代币合约，由工厂创建。</p>
+    <div class="tw"><table class="t">
+      <tr><th>合约</th><th>地址</th><th>源码</th></tr>
+      <tr><td><b>Factory</b> <span class="cur">当前</span><span class="what">PactFactory &middot; 发行每个币并创建它的池子</span></td>
+        <td><code class="cp" data-c="0xba29C06Fd0d656c2560f93A60B1A8B28d5a1e791">0xba29C06Fd0d656c2560f93A60B1A8B28d5a1e791</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xba29C06Fd0d656c2560f93A60B1A8B28d5a1e791?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Hook</b> <span class="cur">当前</span><span class="what">PactHook &middot; 管理每个币的池子：锁定的流动性、每笔交易的 1%、价格上下限、关闭与分配，以及 72 小时暂停</span></td>
+        <td><code class="cp" data-c="0x12c864a64F812BfaDE4e0b1D95EC18dAa45A2acC">0x12c864a64F812BfaDE4e0b1D95EC18dAa45A2acC</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x12c864a64F812BfaDE4e0b1D95EC18dAa45A2acC?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Opening</b> <span class="cur">当前</span><span class="what">PactOpening &middot; 前 10 分钟：每个钱包投入的金额、为所有人执行的一次买入，以及退款</span></td>
+        <td><code class="cp" data-c="0x6703f112cE7CeE67703E21Aba6e81DC8219B476d">0x6703f112cE7CeE67703E21Aba6e81DC8219B476d</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x6703f112cE7CeE67703E21Aba6e81DC8219B476d?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Vault</b> <span class="cur">当前</span><span class="what">PactVault &middot; 创建者的币：锁定 7 天，之后只有在提前 24 小时公告后才释放</span></td>
+        <td><code class="cp" data-c="0x6CbE0C3e21F787915D98FE53CB9Bd67178a9cc3f">0x6CbE0C3e21F787915D98FE53CB9Bd67178a9cc3f</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x6CbE0C3e21F787915D98FE53CB9Bd67178a9cc3f?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Deployer</b> <span class="cur">当前</span><span class="what">PactDeployer &middot; 在一笔交易中部署了另外四个合约，没有其他功能</span></td>
+        <td><code class="cp" data-c="0xa9789341C8602a4284CBF79421b32bB115D4f993">0xa9789341C8602a4284CBF79421b32bB115D4f993</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xa9789341C8602a4284CBF79421b32bB115D4f993?tab=contract">已验证</a></td></tr>
+    </table></div>
+  </article>
+
+  <article class="blk" id="desk-contracts" data-t="The Desk —— 当前与历史合约">
+    <h3>The Desk &mdash; 当前与历史合约</h3>
+    <p>这里的每一个都是不可变的：没有代理，没有升级路径。当一个策略需要新功能时，我们部署一个新合约，而不是升级旧的 &mdash; 这就是为什么会有「历史版本」这些行。<b>一个历史版本的合约仍然持有着在它上面开出来的机器人，它的提取函数也仍然有效。</b>如果你的机器人早于当前版本，那你要交互的就是那个地址。</p>
+    <div class="tw"><table class="t">
+      <tr><th>合约</th><th>地址</th><th>源码</th></tr>
+      <tr><td><b>Fee Router</b> v2 <span class="cur">当前</span><span class="what">每一笔 Desk 交易都经过它 &mdash; 每笔已成交交易收 1% 手续费，其中 30% 记给你的推荐人，剩下的进金库。它可以路由 V2 / V3 / V4 池。</span></td>
+        <td><code class="cp" data-c="0x9d1eA9Abbb99D813b7acA7666285CDed7f833565">0x9d1eA9Abbb99D813b7acA7666285CDed7f833565</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x9d1eA9Abbb99D813b7acA7666285CDed7f833565?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Fee Router</b> v1 <span class="lgc">历史版本</span></td>
+        <td><code class="cp" data-c="0x513969D81C0F7D490790274203221C1551663690">0x513969D81C0F7D490790274203221C1551663690</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x513969D81C0F7D490790274203221C1551663690">查看</a></td></tr>
+      <tr><td><b>Limit Orders</b> v2 <span class="cur">当前</span><span class="what">你签一个 Permit2 witness；什么都不会被托管。随时可以取消，或者干脆让它过期。</span></td>
+        <td><code class="cp" data-c="0xAd100f712FA482938adCe1dc08B3B30C8834cBBb">0xAd100f712FA482938adCe1dc08B3B30C8834cBBb</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xAd100f712FA482938adCe1dc08B3B30C8834cBBb?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Limit Orders</b> v1 <span class="lgc">历史版本</span></td>
+        <td><code class="cp" data-c="0xD2C409Dfa5e37C094166B9e556086bA018b2cd09">0xD2C409Dfa5e37C094166B9e556086bA018b2cd09</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xD2C409Dfa5e37C094166B9e556086bA018b2cd09">查看</a></td></tr>
+      <tr><td><b>Registry</b>（ArchitectRegistry）<span class="what">@name：一个钱包一个昵称，记在链上。用于推荐和排行榜。</span></td>
+        <td><code class="cp" data-c="0x80d4dCbc9814f1bCA48C0f10f70B36BF3bc09fAF">0x80d4dCbc9814f1bCA48C0f10f70B36BF3bc09fAF</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x80d4dCbc9814f1bCA48C0f10f70B36BF3bc09fAF?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Ladder</b> <span class="cur">当前</span><span class="what">托管 &mdash; 在依次下降的价格上叠放买单，每一档的 ETH 都被持有着。<code>cancel(id)</code> 会退回每一档未成交的部分。</span></td>
+        <td><code class="cp" data-c="0x9730274e9aB060eB2C9CC3417f85A323aeF7bB6C">0x9730274e9aB060eB2C9CC3417f85A323aeF7bB6C</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x9730274e9aB060eB2C9CC3417f85A323aeF7bB6C?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Martingale</b> v2 <span class="cur">当前</span><span class="what">托管 &mdash; 每往下一步就买得更大，到你的目标价整批卖出。v2 增加了止损。<code>withdraw(id)</code> 退回代币 + 未用掉的 ETH。</span></td>
+        <td><code class="cp" data-c="0x056A87cB9974f78fa4185BCe2e14807cBE357F8F">0x056A87cB9974f78fa4185BCe2e14807cBE357F8F</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x056A87cB9974f78fa4185BCe2e14807cBE357F8F?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Martingale</b> v1 <span class="lgc">历史版本</span><span class="what">仍然持有 v2 之前开出来的周期 &middot; 同样的 <code>withdraw(id)</code></span></td>
+        <td><code class="cp" data-c="0xad55Ab54B38F6eE5aB8408de627C0CE20aeF5Cef">0xad55Ab54B38F6eE5aB8408de627C0CE20aeF5Cef</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xad55Ab54B38F6eE5aB8408de627C0CE20aeF5Cef?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Spot Grid</b> v3 <span class="lgc">历史版本</span><span class="what">托管 &mdash; 在一个区间内按固定档位低买高卖，利润下限在链上强制执行。v3 增加了追加资金。<code>stop(id, 0x, 0, false)</code> 退回一切。</span></td>
+        <td><code class="cp" data-c="0x994Cf0A4f0E876f52f3b76a2856D93924DA71511">0x994Cf0A4f0E876f52f3b76a2856D93924DA71511</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x994Cf0A4f0E876f52f3b76a2856D93924DA71511?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Spot Grid</b> v4 &middot; compound <span class="cur">当前</span><span class="what">托管 &mdash; 与 v3 相同的网格，加上每个机器人的<b>燃气储备</b>（每次成交从中支付自己的燃气，停止时退回余额）和把利润<b>再投入</b>下一笔买单。同样的 <code>stop(id, 0x, 0, false)</code> 退回一切。目前仅限测试者 &mdash; 产品名为 Bots v3。</span></td>
+        <td><code class="cp" data-c="0xF8ef52605FBcc968B24b7FdBD7e93c752A659D5f">0xF8ef52605FBcc968B24b7FdBD7e93c752A659D5f</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xF8ef52605FBcc968B24b7FdBD7e93c752A659D5f?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Infinity Grid</b> v4 &middot; compound <span class="cur">当前</span><span class="what">ESCROW &mdash; the infinity grid plus a per-bot <b>gas reserve</b> (every fill pays its own gas from it; the remainder is refunded on stop) and <b>compounding</b>: every realised gain grows the position it keeps. Product name: Bots v3. <code>stop(id, 0x, 0, false)</code> returns tokens, ETH and the unused gas reserve.</span></td>
+        <td><code class="cp" data-c="0xBdC77e3D589D161489f7C986d8f654F30b88DDeb">0xBdC77e3D589D161489f7C986d8f654F30b88DDeb</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xBdC77e3D589D161489f7C986d8f654F30b88DDeb?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Shadow</b> &middot; copy trading <span class="cur">当前</span><span class="what">ESCROW &mdash; mirrors the ETH-quoted swaps of a wallet you choose, from your escrow, at your size, with your own stop-loss / take-profit per position and a gas reserve. The leader never touches your money. <code>stop(id)</code> returns the ETH, the unused gas reserve and every open position as tokens (not sold); <code>sellPosition(id, token, route, minOut)</code> sells one first if you want ETH.</span></td>
+        <td><code class="cp" data-c="0xE26dd0A09Cd7bA2F7d0a31e4B625E983B0B1B3D2">0xE26dd0A09Cd7bA2F7d0a31e4B625E983B0B1B3D2</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xE26dd0A09Cd7bA2F7d0a31e4B625E983B0B1B3D2?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Sniper</b> &middot; launches <span class="cur">current</span><span class="what">ESCROW &mdash; a configurable launch sniper. Your ETH and a gas reserve sit in your own bot; you set the money limits the contract enforces (size per entry, cap per token, max open positions, stop-loss / take-profit proven against cost, which sources) and the strategy the keeper runs (Pons launches with entry timing and filters, a watchlist of tokens you pick, exits by take profit / stop loss / trailing / partial / quiet timer / max hold). Enters Pons bonding curves with native ETH (the curve must be registered in the Pons factory; 1% in WETH to the treasury) and router pools. <code>stop(id)</code> returns the ETH, the unused gas reserve and every open position as tokens (not sold); <code>sellPosition(id, token, route, minOut)</code> sells one first; a token that refuses transfers never blocks the stop and stays claimable with <code>claimToken(id, token)</code>. <b>New to bots?</b> The wiki explains what a bot is, where your money sits and how to start one, with a picture for every step: <a href="https://nlyra.xyz/zh/wiki/bots">nlyra.xyz/wiki/bots</a>. <b>Paper mode:</b> the same bot with no deposit and no contract. The keeper runs your exact strategy on live launches and books simulated fills 2 s after each decision at the real curve or pool price then, with the 1% fee, gas and the same slippage / take-profit / stop-loss checks the contract makes. Three per wallet; one tap turns it into a live bot with the same settings.</span></td>
+        <td><code class="cp" data-c="0x6B30B0946743eF8A2D323127c8CfaC9966b5C84c">0x6B30B0946743eF8A2D323127c8CfaC9966b5C84c</code></td>
+      </tr>
+      <tr><td><b>Send to</b> &middot; deliver to another wallet <span class="cur">current</span><span class="what">NOT AN ESCROW &mdash; a 5 KB wrapper on the fee router used when you tick <i>Send to another wallet</i> on a buy or sell: you pay from the wallet that signs and the tokens (or the ETH) are delivered to the address you choose, in the same transaction. Holds nothing, has no keeper; the router still validates fee, pairs, hooks, deadline and slippage. On-chain everyone still sees who paid and who received: it is a convenience (hot wallet buys, cold wallet holds), not privacy.</span></td>
+        <td><code class="cp" data-c="0x0eF655f16345afb66b42d4e65B71a16052d1Ddc0">0x0eF655f16345afb66b42d4e65B71a16052d1Ddc0</code></td>
+      </tr>
+      <tr><td><b>OTC Desk</b> &middot; block trades <span class="cur">当前</span><span class="what">ESCROW &mdash; peer-to-peer block trades: the seller escrows a token and names a price in ETH, USDG or NLYRA; the buyer pays and the tokens leave the escrow in the same transaction. No pool is touched. Partial fills above the seller's minimum, expiry, optional private buyer. <code>cancel(id)</code> returns the tokens to the seller at any time; after expiry anyone may call it and it still pays the seller. Fee 0.5% of the payment (hard cap 1%), sent to the NLYRA buyback burner. Owner cannot reach escrow. No upgrade path.</span></td>
+        <td><code class="cp" data-c="0x9656513aC910a9839B51dB7c92a6914ABB4F52e8">0x9656513aC910a9839B51dB7c92a6914ABB4F52e8</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x9656513aC910a9839B51dB7c92a6914ABB4F52e8?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Spot Grid</b> USDG <span class="cur">当前</span><span class="what">托管 &mdash; 就是 v3 的现货网格，只是把计价货币从 ETH 换成了 <b>USDG</b>：用 USDG 入金，利润也记在 USDG 上，任何一条腿都不碰 ETH。它同时也是给<b>股票代币</b>开网格的唯一办法 &mdash; 那些池子只对 USDG 报价。入金方式是先 <code>approve</code> 再开仓。2026-08-30 部署并完成验证；从站上创建的功能正在 bots v2 里接通。托管规则不变，退出调用也不变：<code>stop(id, 0x, 0, false)</code>。</span></td>
+        <td><code class="cp" data-c="0xdd13354cfE3E79a944d8F93476176F016f6311e4">0xdd13354cfE3E79a944d8F93476176F016f6311e4</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xdd13354cfE3E79a944d8F93476176F016f6311e4?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Spot Grid</b> v1 <span class="lgc">历史版本</span><span class="what">v3 之前开出来的网格 &middot; 同样的 stop 调用</span></td>
+        <td><code class="cp" data-c="0xC0A3cE7e18FeE382432a18F750756E296D44dD4b">0xC0A3cE7e18FeE382432a18F750756E296D44dD4b</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xC0A3cE7e18FeE382432a18F750756E296D44dD4b?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Infinity Grid</b> v3 <span class="lgc">历史版本</span><span class="what">托管 &mdash; 没有上边界的网格，另有地板价、止盈和止损。v3 增加了追加资金。<code>stop(id, 0x, 0, false)</code>。</span></td>
+        <td><code class="cp" data-c="0x177a8837c0444e18677b618624C2a853573d2D7D">0x177a8837c0444e18677b618624C2a853573d2D7D</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x177a8837c0444e18677b618624C2a853573d2D7D?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Infinity Grid</b> USDG <span class="cur">当前</span><span class="what">托管 &mdash; 以 <b>USDG</b> 计价的 v3 无限网格：没有上限，带地板价、止盈和止损，用美元而不是 ETH 入金和记账。入金方式是先 <code>approve</code> 再开仓。2026-08-30 部署并完成验证；从站上创建的功能正在 bots v2 里接通。退出调用同样是 <code>stop(id, 0x, 0, false)</code>。</span></td>
+        <td><code class="cp" data-c="0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3">0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Infinity Grid</b> v2 <span class="lgc">历史版本</span></td>
+        <td><code class="cp" data-c="0x6C56f98FF2A3867B43aFf8Cad47EC2b6da81E1ab">0x6C56f98FF2A3867B43aFf8Cad47EC2b6da81E1ab</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x6C56f98FF2A3867B43aFf8Cad47EC2b6da81E1ab?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Infinity Grid</b> v1 <span class="lgc">历史版本</span></td>
+        <td><code class="cp" data-c="0x5B8555f254AbD8c4B2a25ca6595Cc4025308584c">0x5B8555f254AbD8c4B2a25ca6595Cc4025308584c</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x5B8555f254AbD8c4B2a25ca6595Cc4025308584c?tab=contract">已验证</a></td></tr>
+      <tr><td><b>DCA</b> v2 <span class="cur">当前</span><span class="what">托管 &mdash; 按计划等额买入，直接送到你钱包，或者留着等止盈。v2 增加了止损。<code>stop(id, 0x, 0, false)</code> 退回代币 + 还没花掉的分期。</span></td>
+        <td><code class="cp" data-c="0x630d58f9B8Cb55D8e246268F52596AFc3471fc1d">0x630d58f9B8Cb55D8e246268F52596AFc3471fc1d</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x630d58f9B8Cb55D8e246268F52596AFc3471fc1d?tab=contract">已验证</a></td></tr>
+      <tr><td><b>DCA</b> v1 <span class="lgc">历史版本</span></td>
+        <td><code class="cp" data-c="0x07D52Ced2EA760187Fa83D5AA96A4B8174124a0d">0x07D52Ced2EA760187Fa83D5AA96A4B8174124a0d</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x07D52Ced2EA760187Fa83D5AA96A4B8174124a0d?tab=contract">已验证</a></td></tr>
+      <tr><td><b>TWAP</b><span class="what">托管 &mdash; 一笔大单被切开分散到一段时间里执行。<code>stop(id)</code> 退回每一片还没执行的。</span></td>
+        <td><code class="cp" data-c="0xF8bE45D8da70745B9Df1CF17848dfcDD4b4C2309">0xF8bE45D8da70745B9Df1CF17848dfcDD4b4C2309</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xF8bE45D8da70745B9Df1CF17848dfcDD4b4C2309?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Predict</b> <span class="cur">当前</span><span class="what">一轮开着的时候是托管 &mdash; BTC 涨/跌，5 分钟一轮，赢家瓜分扣掉 3% 之后的奖池。无法结算的轮次通过 <code>claim</code> 全额退款。</span></td>
+        <td><code class="cp" data-c="0x688c265886776005eaF321c7121bF2D1b76676A1">0x688c265886776005eaF321c7121bF2D1b76676A1</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x688c265886776005eaF321c7121bF2D1b76676A1?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Predict Oracle</b><span class="what">每一轮结算所依据的价格。如果一个被提交的价格偏离实时的 Chainlink BTC/USD 答案超过 10%，它会在链上被拒绝。</span></td>
+        <td><code class="cp" data-c="0xCC85d7B57819921f2D173134D0e21eca8A7B4F96">0xCC85d7B57819921f2D173134D0e21eca8A7B4F96</code></td>
+        <td><a class="vbadge" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0xCC85d7B57819921f2D173134D0e21eca8A7B4F96?tab=contract">已验证</a></td></tr>
+      <tr><td><b>Keeper</b> <span class="lgc">是钱包，不是合约</span><span class="what">机器人引擎的密钥。它只能触发你的机器人已经授权过的动作，而且价格和金额都会在链上被重新核对。它不是任何东西的 owner。</span></td>
+        <td><code class="cp" data-c="0x96D0B8008d1E38d45A1B9cFCCCC932629059246c">0x96D0B8008d1E38d45A1B9cFCCCC932629059246c</code></td>
+        <td><a class="vbadge n" target="_blank" rel="noopener" href="https://robinhoodchain.blockscout.com/address/0x96D0B8008d1E38d45A1B9cFCCCC932629059246c">查看</a></td></tr>
+    </table></div>
+    <div class="note warn">
+      <span class="lbl">两个被弃用的部署 &mdash; 不要使用</span>
+      <p>有两个合约部署出来之后、在被使用之前就被弃用了：第一版 Ladder 在 <code>0xE988A365DbD77D28fD518074215866D675a5639E</code>，第一版 Predict 在 <code>0x93467d80EA3Dd3C6F04e310d821B4e2E6662F602</code>。把它们列在这里只是为了不让任何人把它们错当成正在运行的那两个。站上任何地方都不会指向它们。</p>
+    </div>
+  </article>
+
+  <article class="blk" id="custody" data-t="托管模型 —— 你的钱到底放在哪">
+    <h3>托管模型 &mdash; 你的钱到底放在哪</h3>
+    <p>对整个生态并没有一个统一的答案。一共有三种形态，而知道你处在哪一种，就能准确知道可能出什么问题，以及你要怎么把钱拿回来。</p>
+    <div class="tw"><table class="t">
+      <tr><th>你做了什么</th><th>钱放在哪</th><th>你怎么拿回来</th></tr>
+      <tr><td><b>市价买入或卖出</b><span class="what">The Desk、Architect Swap</span></td><td><b>你的钱包。</b>这次兑换是一笔原子交易：同一个区块里进出。</td><td>没什么可拿回来的 &mdash; 它要么发生了，要么 revert 了。</td></tr>
+      <tr><td><b>限价单</b><span class="what">The Desk</span></td><td><b>你的钱包。</b>什么都不会被托管。你签的是一个 Permit2 witness，它只授权按你签下的条件执行的那一次转账。</td><td>让它过期、取消它，或者撤销那个 Permit2 授权额度。没有什么余额需要抢救。</td></tr>
+      <tr><td><b>Ladder、Martingale，或六种机器人中的任何一个</b><span class="what">The Desk</span></td><td><b>Robinhood Chain 上的一个托管合约</b>，以你的钱包地址登记为 <i>maker</i>。你的资金在合约里，不在你的钱包里，也不在我们这里。</td><td>一个只有 maker 能调用的提取函数，只需要你的机器人 id。不需要 Keeper，不需要服务器，不需要路由数据，也不用等过期。<a href="#emergency">§3 &middot; 紧急提取</a></td></tr>
+      <tr><td><b>Predict 下注</b></td><td><b>Predict 合约</b>，直到那一轮结算。</td><td><code>claim([epoch,&hellip;])</code> &mdash; 拿走奖金，或者在那一轮被取消时拿到全额退款。</td></tr>
+      <tr><td><b>$NLYRA 质押</b></td><td><b>质押合约。</b>你的余额是合约状态，没有任何管理员 setter。</td><td><code>withdraw()</code> 或 <code>exit()</code>，无需许可，没有锁仓。</td></tr>
+      <tr><td><b>Architect Stake 矿池</b></td><td><b>矿池合约</b>，和创建者托管的那笔奖励储备放在一起。</td><td>随时可以解除质押；本金不会被奖励记账动到。</td></tr>
+      <tr><td><b>在 Architect Swap 上提供的流动性</b></td><td><b>池子。</b>只有你的 LP 代币（V2）或头寸 NFT（V3）能赎回你的份额。</td><td>在 <a href="https://nlyra.xyz/zh/dex">/dex</a> 上移除流动性，或者直接调用路由/头寸管理器。</td></tr>
+      <tr><td><b>Shield 存入</b></td><td><b>隐私池合约。</b></td><td>一个 zk 提取证明，或者用 <code>ragequit</code> 退回存入的那个钱包。</td></tr>
+      <tr><td><b>Roulette / Slots 下注</b></td><td><b>游戏合约</b>，在 commit 和 reveal 之间。</td><td>合约自己付给赢家。如果荷官不出声了，<code>refundBet</code> 会退回你的本金。</td></tr>
+    </table></div>
+    <div class="note bad">
+      <span class="lbl">把话说明白</span>
+      <p>一个正在运行的机器人、ladder 或 martingale <b>把你的资金放在一个合约里</b>。那是托管，不是「资金在你自己钱包里的自托管」。你保留的，是无条件地自己把它们拉出来的能力 &mdash; 通过 Blockscout，不需要网站，也不需要我们批准。这是一个和「它从未离开过你的钱包」不一样、而且更弱的承诺，我们不打算装作不是这样。</p>
+    </div>
+  </article>
+
+  <article class="blk" id="admin-powers" data-t="管理员权限 —— 完整清单">
+    <h3>管理员权限 &mdash; 完整清单</h3>
+    <div class="note bad">
+      <span class="lbl">读本节其余内容之前，先读这一段</span>
+      <p><b>每一个 Desk 合约的所有权都放在一把单独的热钱包私钥上，而不是一个多签上。</b>在它们每一个上 &mdash; 手续费路由、限价单、ladder、martingale、DCA、TWAP、各种网格（ETH 计价的和 USDG 计价的）、Predict 以及 Predict 预言机 &mdash; <code>owner()</code> 返回的都是同一个外部拥有账户地址 <code class="cp" data-c="0xa6CD59b326F8bc5Cf68EcD2377Eee13AfBbb1657">0xa6CD59b326F8bc5Cf68EcD2377Eee13AfBbb1657</code>。在它们每一个上面，<code>pendingOwner()</code> 都是零地址，这意味着通往任何更安全方案的两步交接<b>从来没有开始过</b>。</p>
+      <p>Roulette、Slots 和质押奖励分发者由<b>第二个</b>热钱包地址持有，<code class="cp" data-c="0xe30647793192D15BFA6E53aE8651368d332fe04C">0xe30647793192D15BFA6E53aE8651368d332fe04C</code>，它同时也是手续费金库。</p>
+      <p><b>这对你意味着什么：</b>下面列出的这些限制是真实存在、并且由合约强制执行的 &mdash; 一把被攻破的密钥仍然无法移动你的托管资金、无法改变提取的去向，也无法升级任何东西。但是每一项<i>确实存在</i>的权限，都只隔着一把密钥，而迁移到多签这件事在清单上、还没做。把下面的权限读作「持有那把密钥的人能做什么」，而不是「团队会做什么」。</p>
+    </div>
+    <div class="wrapd">
+      <details open><summary>Desk 运营者能做什么</summary><div class="a">
+        <ul>
+          <li><b>暂停。</b>暂停机器人合约会停掉 Keeper 的交易入场。暂停<b>手续费路由</b>影响更大：它会停掉一切经过它的兑换，其中包括一个机器人把仓位平回 ETH 所需要的那条卖出腿。</li>
+          <li><b>暂停永远做不到的一件事</b>是挡住提取。<code>stop</code>、<code>cancel</code>、<code>withdraw</code>、<code>refundExpired</code>、<code>withdrawEth</code> 以及 Predict 的 <code>claim</code> 都没有带 <code>whenNotPaused</code> &mdash; 这是逐个函数对照已部署源码验证过的。即使一切都被暂停，你依然可以<b>按原样</b>把仓位取回：代币和 ETH 保持它们当时的样子，不做卖出。</li>
+          <li><b>只能对盈余调用 <code>rescue(token, to)</code>。</b>它在算术上被限制在 <code>balanceOf(this) &minus; escrowed[token]</code> &mdash; 也就是超出用户存入部分的那一块。如果这个盈余是零，它会以 <code>NothingToRefund</code> revert。</li>
+          <li><b>为<i>新的</i>机器人、订单和市价兑换更改手续费区间。</b>今天的链上读数：<code>minFeeBps = 90</code>（0.9%）和 <code>maxFeeBps = 200</code>（2%）。owner 可以移动这两个值，但 <code>setMaxFeeBps</code> 带着 <code>require(b &lt;= 300)</code>，所以 <b>3% 是一个绝对上限，不部署一个新的路由就抬不上去</b>。The Desk 自己收 1%，页面会拒绝任何更高的值。</li>
+          <li><b>更改推荐人分成。</b>今天它是 <code>3000</code>（30%），唯一的护栏是 <code>require(b &lt;= 10_000)</code> &mdash; 所以 <b>owner 可以把将来的手续费分成设为 0%</b>。已经累积的推荐余额仍然可以领取。把 30% 当作当前政策，而不是一个保证。</li>
+          <li><b>为<i>将来</i>累积的手续费改变金库去向。</b>已经累积到旧地址上的手续费，仍然由那个地址领取。</li>
+          <li><b>转移所有权</b>，分两步（<code>transferOwnership</code> &rarr; <code>acceptOwnership</code>，带一个零地址检查）。</li>
+          <li><b>仅限 Predict：把预言机指向别处。</b><code>setOracle(address)</code> 会更换那个决定每一轮<i>将来</i>比赛哪一边赢的合约。<b>这是整个生态里最强的一项 owner 权限</b> &mdash; 一个把它指向自己控制的合约的 owner，就决定了谁赢，因而也决定了奖池去哪。它够不到已经结算完的一轮，也动不了账本里的下注，但它是唯一一项「只能靠信任运营者」来防护的权限。当前的预言机受 Chainlink 约束；一个替换品未必如此。</li>
+          <li><b>仅限 Predict：更改手续费</b>，在硬编码的常量范围内（<code>MAX_FEE_BPS = 500</code>、<code>MAX_REFERRAL_BPS = 5000</code>），而且<b>只能在游戏被暂停时</b>。</li>
+        </ul>
+      </div></details>
+      <details><summary>Desk 运营者不能做什么</summary><div class="a">
+        <ul>
+          <li><b>动你的托管资金。</b>从任何一个 owner 函数到用户余额之间，不存在代码路径。</li>
+          <li><b>改变提取的去向。</b>付款发往创建时存下的 maker 地址。它没有 setter。</li>
+          <li><b>升级合约。</b>没有代理，没有升级机制。部署出来的就是跑着的。</li>
+          <li><b>提高一个正在运行的机器人的手续费。</b>费率在创建时就写进了这个机器人的记录里；之后改默认值也够不到它。限价单则把它的手续费写在签名里面。</li>
+        </ul>
+      </div></details>
+      <details><summary>Keeper 能做什么、不能做什么</summary><div class="a">
+        <p>Keeper 是执行机器人的链下进程。它跑在自己的密钥上（<code>0x96D0B800&hellip;59246c</code>），并且不拥有任何东西。它的全部权力就是「在一条已经存在的记录上调用执行函数」。这次执行到底可以做什么，全部由合约强制约束：</p>
+        <ul>
+          <li>它<span class="no">不能</span>亏本卖出一个网格档位 &mdash; 有利可图的档距是在链上按档检查的。</li>
+          <li>它<span class="no">不能</span>为一个限价单挑自己的路由 &mdash; 路由以 <code>bytes32 routeHash</code> 的形式固定在你的签名里面，否则 <code>execute()</code> 会以 <code>BadRouteHash</code> revert。</li>
+          <li>它<span class="no">不能</span>绕过你的最低值 &mdash; 输出是按目标地址的余额差来测量并与 <code>minAmountOut</code> 比较的，而不是采信池子自己声称的数字。</li>
+          <li>它<span class="no">不能</span>把你路由到一个任意的 V4 hook 上 &mdash; <code>key.hooks</code> 必须是 <code>address(0)</code> 或者在白名单里明确列出。</li>
+          <li>它<span class="no">不能</span>让路由对自己免费 &mdash; <code>minFeeBps = 90</code>，低于这个值它会以 <code>FeeTooLow()</code> revert。</li>
+          <li>它<span class="no">不能</span>取得托管权。它在任何时候都不持有你的资金。</li>
+        </ul>
+        <p><b>它的故障模式是不作为，不是盗窃。</b>如果它挂了，你的机器人会在策略中途冻住：不买、不卖、不止盈，<b>也不止损</b>。钱是安全的；你所依赖的那个止损不安全。<a href="#tr-bot">该怎么办 &rarr;</a></p>
+      </div></details>
+      <details><summary>质押、DEX 和 launchpad 的权限</summary><div class="a">
+        <ul>
+          <li><b>$NLYRA 质押：</b>已对照已部署的字节码确认 &mdash; 它是 StakingRewards 的 Uniswap 分支，<b>没有 owner，没有暂停，也没有 <code>recoverERC20</code></b>。已质押的 3.22 亿不可能被管理员卷走，奖励池按 wei 精确注资。唯一的角色是 <code>rewardsDistribution</code>，它负责为奖励周期注资。</li>
+          <li><b>质押上唯一那条需要点名的注意事项：</b>因为质押代币和奖励代币是同一个，<code>notifyRewardAmount</code> 会把合约的全部余额都算作背书。所以那个 <code>rewardsDistribution</code> 地址 &mdash; 一个单独的钱包 <code>0xe30647&hellip;e04C</code>，而且没有任何 setter 可以更换它 &mdash; <i>是有可能</i>把用户本金标记成可发放的奖励的。那不是一次原子式的抽干：它会缓慢地、完全公开地展开。但它仍然是一个信任假设，你应该知道它存在。</li>
+          <li><b>DEX（V2）：</b>协议手续费开关 &mdash; 兑换量的 0.05% 进金库，从第一天起就开着。交易不能被暂停，代币不能被封禁，池子里的资金碰不到。</li>
+          <li><b>DEX（V3）：</b>池子手续费中的一部分归协议，owner 可以创建新的费率档。头寸和流动性碰不到。</li>
+          <li><b>Launchpad v4：</b>恰好一项权限 &mdash; 增加（或对将来的发行关闭）已批准的交易对。它没有任何代码路径通向一个已经存在的池子、头寸或手续费分成。</li>
+        </ul>
+        <p>其中两项由链上读取确认：质押合约的 <code>rewardsDistribution</code> 是 <code>0xe30647&hellip;e04C</code>，而 Holder Rewards 发行工厂的 keeper 是运营用的那把热钱包私钥。</p>
+        <!--TODO-VERIFY: the admin surface of LaunchFactoryV2, LaunchFactoryHR, StakePoolFactory/FixedAPYPool, StakingRewards, LyraLiquidityVault, PrivacyPoolComplex, BountyEscrow, LyraRouletteV2 and LyraSlotsV2 is still UNVERIFIED — the on-chain owner()/pendingOwner() probe answered only for Roulette and Slots. Needs /root/stake-deploy/ read line by line and a re-probe with each verified ABI's real getter names. Until then no exhaustive power list can be published for these. -->
+        <div class="todo"><p><b>仍在核实中：</b>launchpad 工厂、质押矿池工厂、质押合约、Liquidity Desk 金库、Shield 池、赏金托管合约以及两个游戏的完整 owner 权限面。一次 <code>owner()</code> 探测只在 Roulette 和 Slots 上得到了回应。上面这四条是运营者陈述的立场，不是一次已完成的核实 &mdash; 与它们上面那些 Desk 合约不同，那些是逐个函数读过的。</p></div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="blk" id="versions" data-t="当前版本与历史版本">
+    <h3>当前版本与历史版本</h3>
+    <p>因为 Desk 的合约不可升级，一个新功能就意味着一个新合约。这留下了一条痕迹。规则很简单：</p>
+    <ul>
+      <li><b>新的活动走当前版本。</b>站上只会在上面标着<span class="cur">当前</span>的那些地址上创建机器人、订单和发行。</li>
+      <li><b>旧的仓位留在它诞生的地方。</b>一个在 Spot Grid v1 上开出来的网格，永远住在 v1 上。它不会被迁移，也没法迁移。</li>
+      <li><b>历史版本的提取函数仍然有效。</b>同样的函数名，同样的参数。合约不会过期。</li>
+      <li><b>如果你不知道是哪一个持有你的机器人</b>，<a href="https://nlyra.xyz/desk/help/bots">救援指南</a>里的机器人 id 查找器会直接从你的钱包地址读链，然后告诉你。</li>
+    </ul>
+    <div class="note warn">
+      <span class="lbl">「不可升级」的三个例外</span>
+      <p>上面列出的每一个 Desk 合约都是不可变的 &mdash; 没有代理，没有管理员槽位。生态里有三样东西不是这样，你应该知道是哪些：</p>
+      <ul style="margin:8px 0 0 0;padding-left:20px">
+        <li><b>Shield 入口合约</b>（<code>0x9c03515e&hellip;22F2</code>）是一个 <b>ERC-1967 可升级代理</b>。持有被屏蔽资金的那个池子不是。</li>
+        <li><b>WETH 和 USDG</b> 是由第三方持有的可升级合约。它们不是我们的，我们也改变不了这一点。</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="blk" id="emergency" data-t="紧急提取 —— 不经过我们把资金取出来">
+    <h3>紧急提取 &mdash; 不经过我们把资金取出来</h3>
+    <p>The Desk 上的每一个托管合约都暴露了一个只做一件事的函数：立刻把这条记录里的所有东西送回给拥有它的那个钱包，不卖掉任何东西。这个保证建立在该函数的四条性质上，而这四条都是在主网上用直接的链上调用验证过的，路径里没有任何 Desk API：</p>
+    <ol>
+      <li><b>它只需要机器人 id。</b>不需要路由字节，不需要报价，不需要我们的签名。网格和 DCA 接受 <code>route = 0x</code> 和 <code>minOut = 0</code>，因为路由只在 <code>sellAll</code> 分支里才会被读到 &mdash; 而你传的是 <code>sellAll = false</code>。</li>
+      <li><b>它只有 maker 能调用。</b>合约会把 <code>msg.sender</code> 和创建时记录的 maker 地址做比较。任何其他人调用它都会以 <code>NotMaker</code> revert。没有人能改变那个地址，包括我们。</li>
+      <li><b>暂停挡不住它。</b>这些提取函数没有一个带 <code>whenNotPaused</code>。</li>
+      <li><b>过期挡不住它，而且过期从不没收任何东西。</b>提取函数根本不看日期。过期之后还会多出第二条路：<code>refundExpired(id)</code>，任何人都可以调用 &mdash; 而它付的仍然是 maker，绝不是调用者。</li>
+    </ol>
+    <h4>各合约对应的调用</h4>
+    <div class="tw"><table class="t">
+      <tr><th>你有什么</th><th>在合约上调用这个</th><th>选择器</th></tr>
+      <tr><td>Infinity Grid、Spot Grid、DCA</td><td><code>stop(id, 0x, 0, false)</code></td><td><code>0x81e9e1bb</code></td></tr>
+      <tr><td>Shadow &middot; copy trading</td><td><code>stop(id)</code><span class="what">returns ETH + gas reserve + open positions as tokens (not sold)</span></td><td><code>0x63c4f031</code></td></tr>
+      <tr><td>Sniper &middot; launches</td><td><code>stop(id)</code><span class="what">returns ETH + gas reserve + open positions as tokens (not sold); after expiry anyone can call it for you</span></td><td><code>0x63c4f031</code></td></tr>
+      <tr><td>Spot Grid v4 / Infinity Grid v4, after expiry</td><td><code>refundExpired(id, 0x)</code> &mdash; <b>callable by anyone</b>, always pays the maker</td><td><code>0x332620d8</code></td></tr>
+      <tr><td>TWAP</td><td><code>stop(id)</code></td><td><code>0x63c4f031</code></td></tr>
+      <tr><td>Martingale</td><td><code>withdraw(id)</code></td><td><code>0x8e19899e</code></td></tr>
+      <tr><td>Ladder</td><td><code>cancel(id)</code><span class="what">returns what has not filled, before or after expiry. After expiry our keeper calls <code>refundExpired(id)</code> for you (anyone can; it only ever pays the maker), so an expired ladder empties itself back to your wallet within a minute.</span></td><td><code>0xc4d252f5</code></td></tr>
+      <tr><td>Predict</td><td><code>claim([epoch, &hellip;])</code><span class="what">用 <code>getUserRounds(user, cursor, size)</code> 枚举，用 <code>claimable(epoch, user)</code> / <code>refundable(epoch, user)</code> 测试</span></td><td><code>0x6ba4c138</code></td></tr>
+      <tr><td>限价单 &mdash; 真正的紧急开关</td><td>在 <b>Permit2</b> <code>0x000000000022D473030F116dDEE9F6B43aC78BA3</code> 上调用 <code>invalidateUnorderedNonces(word, mask)</code><span class="what">这里没有托管资金可提取；让一个已签名的订单再也无法被成交的办法，是把那个 nonce 作废</span></td><td><code>0x3ff9dcb1</code></td></tr>
+      <tr><td>任何东西，在过期之后</td><td><code>refundExpired(id)</code> &mdash; <b>任何人都可以调用</b>，永远付给 maker</td><td><code>0xcc3e049b</code></td></tr>
+      <tr><td>被智能合约钱包弹回来的 ETH</td><td>在同一个合约上调用 <code>withdrawEth()</code>，不带参数<span class="what">先用 <code>pendingEth(&lt;your address&gt;)</code> 读一下余额</span></td><td><code>0xa0ef91df</code></td></tr>
+    </table></div>
+    <p style="font-size:13.5px;color:var(--text-3)">这里给出选择器，是为了让这些调用可以在任何工具里手工构造，而不只是在 Blockscout 的表单里。上面每一条路径都对照今天已部署的合约确认过：只有 maker 能调用、只需要 id、不受暂停影响、不受过期影响。</p>
+    <div class="note">
+      <span class="lbl">完整的操作指南是一个独立页面</span>
+      <p>合约地址、每种机器人类型对应的确切字段值、一个从你的钱包地址读链的机器人 id 查找器，以及一张列出每一条 revert 信息的表格：<a href="https://nlyra.xyz/desk/help/bots"><b>The Desk &middot; 机器人：怎么把你的钱取出来</b></a>。</p>
+      <p>它是一个单独的、自包含的文件 &mdash; 用 Ctrl+S / Cmd+S 存下来，离线也一样能用。万一这个域名消失了，GitHub 上还有一个站外镜像：<a href="https://nlyraproject.github.io/nlyra-desk-rescue/" target="_blank" rel="noopener">nlyraproject.github.io/nlyra-desk-rescue</a>。</p>
+    </div>
+    <div class="note">
+      <span class="lbl">每一个版本都被覆盖了，包括当前那些</span>
+      <p>救援指南列出了<b>每一个</b>托管合约 &mdash; 当前的和历史的 &mdash; 其中包括 <b>Spot Grid v3</b> <code>0x994Cf0A4f0E876f52f3b76a2856D93924DA71511</code> 和 <b>Infinity Grid v3</b> <code>0x177a8837c0444e18677b618624C2a853573d2D7D</code>（这两个正是站上今天开网格机器人所用的），以及两个 USDG 计价的网格 <code>0xdd13354cfE3E79a944d8F93476176F016f6311e4</code> 和 <code>0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3</code>。每一条都写明它持有哪些机器人（按创建日期）、以及提取会退回什么。所有网格版本的调用都是一样的 &mdash; <code>stop(bytes32,bytes,uint256,bool)</code>，选择器 <code>0x81e9e1bb</code>。如果你想要第二个来源，<a href="#desk-contracts">上面的 &sect;3</a> 里是同样的地址。</p>
+    </div>
+    <h4>被弹回来的 ETH</h4>
+    <p>每一个合约转发 ETH 时都带 30,000 gas 的补贴。如果你的钱包是一个 <code>receive()</code> 很费 gas 的智能合约钱包，这笔付款不会失败，钱也不会丢 &mdash; 它会被记到 <code>pendingEth[you]</code>，你用 <code>withdrawEth()</code> 领走。</p>
+  </article>
+
+  <article class="blk" id="risks" data-t="风险与审计 —— 诚实版本">
+    <h3>风险与审计 &mdash; 诚实版本</h3>
+    <div class="note">
+      <span class="lbl">代码从哪来，以及实际被检查过什么</span>
+      <p>这套东西里有相当一部分<b>不是新代码</b>。DEX 是 Uniswap V2 和 V3，$NLYRA 质押合约是 Synthetix StakingRewards，Shield 的电路来自 0xbow Privacy Pools &mdash; 这些设计都有多年的生产历史，也有它们自己的审计。细节在下面的面板里。</p>
+      <p>在这条血统之上，针对<b>我们自己的</b>部署做过的事情是：每一份源码都已验证，可以在 Blockscout 上读；LYRA 在每个合约上线前都逐行读过它；而且<b>每一条提取路径都在主网上用真金白银执行过</b> &mdash; 我们是这样知道你的出口可用的，而不是靠假设。</p>
+      <p>我们不打算美化的那部分：除了 2026 年 9 月 30 日经 Coinsult 审计的<a href="https://nlyra.xyz/newstake/app/">真实收益质押 v2</a>（0 个严重、0 个中危）之外，<b>没有任何一个专门为 NLYRA 编写的合约经过第三方审计公司的审计。</b>The Desk 的没有，launchpad 的没有，游戏的也没有。这些合约之所以做得小、不可变、公开，恰恰是为了让你能自己检查它们；而且「没发现 bug」从来不等于「没有 bug」 &mdash; 这也正是为什么那些提取保证被设计成即使我们在其他所有事情上都错了也依然成立。</p>
+    </div>
+    <div class="note warn">
+      <span class="lbl">那个与代码无关的风险</span>
+      <p><b>这个生态里的每一把 owner 密钥都是服务器上的一把单独的热钱包私钥，不是多签。</b>合约严格限制了这些密钥能做什么 &mdash; 它们够不到你的托管资金、改不了付款去向，也升级不了任何东西 &mdash; 但那些确实存在的权限，前面并没有第二个签名挡着。<a href="#admin-powers">确切的清单在上面。</a>迁移到多签这件事还没有开始。</p>
+    </div>
+    <div class="wrapd">
+      <details open><summary>我们在什么代码之上搭建，以及上游审计的边界在哪</summary><div class="a">
+        <p>有几个合约是对在别处已有多年生产历史的代码的重新部署：</p>
+        <ul>
+          <li>$NLYRA 质押合约是 <b>Synthetix StakingRewards</b> &mdash; 和 Uniswap 在 2020 年做 UNI 流动性挖矿时用的是同一套设计。</li>
+          <li>V2 DEX 是 <b>Uniswap V2</b>（Factory + Router），带上每个 V2 分支都必须重新计算的那一个哈希常量。</li>
+          <li>V3 那一侧是从官方 npm 产物部署的 <b>Uniswap V3</b>（v3-core 1.0.1 + v3-periphery 1.4.4）。</li>
+          <li>Shield 的电路来自 <b>0xbow Privacy Pools</b> 项目（Apache-2.0）。</li>
+        </ul>
+        <p>对上游项目的审计<b>不是</b>对我们这次部署的审计。它说明这个设计被充分研究过；它对部署参数、接线方式，以及我们自己围绕它写的代码，什么也没说。</p>
+        <p><b>0xbow Privacy Pools 的电路是真的经过审计的</b> &mdash; 在上游，由它们作者的审计方做的。我们围着它写的 <code>PrivacyPoolComplex</code> 包装层没有经过审计，而我们的 Shield 入口合约是一个可升级代理。这个区分正是重点所在。</p>
+        <!--TODO-VERIFY: "byte-for-byte unmodified" for the V2 Factory+Router, "official npm artifacts v3-core 1.0.1 / v3-periphery 1.4.4, zero patches" for V3, and "Synthetix StakingRewards verbatim" have NOT been re-verified by bytecode diff. The audit pass confirmed the Shield circuit lineage and that no NLYRA contract has any third-party audit, but did not diff the Uniswap/Synthetix bytecode. Needs a bytecode/artifact comparison before any of the three is restated as an equivalence. -->
+        <div class="todo"><p><b>仍在核实中：</b>Uniswap V2、Uniswap V3 和 Synthetix 这三次部署到底「未经修改」到什么程度。还没有人把已部署的字节码和上游产物做过 diff。请把这些读作我们所主张的血统 &mdash; 你可以在 Blockscout 上自行验证 &mdash; 而不是一个已被证明的等价关系。</p></div>
+      </div></details>
+      <details><summary>逐个产品来看，还剩下哪些风险</summary><div class="a">
+        <ul>
+          <li><b>智能合约风险。</b>除质押 v2 之外，都是未经审计的代码 &mdash; 而且审计只能降低风险，不能消除风险。不要存入你输不起的钱。</li>
+          <li><b>Keeper 风险（仅限机器人）。</b>如果 Keeper 停了，你的机器人会冻住：不会止盈，<b>也不会止损</b>。你的钱是安全的；你的风险管理不是。</li>
+          <li><b>托管风险（机器人、ladder、martingale、Predict）。</b>资金放在一个合约里，不在你的钱包里。那个合约里的一个 bug，就是一个能碰到你余额的 bug。</li>
+          <li><b>市场风险。</b>自托管是一个关于「能拿到」的保证，不是关于价格的保证。一个一路买到底的网格，退还给你的正是那样东西：一个亏损的仓位。</li>
+          <li><b>恶意代币风险。</b>转账税、黑名单和增发开关都住在代币合约里，而那个我们控制不了。SAFE 这个判定是一个过滤器，不是一个承诺。</li>
+          <li><b>无常损失。</b>为一个波动的交易对提供流动性，表现可能不如单纯持有。</li>
+          <li><b>密钥风险，你的。</b>maker 地址是永久的。丢了钱包，就丢了机器人 &mdash; 没有恢复路径，我们也造不出来一个。</li>
+          <li><b>密钥风险，我们的。</b>合约所有权放在单独的热钱包私钥上。这些密钥能做什么被合约限住了；但它们前面依然没有多签。</li>
+          <li><b>$NLYRA 的集中度风险。</b>创建者钱包持有大约<b>总量的 4.7%</b>（约 4700 万 NLYRA），随时可以卖出。这是一个你可以盯着看的公开余额。</li>
+          <li><b>Predict 预言机风险。</b>owner 可以为将来的轮次把 Predict 的预言机指向别处。见 <a href="#admin-powers">§3 &middot; 管理员权限</a>。</li>
+          <li><b>钓鱼。</b>唯一的官方站点是 <b>nlyra.xyz</b>。我们绝不会主动私信你，绝不会问你要助记词，也绝不会让你去「验证」你的钱包。应用只会向你提议交易 &mdash; 读清楚你签的是什么。</li>
+        </ul>
+      </div></details>
+      <details><summary>这些东西你自己要怎么核实</summary><div class="a">
+        <ul>
+          <li><b>检查网站请你签的授权。</b>站点请求的每一个授权，都是对一个固定合约的一个确切金额 &mdash; 前端里任何地方都没有无限授权，而且页面会拒绝任何不是它预期的那个托管合约的 spender。在你的钱包弹窗里读一下金额，确认它和你输入的一致。</li>
+          <li>打开上面任意一个地址 &rarr; Blockscout &rarr; <b>Contract</b> 标签页 &rarr; 读已验证的源码。</li>
+          <li>在一个机器人合约上，打开 <b>Read Contract</b>，用你自己的机器人 id 查一下 maker 地址，然后到 <b>Write Contract</b> 调用那个提取函数 &mdash; 这就是全部的救援路径，不涉及任何网站。</li>
+          <li>把我们自己的任意一个合约粘进<a href="https://nlyra.xyz/zh/">扫描器</a>。我们和所有人一样，接受同一台判定机器的评判。</li>
+        </ul>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="blk" id="supply-locks" data-t="$NLYRA 供应量与锁仓">
+    <h3>$NLYRA 供应量与锁仓</h3>
+    <p>于 <b>2026 年 8 月 27 日</b>从链上实时读取。数字会变；方法不会 &mdash; 这里每一个都是一次 <code>balanceOf</code> 或者一次你可以自己重复的合约读取。</p>
+    <div class="tw"><table class="t">
+      <tr><th>项目</th><th>数量</th><th>说明</th></tr>
+      <tr><td>已铸造总量</td><td><b>1,000,000,000</b></td><td>18 位小数，在构造函数里铸造一次。不存在 mint 函数。</td></tr>
+      <tr><td>销毁到 <code>0xdEaD</code></td><td>33,575,754</td><td>占总量 3.36%，不可逆。</td></tr>
+      <tr><td>总供应量</td><td>966,424,245</td><td>已铸造减去已销毁 &middot; <a href="https://nlyra.xyz/api/supply/total">/api/supply/total</a></td></tr>
+      <tr><td>流通量</td><td>872,125,085</td><td>总量减去金库储备和锁仓余额 &middot; <a href="https://nlyra.xyz/api/supply/circulating">/api/supply/circulating</a></td></tr>
+      <tr><td>已质押</td><td>322,786,227</td><td>占总量 32.3% &mdash; 用户存在质押合约里的钱，随时可以取出。不是团队持仓。</td></tr>
+      <tr><td>在流动性池里</td><td>176,199,434</td><td>Uniswap V3 的 NLYRA/WETH 1% 池。</td></tr>
+      <tr><td>团队代币，仍在锁仓中</td><td><b>47,313,125</b></td><td>线性释放 &mdash; 见下。</td></tr>
+      <tr><td>金库钱包</td><td>46,986,034</td><td><b>占总量 4.70%，未锁仓，随时可以卖出。</b>这是一个你可以盯着看的公开余额：<code class="cp" data-c="0xe30647793192D15BFA6E53aE8651368d332fe04C">0xe30647793192D15BFA6E53aE8651368d332fe04C</code></td></tr>
+    </table></div>
+    <h4>一共有两个锁，它们不是一回事</h4>
+    <div class="note warn">
+      <span class="lbl">锁 1 &mdash; 团队代币。2026 年 11 月 22 日结束，不是「两年」。</span>
+      <p><b>52,570,139 NLYRA（占总量 5.26%）</b>放在 PinkLock02 的 <b>#1000170</b> 号锁里，<b>每 10 天释放 10%</b>。第一批已于 <b>2026 年 8 月 24 日</b>解锁；最后一批在 <b>2026 年 11 月 22 日</b>解锁。<b>今天仍有 47,313,125 处于锁定状态</b>，此刻没有任何可提取的部分。</p>
+      <p>剩下的批次落在 2026 年 9 月 3 日、13 日、23 日；10 月 3 日、13 日、23 日；以及 11 月 2 日、12 日、22 日 &mdash; 九批，每批 5,257,014 NLYRA。</p>
+      <p><b>这个时间表已经不可能被任何人改动了。</b>PinkLock 的 <code>editLock</code> 在一个锁被提取过之后就会 revert，而这个锁已经被提取过了。即便在第一次领取之前，它也只能把日期往后推或者往里加代币，永远没法把日期提前。</p>
+      <p>照这个来做打算：<b>从现在到 2026 年 11 月 22 日，总量的 5.26% 会进入流通盘。</b>如果你在哪里读到过「团队代币被锁住了」并且以为是好几年，这才是真正的时间表。</p>
+    </div>
+    <div class="note">
+      <span class="lbl">锁 2 &mdash; 流动性。根本不是一个计时器。</span>
+      <p>整个发行时的流动性头寸（Uniswap V3 NFT <b>#430660</b>，占<b>全部 NLYRA 流动性的 99.7%</b>）由 <b>PonsLaunchLocker</b> <code class="cp" data-c="0x736D76699C26D0d966744cAe304C000d471f7F35">0x736D76699C26D0d966744cAe304C000d471f7F35</code> 持有。</p>
+      <p>那个合约完整的非 view ABI 里<b>没有提取、没有解锁、没有 <code>decreaseLiquidity</code>，也没有任何把 NFT 转出去的办法</b>，而且它不是代理，所以也加不上去。它不是一个会到期的计时器 &mdash; <b>根本就不存在释放它的代码路径</b>。</p>
+      <p>两条诚实的脚注。这个锁仓合约<b>不是无主的</b>：它由第三方 Pons 持有，地址是 <code>0x263ed295dAFaE1d9AAdD6E56c4B6F9f38eE019Dd</code>。那个 owner 仍然没有任何函数可以移动这个头寸。另外，那些报告 NLYRA「LP 未锁仓」的自动扫描器，读的是它们自己的锁仓合约注册表，而那个注册表并不索引这条链 &mdash; 请改去读这个锁仓合约的 ABI，那比一个注册表标记是更强的证据。</p>
+    </div>
+    <h4>代币合约本身能做什么</h4>
+    <p>一共存在四个非 view 函数：<code>approve</code>、<code>transfer</code>、<code>transferFrom</code>，以及一个在发行时使用、如今已永久失效的 setter（它只能由发行工厂调用，而且只在一个要求处于发行区块的分支里被读到，那个区块在大约 2100 万个区块之前）。<b>没有 owner 变量，没有 mint，没有黑名单，没有暂停，没有转账税</b> &mdash; 这是对照已部署的字节码验证的，那份字节码里同样含有零个 <code>DELEGATECALL</code>、<code>SELFDESTRUCT</code>、<code>CREATE</code> 和 <code>CREATE2</code> 操作码。</p>
+    <!--TODO-VERIFY: four plain EOAs hold 1.53%, 1.53%, 1.22% and 0.60% of supply with no established on-chain link to the treasury. A first-inbound-transfer funding trace on each is needed before this page makes ANY claim about insider concentration in either direction. None is made here. -->
+    <div class="todo"><p><b>本页不作主张的一点：</b>其余那些大持币者是否互不相关。有四个普通钱包各自持有 0.6% 到 1.5%，还没有对它们跑过资金来源追踪，所以本页对内部人集中度不作任何方向上的断言。你可以自己去 <a href="https://nlyra.xyz/zh/map">Constellation</a> 里看它们，它就是为这件事造的。</p></div>
+  </article>
+
+  <article class="blk" id="revenue" data-t="生态收入去了哪里">
+    <h3>生态收入去了哪里</h3>
+    <div class="tw"><table class="t">
+      <tr><th>来源</th><th>费率</th><th>去向</th></tr>
+      <tr><td>The Desk &mdash; 每一笔已成交的交易</td><td>1%（被推荐 0.9%）<span class="what">今天的链上区间：最低 0.9%，最高 2%；绝对上限 3%，不换一个新的路由就抬不上去</span></td><td><b>30% 给推荐人</b>，由手续费路由在链上按收取手续费时所用的资产记账，随时可以领取。剩下的 70% 进金库 <code>0xe30647&hellip;e04C</code>。<b>这 30% 是当前政策，不是保证</b> &mdash; owner 可以把将来手续费里的推荐人分成设为零，不过已经累积的余额仍然可以领取。</td></tr>
+      <tr><td>Predict &mdash; NLYRA 池</td><td>奖池的 3%</td><td>金库。只在一轮结算出赢家时收取；平局或退款不收任何费用。</td></tr>
+      <tr><td>Architect Swap &mdash; V2</td><td>交易量的 0.05%<span class="what">从 0.3% 的兑换手续费里出；0.25% 归流动性提供者</span></td><td>金库。</td></tr>
+      <tr><td>Architect Swap &mdash; V3</td><td>池子费率档的 1/4<span class="what">3/4 归流动性提供者</span></td><td>金库。</td></tr>
+      <tr><td>Architect Launch &mdash; 池子手续费</td><td>池子那 1% 手续费的 10% 或 20%<span class="what">创建者在 Architect Swap V3 上永久保留 90%，在 Uniswap V3 上永久保留 80%</span></td><td>协议的那一份；<b>其中 50% 会在市场上买入 $NLYRA 并送到 <code>0xdEaD</code></b>，通过位于 <code>0x371bB210&hellip;73151926</code> 的 Buyback Burner 完成，它没有 owner，任何人都可以触发。</td></tr>
+      <tr><td>Architect Launch &mdash; Holder Rewards 场地</td><td>池子那 1% 手续费的 20%<span class="what">30% 给创建者，50% 撒给持币者</span></td><td>协议的那一份，去向同上。</td></tr>
+      <tr><td>Liquidity Desk</td><td>利润的 20% + 退出时 0.5%<span class="what">没有管理费</span></td><td>回购销毁地址。</td></tr>
+      <tr><td>赏金任务</td><td>2%，仅在成功时</td><td>金库。被退款或被取回的赏金不收任何费用。</td></tr>
+      <tr><td>API &mdash; Starter key</td><td>30 天 $29，以 USDG 支付</td><td>金库。</td></tr>
+      <tr><td>Lyra Shield</td><td><b>0%</b><span class="what">约 0.0003 ETH 的预付是用来覆盖你将来提取时的 gas &mdash; 它不是手续费</span></td><td>中继者的 gas。</td></tr>
+      <tr><td>Architect Stake 创建者矿池 &middot; $NLYRA 质押 &middot; 治理 &middot; 扫描器 &middot; 钱包检查 &middot; Constellation &middot; The Key</td><td><b>0%</b></td><td>这些产品的代码里都不存在协议费。</td></tr>
+      <tr><td>对你利润的业绩提成</td><td><b>0%</b></td><td>任何产品上都从不收取。</td></tr>
+    </table></div>
+    <!--TODO-VERIFY: the treasury address for Desk fees is recorded as TREASURY 0xe30647793192D15BFA6E53aE8651368d332fe04C in /root/desk-deploy/desk-addresses.json, with a TREASURY_OLD_LOCKED at 0x371bB2107f6E021EF2a5a980a9204F5a73151926 (the Buyback Burner). Whether the current treasury also feeds the burner, and what the split is, was NOT verified on-chain in this pass. Do not state a destination for the 70% beyond "the treasury" until it is. -->
+    <div class="todo"><p><b>这里还没有说的：</b>金库拿到它那一份之后会怎么处理。Desk 的手续费金库是 <code>0xe30647793192D15BFA6E53aE8651368d332fe04C</code>，它的转出在 Blockscout 上是公开的，但这项政策还没有为本页做过链上核实，所以这里不主张任何分配方式。</p></div>
+  </article>
+</section>
+
+<section class="ch" id="troubleshooting" data-t="故障排查">
+  <h2>4 &middot; 故障排查</h2>
+  <p class="chsub">真正会出问题的那些事，以及每一件到底意味着什么。Desk 专有的报错在 <a href="/desk/docs#faq">Desk 手册 §15</a> 里有更长的一份清单。</p>
+
+  <article class="blk" id="tr-connect" data-t="我的钱包连不上">
+    <h3>我的钱包连不上</h3>
+    <div class="wrapd">
+      <details open><summary>在手机上点连接按钮没有任何反应</summary><div class="a">
+        <p>你几乎肯定是在 Safari 或 Chrome 里。<b>钱包 App 的私钥在手机的普通浏览器里够不到</b>，所以页面根本没有可以连接的对象。</p>
+        <p>请在你钱包 App 自带的浏览器里打开 <b>nlyra.xyz</b> &mdash; 每个主流钱包都有一个（MetaMask &rarr; Browser，Trust &rarr; DApps，Coinbase Wallet &rarr; 指南针图标）&mdash; 然后从那里连接。</p>
+        <p>如果你要走自助提取那条路，Blockscout 的写入表单也是同理：那个链接也要在钱包 App 里打开。</p>
+      </div></details>
+      <details><summary>「No wallet detected」</summary><div class="a">
+        <p>本站<b>只支持注入式钱包</b> &mdash; MetaMask、Rabby，或者钱包 App 自带的浏览器。没有 WalletConnect，也没有邮箱登录。装一个，或者在你的钱包 App 里打开本站。</p>
+      </div></details>
+      <details><summary>连上了，然后马上就断开</summary><div class="a">
+        <p>通常是钱包被锁了，或者站点权限被撤销了。先解锁钱包，然后在钱包的<b>已连接站点</b>列表里移除 nlyra.xyz，再从头连接一次。在 MetaMask 里，把账户的交易缓存硬重置一下（设置 &rarr; 高级 &rarr; 清除活动标签页数据）也能清掉一个卡住的 nonce。</p>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="blk" id="tr-network" data-t="网络不对 / 我有 ETH 但站上说我没有">
+    <h3>网络不对，或者「我有 ETH 但它显示为零」</h3>
+    <div class="wrapd">
+      <details open><summary>「把你的钱包切换到 Robinhood Chain」</summary><div class="a">
+        <p>你的钱包在另一条网络上。本站会提出帮你切换，如果你没有这条网络，也会提出帮你添加。如果你的钱包拒绝自动切换，就按 <a href="#add-network">§1 &middot; 把网络加进来</a>里的确切设置手动添加 &mdash; 链 ID 是 <b>4663</b>。</p>
+        <p>每一笔交易在构造之前都会重新核对所在的链，所以不可能不小心签出一笔在错误网络上的交易。</p>
+      </div></details>
+      <details><summary>我有 ETH，但站上说我没有</summary><div class="a">
+        <p><b>你的 ETH 在另一条链上。</b>以太坊、Arbitrum 或 Base 上的 ETH 不是 Robinhood Chain 上的 ETH &mdash; 它必须先跨链到这条链上。<a href="#get-gas">§1 &middot; 搞到 gas</a> 里列了三条进来的路。</p>
+        <p>这是新用户被卡住的头号原因。在你怀疑别的东西坏掉之前，先看一眼钱包里的网络名称。</p>
+      </div></details>
+      <details><summary>RPC 超时，或者页面加载不出数据</summary><div class="a">
+        <p>试试直接用这条链的公共 RPC：<code>https://rpc.mainnet.chain.robinhood.com</code>。如果你的钱包里给链 4663 存了一个自定义的或者过时的 RPC，把这条网络删掉，再用<a href="#add-network">官方设置</a>重新加一遍。如果 Blockscout 看起来也是旧的，那就是链本身出了一阵状况 &mdash; 你在那种状态下签的东西不会丢，只是不会被确认。</p>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="blk" id="tr-tx" data-t="一笔交易在 pending、失败或 revert 了">
+    <h3>一笔交易在 pending、失败或 revert 了</h3>
+    <div class="wrapd">
+      <details open><summary>我的交易 revert 了。钱是不是没了？</summary><div class="a">
+        <p><span class="no">没有。</span>一笔 revert 的交易什么也不会做 &mdash; 就跟它从来没发生过一样，只不过你付掉了 gas（大约 $0.007）。</p>
+        <p>常见原因是从你按下按钮到区块落地之间，价格越过了你的滑点。再试一次，或者把滑点上调一档。在一个走得很快的代币上，3% 常常不够。</p>
+      </div></details>
+      <details><summary>它「pending」了好一会儿了</summary><div class="a">
+        <p>这条链的出块大约 100 毫秒，所以真正意义上的 pending 很罕见，通常意味着 nonce 出现了缺口：同一个钱包更早的一笔交易卡在它前面。打开钱包的活动列表，找到最旧的那笔待处理项，要么给它加速，要么取消它 &mdash; 排在它后面的所有东西都在等它。</p>
+        <p>把哈希粘进 <a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Blockscout</a> 看真相。浏览器上的记录才是记录；站点的界面只是它的一个视图。</p>
+      </div></details>
+      <details><summary>「refused:」&mdash; 那是什么？</summary><div class="a">
+        <p>一道安全检查发现服务器构造出来的交易和你屏幕上显示的东西对不上，而且是<b>在你的钱包被打开之前</b>发现的。什么都没有被签名，也什么都没有被花掉。</p>
+        <p>它核对目标合约、链、代币、金额、最小输出、手续费和推荐人 &mdash; 对照的是原始 calldata，而不是服务器对它的描述。重新报价，然后再试一次。<b>如果它反复出现，那说明真的有什么不对劲，你不应该硬闯过去</b> &mdash; 请改为<a href="https://nlyra.xyz/report?from=docs-refused">上报它</a>。</p>
+      </div></details>
+      <details><summary>「价格变动了。看一下新的数字，然后再点一次。」</summary><div class="a">
+        <p>新的报价和给你看过的那个差了超过 3%，所以这笔交易在到达你的钱包之前就被拦下了，面板会用真实的数字重画一遍。我们绝不会让你去签一笔在你做完决定之后条件已经变了的交易。</p>
+      </div></details>
+      <details><summary>我拿到的比报价上暗示的少很多</summary><div class="a">
+        <p>有三种可能的原因，按可能性排序：<b>价格冲击</b>（你自己的单子推动了池子 &mdash; 报价行从 1% 起就会显示它）、<b>hook 池</b>（有些 V4 池在每一笔兑换上额外收 1&ndash;2%；它是被测量出来的，而且已经算在报价里了），或者<b>代币本身带转账税</b>。<a href="/desk/docs#fees">完整拆解 &rarr;</a></p>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="blk" id="tr-bot" data-t="机器人不执行了">
+    <h3>机器人不执行了</h3>
+    <div class="wrapd">
+      <details open><summary>好一阵子没有成交了 &mdash; 是 Keeper 挂了吗？</summary><div class="a">
+        <p>机器人是由 Keeper 这个链下进程执行的。当它挂掉时，机器人主页会显示一个 <b>keeper offline</b> 标记。在那种状态下：不买、不卖、不止盈，<b>也不止损</b>。</p>
+        <p><b>无论如何，你的钱都是安全的，也可以取出来</b> &mdash; 提取不需要 Keeper、不需要服务器，也不需要网站。但你所依赖的那道保护此刻不在。如果你原本指望着一个止损，请<a href="#emergency">把资金取出来，改为手动管理这个仓位</a>。</p>
+      </div></details>
+      <details><summary>我的止损没有触发</summary><div class="a">
+        <p>止损是由 Keeper 执行的，不是合约自己触发的。如果 Keeper 挂了，就什么也不会触发。这是平台上每一个自动离场机制诚实的局限所在。</p>
+      </div></details>
+      <details><summary>我的网格显示「Out of range」，不再交易了</summary><div class="a">
+        <p>价格已经离开了你设定的区间。在区间上方，一切都被卖掉了，机器人现在拿着 ETH。在区间下方，一切都被买入了，你现在是亏损地持有着这个代币。这两种状态本身都不会让你的钱消失 &mdash; 你随时可以停掉机器人，把任意一边取回来。你失去的是机会。<a href="/desk/docs#bot-infinity">Infinity Grid</a> 没有上边界，所以当你对顶部没有看法时，它是更好的选择。</p>
+      </div></details>
+      <details><summary>「Not profitable &mdash; not created」</summary><div class="a">
+        <p>这套配置赚不到钱。一个网格在买卖两条腿上各付 1% 手续费，再加两次池子手续费，所以档位之间的净间距如果小于大约 2.5%，就必定亏损。这条拒绝信息会给出你自己的确切数字，以及你这个区间所允许的最大网格数。把区间拉宽、少用几个网格，或者挑一个更便宜的池子。<b>合约会独立地强制执行同一条下限</b>，所以它不是任何人可以豁免的一个设置。</p>
+      </div></details>
+      <details><summary>价格明明打到了，我的限价单却一直没成交</summary><div class="a">
+        <p>被强制执行的是<b>你签名时的最小输出</b>，而不是你输入的那个价格。如果流动性变薄了，池子可以打出你的价格，却无法在你的规模上付出你的最小输出。其他可能：订单过期了、下单之后你的余额或 Permit2 授权发生了变化，或者 Keeper 挂了。一条 FAILED 记录会带上原因。</p>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="blk" id="tr-blockscout" data-t="直接从 Blockscout 取消或提取">
+    <h3>怎么直接从 Blockscout 取消或提取</h3>
+    <p>这条路不需要我们提供任何东西：不需要网站，不需要 API，也不需要 Keeper。它在站点挂掉时能用，在站点再也回不来时也能用。</p>
+    <ol>
+      <li>打开持有你仓位的那个合约 &mdash; 地址在 <a href="#desk-contracts">§3 &middot; The Desk 合约</a>里。如果你不知道是哪个版本持有它，<a href="https://nlyra.xyz/desk/help/bots">救援指南里的机器人 id 查找器</a>会从你的钱包地址读出来。</li>
+      <li>进入 <b>Contract</b> 标签页 &rarr; <b>Read Contract</b>。查一下你的机器人 id，确认 <i>maker</i> 字段就是你的地址。</li>
+      <li>切换到 <b>Write Contract</b>，按 <b>Connect wallet</b>。<b>在手机上，请在你钱包 App 的浏览器里打开那个 Blockscout 链接</b> &mdash; 写入表单在 Safari 或 Chrome 里够不到你的私钥。</li>
+      <li>调用对应你这种仓位类型的函数：
+        <div class="tw" style="margin-top:8px"><table class="t">
+          <tr><th>仓位</th><th>函数</th><th>参数</th></tr>
+          <tr><td>Infinity Grid、Spot Grid、DCA、TWAP</td><td><code>stop</code></td><td><code>id</code>、<code>route = 0x</code>、<code>minOut = 0</code>、<code>sellAll = false</code></td></tr>
+          <tr><td>Martingale</td><td><code>withdraw</code></td><td><code>id</code></td></tr>
+          <tr><td>Ladder</td><td><code>cancel</code></td><td><code>id</code></td></tr>
+          <tr><td>限价单</td><td><code>cancel</code></td><td>订单行上显示的那个订单哈希或 id</td></tr>
+          <tr><td>Predict</td><td><code>claim</code></td><td><code>[epoch, &hellip;]</code></td></tr>
+          <tr><td>$NLYRA 质押</td><td><code>exit</code></td><td>无</td></tr>
+        </table></div>
+      </li>
+      <li>在你的钱包里确认。资金会去到创建时记录的 maker 地址 &mdash; 也就是你的钱包，而且没有人能改它。</li>
+    </ol>
+    <div class="note">
+      <span class="lbl">不要靠猜来填参数</span>
+      <p>救援指南里有每种机器人类型对应的确切字段值，还有一张列出每一条 revert 信息及其含义的表格：<a href="https://nlyra.xyz/desk/help/bots"><b>The Desk &middot; 机器人：怎么把你的钱取出来</b></a>。</p>
+    </div>
+  </article>
+
+  <article class="blk" id="tr-siteDown" data-t="网站挂了 —— 我怎么拿到我的资金？">
+    <h3>网站挂了 &mdash; 我怎么拿到我的资金？</h3>
+    <p>关于你的钱，没有任何一件事取决于 nlyra.xyz 能不能打开。按优先顺序：</p>
+    <ol>
+      <li><b>打开救援指南。</b><a href="https://nlyra.xyz/desk/help/bots">nlyra.xyz/desk/help/bots</a> 是一个单独的、自包含的文件 &mdash; 现在就用 Ctrl+S / Cmd+S 存下来，它离线之后照样能用，机器人 id 查找器也一样，因为它是直接跟链的 RPC 对话的。</li>
+      <li><b>用站外镜像。</b>如果这个域名没了，同一份指南托管在 GitHub Pages 上，跑在不是我们运维的基础设施上：<a href="https://nlyraproject.github.io/nlyra-desk-rescue/" target="_blank" rel="noopener">nlyraproject.github.io/nlyra-desk-rescue</a>。</li>
+      <li><b>直接用 Blockscout。</b><a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">robinhoodchain.blockscout.com</a> 加上<a href="#tr-blockscout">上面那几步</a>。把 <a href="#desk-contracts">§3</a> 里的合约地址收藏起来。</li>
+      <li><b>用任何能调用合约的工具。</b>ABI 都在 Blockscout 上。提取路径里没有任何专有的东西。</li>
+    </ol>
+    <div class="note warn">
+      <span class="lbl">在你需要它之前就把这件事做了</span>
+      <p>趁一切都还正常的时候，把救援页面存下来，把你的机器人 id 记下来。一条你从来没打开过的救援路径，就是一条你要在压力之下现学的救援路径。</p>
+    </div>
+  </article>
+
+  <article class="blk" id="tr-report" data-t="还是卡住了">
+    <h3>还是卡住了</h3>
+    <p>两个地方，都是真的有人看：</p>
+    <ul>
+      <li><a href="https://nlyra.xyz/report?from=docs-troubleshooting"><b>报告一个 bug 或者提一个改进建议</b></a> &mdash; 直接送到 Architect 那里。请附上页面、你原本预期会发生什么，以及交易哈希（如果有的话）。</li>
+      <li><a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener"><b>Telegram 群</b></a> &mdash; 问「我这样做对不对」这类问题会更快。</li>
+    </ul>
+    <div class="note bad">
+      <span class="lbl">不会有任何人向你索要助记词</span>
+      <p>我们不会，客服不会，「验证机器人」不会，私信里也不会。不存在任何一种情况，需要 NLYRA 的任何人拿到你的助记词或私钥才能帮你。任何开口要的人都是在偷你的钱。我们也从不主动私信。</p>
+    </div>
+  </article>
+</section>
+
+<section class="ch" id="updates" data-t="更新">
+  <h2>5 &middot; 更新</h2>
+  <p class="chsub">每周五发布。每次都是五个小标题：已修复 &middot; 已改进 &middot; 新增 &middot; 已知问题 &middot; 合约变更。某一周如果某个小标题下面是空的，就直接省掉，而不是硬凑。</p>
+
+  <article class="blk" id="changelog" data-t="每周更新日志">
+    <h3>每周更新日志</h3>
+    <div class="note">
+      <span class="lbl">「合约变更」该怎么读</span>
+      <p>这里没有任何东西是可升级的，所以一个合约永远不会原地改变。「合约变更」的意思是<b>部署了一个新地址，而站点现在指向它</b>。你已有的仓位会留在它们开出来的那个合约上，并继续正常运作 &mdash; 见 <a href="#versions">§3 &middot; 当前版本与历史版本</a>。</p>
+    </div>
+    <div class="cl" id="cl-out"></div>
+  </article>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       CHANGELOG DATA — this is the only block you edit to publish an
+       update. Add the new entry at the TOP of the array. Nothing else
+       on this page needs to change.
+
+       Shape:
+         {
+           "date":  "2026-08-28",              ISO date, always a Friday
+           "no":    1,                          issue number
+           "title": "NLYRA Weekly Update #01",  shown as the heading
+           "note":  "optional one-line intro",  omit or "" for none
+           "fixed":     [ "…", "…" ],
+           "improved":  [ "…" ],
+           "new":       [ "…" ],
+           "known":     [ "…" ],
+           "contracts": [ "…" ]                 "None." is a valid entry
+         }
+       Any of the five lists may be omitted or left empty — empty lists
+       are not rendered. Plain text only; <b>, <code> and <a> are allowed.
+       ═══════════════════════════════════════════════════════════════ -->
+  <script type="application/json" id="changelog-data">
+[
+  {
+    "date": "2026-11-19",
+    "no": 13,
+    "title": "NLYRA Weekly Update #13 — NLYRA Launch is open",
+    "note": "The new launchpad of NLYRA is live on Robinhood Chain since 19 November 2026.",
+    "new": [
+      "<b>NLYRA Launch.</b> A launchpad where every coin signs five fixed rules, written in the contract: one price for everyone in the first 10 minutes, the creator's coins locked 7 days, 24 hours of notice before the creator sells, the creator's pay held about 14 days, and close and split if the coin dies. Page: <a href=\"/launch\">nlyra.xyz/launch</a>. How it works: <a href=\"#p-nlyra-launch\">§2 · NLYRA Launch</a>.",
+      "<b>Pairs.</b> A coin can be paired with ETH, USDG, NLYRA or a tokenized stock on Robinhood Chain (NVDA, TSLA, AAPL, SPY, QQQ, META, MSTR).",
+      "<b>The previous launchpad</b> (Architect Launch) moved to <a href=\"/launch-v1\">nlyra.xyz/launch-v1</a>. Its coins keep working, and they show in the Classics tab of the new page."
+    ],
+    "known": [
+      "NLYRA Launch coins trade on our page (nlyra.xyz/launch), in The Desk and, since 21 Nov 2026, in the Uniswap app, which routes their pools. Every trade goes through the coin's own Uniswap v4 pool and our hook. If Uniswap ever says \"no route\", nothing is broken and nobody's coins are stuck.",
+      "The five contracts are verified on RobinScan (robin.etherscan.io), on the chain's explorer (Blockscout) and on Sourcify."
+    ],
+    "contracts": [
+      "New: PactFactory <code>0xba29C06Fd0d656c2560f93A60B1A8B28d5a1e791</code>, PactHook <code>0x12c864a64F812BfaDE4e0b1D95EC18dAa45A2acC</code>, PactOpening <code>0x6703f112cE7CeE67703E21Aba6e81DC8219B476d</code>, PactVault <code>0x6CbE0C3e21F787915D98FE53CB9Bd67178a9cc3f</code>, PactDeployer <code>0xa9789341C8602a4284CBF79421b32bB115D4f993</code>. Table: <a href=\"#launch-contracts\">§3 · NLYRA Launch — contracts</a>."
+    ]
+  },
+  {
+    "date": "2026-10-28",
+    "no": 12,
+    "title": "NLYRA Weekly Update #12 — Scan a token, land on The Desk",
+    "note": "The Risk scan on the home page now opens Robinhood Chain tokens on The Desk: verdict, chart and trade on one page.",
+    "new": [
+      "<b>Risk scan opens The Desk.</b> Paste a Robinhood Chain token contract into the Risk scan on <a href=\"/\">nlyra.xyz</a>, or type a ticker like NLYRA, and it opens on its <a href=\"/desk/\">Desk</a> page: verdict and Risk Level, LYRA Analyze, Constellation map, Market structure, the live chart, and buy or sell from your own wallet. Tokens on other chains (Solana, Ethereum, BNB Chain and more) still open the scanner report, as before. The tokens in \"Happening now\" on the home page open on The Desk too.",
+      "<b>Scans on the spot.</b> If nobody had scanned a token yet, its Desk page now runs the scan itself and shows the verdict in about 20 seconds, instead of \"not scanned\".",
+      "<b>Full scan report button.</b> Every token page on The Desk now has a <b>Full scan report</b> button that opens the complete scanner report: threat score, taxes and liquidity, every warning and good sign, bundle detection and LYRA reading the code."
+    ],
+    "known": [
+      "A scan run on the spot counts toward the public scanner limit of 6 scans per 10 minutes per IP (60 with The Architect's Key). Tokens that already have a verdict show it right away and do not count."
+    ],
+    "contracts": [
+      "None."
+    ]
+  },
+  {
+    "date": "2026-10-27",
+    "no": 11,
+    "title": "NLYRA Weekly Update #11 — NLYRA is on BNB Chain",
+    "note": "Second chain for the token, same bridge, same supply.",
+    "new": [
+      "<b>NLYRA on BNB Chain.</b> Official contract <code>0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec</code> (NlyraOFT, LayerZero V2), verified on BscScan. Minted 1:1 against NLYRA locked in the same adapter on Robinhood Chain that serves Arbitrum. Any other \"NLYRA\" on BNB Chain is fake.",
+      "<b>Bridge.</b> <a href=\"/bridge/\">nlyra.xyz/bridge</a> now has two destinations: Arbitrum One and BNB Chain. Same rules: two required verifiers (LayerZero Labs + Nethermind), pinned libraries, 20,000,000 NLYRA per day per direction, no NLYRA fee.",
+      "<b>Market on BNB Chain.</b> PancakeSwap v3 pool NLYRA/WBNB (1% fee) <code>0x818DFf9130c4882e4A947F167aFbd6A834c8b3cd</code> with treasury liquidity."
+    ],
+    "contracts": [
+      "New: NlyraOFT on BNB Smart Chain (chainId 56) <code>0x10Bd775269A3D53b056F43d9f5B3EeAc17166Bec</code>. The adapter on Robinhood Chain <code>0xe7b3171b76B959Db805874926aA0D62b1A5d3264</code> got the BNB Chain pathway (peer, libraries, DVNs, daily cap); nothing else changed. Full list in <a href=\"/docs#bnb-contracts\">Contracts &amp; Security</a>."
+    ]
+  },
+  {
+    "date": "2026-10-26",
+    "no": 10,
+    "title": "NLYRA Weekly Update #10 — The Desk bots are live on BNB Chain",
+    "note": "Our first products on a second chain. Same bots, same keeper, PancakeSwap instead of Uniswap.",
+    "new": [
+      "<b>Bots on BNB Chain.</b> <a href=\"/bsc\">nlyra.xyz/bsc</a>: Infinity Grid and Spot Grid on PancakeSwap, on paper or for real, in BNB, USDT or USDC. Contracts deployed on 24 October, real bots open since 24&ndash;26 October. Every real bot is a position in an immutable contract under your wallet; our keeper trades it and only you can close it.",
+      "<b>Paper mode stays.</b> Live PancakeSwap quotes, nothing on chain, under your wallet from any device. Switch to Real when you are ready; a real bot is one transaction.",
+      "<b>Leaderboard and Copy.</b> Real and paper boards apart; Copy opens the studio with the same grid.",
+      "<b>Security check on every pair</b> before a bot opens: tax, honeypot and liquidity (GoPlus), with a tax cap of 5%."
+    ],
+    "improved": [
+      "My bots no longer mixes real and paper: each mode shows only its own, with one line to switch to the other.",
+      "Share card: P&amp;L in dollars at the Desk's BNB price, and the official link nlyra.xyz/bsc."
+    ],
+    "known": [
+      "Fees on BNB Chain: 50% of the router's fees go to the stakers on Robinhood Chain, like everywhere else. The collector and the bridge path are deployed and being switched on; the <a href=\"/fees\">/fees</a> page shows BNB Chain as \"setting up\" until then.",
+      "$NLYRA is not on BNB Chain yet. Any NLYRA token on BNB Chain today is fake. The bridge opens next, and the address will be on <a href=\"/docs#bnb-contracts\">this page</a> first."
+    ],
+    "contracts": [
+      "New, all on BNB Chain (chainId 56) and verified on BscScan: ArchitectFeeRouterBSC <code>0x0e86a190F7D92031CA181A50E5E21DaBB530c0E6</code>, ArchitectInfinityGridV4BSC <code>0xE878aa6bE4c5429a5006A516C720A1232Bf18a8a</code>, ArchitectInfinityGridV41BSC <code>0x354Ade1eE04D44B21c037Af8A61189d647027cBE</code>, ArchitectSpotGridV4BSC <code>0x8a678c93f745A853865F5718F9fbb6239e1837e1</code>. Keeper <code>0xfBc9CFf9579578C942cf9E7ab30189EAb8c0714B</code>, fee collector <code>0xbf98Df1Ff6072C7278c58536Ac6dd8C155198d62</code>. Nothing on Robinhood Chain changed. Full list in <a href=\"/docs#bnb-contracts\">Contracts &amp; Security</a>."
+    ]
+  },
+  {
+    "date": "2026-10-19",
+    "no": 9,
+    "title": "NLYRA Weekly Update #09 — NLYRA is on Arbitrum",
+    "note": "First bridge to another chain. Same token, same supply, verified end to end.",
+    "new": [
+      "<b>Bridge to Arbitrum One.</b> <a href=\"/bridge/\">nlyra.xyz/bridge</a> moves NLYRA between Robinhood Chain and Arbitrum in 1&ndash;5 minutes, both directions, with LayerZero V2 (OFT). Lock on Robinhood, mint on Arbitrum, burn to come back. No NLYRA fee; you pay the LayerZero message (~0.0001 ETH) and gas. Daily cap 20,000,000 per direction. Two required verifiers (LayerZero Labs + Nethermind), libraries pinned.",
+      "<b>NLYRA on Arbitrum.</b> Official contract <code>0x834e80509b23dC82d79F982510a32348986B06b5</code>, verified on Arbiscan and Sourcify. Any other \"NLYRA\" on Arbitrum is fake.",
+      "<b>Uniswap v3 pool on Arbitrum</b> (NLYRA/WETH, 1% fee) with treasury liquidity, and a price keeper that keeps the Arbitrum price within about 1% of Robinhood Chain.",
+      "<b>Explorer.</b> Robinhood Chain now has an Etherscan explorer (<a href=\"https://robin.etherscan.io\" target=\"_blank\" rel=\"noopener\">robin.etherscan.io</a>); our contracts show as verified there too."
+    ],
+    "improved": [
+      "Official X account is now <a href=\"https://x.com/nlyraproject\" target=\"_blank\" rel=\"noopener\">@nlyraproject</a> (linked from the site). CoinGecko has been asked to list the Arbitrum contract and the new X account; DEX Screener to link both tokens as one project."
+    ],
+    "known": [
+      "On DEX Screener the Arbitrum pair shows a tiny market cap: it uses the supply of the Arbitrum contract (only what has been bridged so far). It will show the project market cap once CoinGecko lists the Arbitrum contract."
+    ],
+    "contracts": [
+      "New: NlyraOFTAdapter on Robinhood Chain <code>0xe7b3171b76B959Db805874926aA0D62b1A5d3264</code>; NlyraOFT on Arbitrum One <code>0x834e80509b23dC82d79F982510a32348986B06b5</code>. Nothing existing changed."
+    ]
+  },
+  {
+    "date": "2026-10-14",
+    "no": 8,
+    "title": "Security note — launchpad report credited",
+    "note": "A security researcher reported a launchpad issue to us before anyone used it. Credit where it is due.",
+    "known": [
+      "Launchpad: a griefing issue that could block new launches (nobody's funds are at risk, and launches that already happened are not affected). Confirmed by our own audit of 10 October; the fix is being built and will be listed here under Contracts changed when it ships. Reported by onlyzack46 (<a href=\"https://x.com/pandanesse05\" target=\"_blank\" rel=\"noopener\">@pandanesse05</a> on X) on 13 October 2026. Thank you.",
+      "Wording on <a href=\"/otc\">/otc</a> (\"not deployed yet\") and on <a href=\"/agents\">/agents</a> (the \"real sell test\" line) is outdated and is being corrected. Also from the same report."
+    ],
+    "contracts": [
+      "None."
+    ]
+  },
+  {
+    "date": "2026-09-20",
+    "no": 6,
+    "title": "NLYRA Weekly Update #06",
+    "note": "Paper mode for the Sniper, and expired ladders now empty themselves back to your wallet.",
+    "new": [
+      "<b>Paper mode for the Sniper.</b> Test a launch-sniping strategy with zero risk: no deposit, no gas, no contract. A paper bot runs your exact rules on the live Pons feed and books simulated fills two seconds after each decision, at the real curve or pool price at that moment, minus the 1% fee and gas, through the same slippage and take-profit / stop-loss checks the contract enforces, so the numbers stay honest. Same positions table, fills and PnL as a real bot, tagged PAPER and never mixed into your real totals. Up to three per wallet. When you like what you see, <i>Go live with this strategy</i> opens the real Sniper with the same settings."
+    ],
+    "fixed": [
+      "<b>Expired ladders.</b> A ladder past its expiry kept the unfilled part in the escrow until someone called <code>cancel</code> or <code>refundExpired</code>, and the page showed it with a green check and no button, so it looked finished. Now the page shows EXPIRED · IN ESCROW with a Withdraw button, and the keeper calls <code>refundExpired(id)</code> for you within a minute of expiry, on our gas. It only ever pays the maker."
+    ]
+  },
+  {
+    "date": "2026-09-20",
+    "no": 5,
+    "title": "NLYRA Weekly Update #05",
+    "note": "The Sniper is live for everyone on /desk/bots: a configurable launch sniper, the fourth non-custodial bot. Same rules as the others: your ETH in your own bot, the keeper only runs your strategy, stop returns everything.",
+    "new": [
+      "<b>Sniper &mdash; configurable launch sniping.</b> The fourth bot of the family. Pons launches arrive ten a minute and the curve taxes early buys 99% in the first second, 7% in the second, 1.2% in the third and 1% after that &mdash; we measured it on-chain and built the bot around it. You deposit ETH and a gas reserve in your own bot, pick a preset (the one we run ourselves, with its live numbers on the page) or set every rule yourself: sources (Pons launches, a watchlist of tokens you choose), entry timing (instant, first outside buyer, or a volume confirmation in N seconds), filters (creator pre-buy, bundle size, buyers, no sells, run-up, blacklist), exits (take profit, stop loss, trailing, partial, quiet timer, max hold, moon bag) and pace. The contract only enforces your money limits; the strategy is yours and changes without a transaction. Non-custodial like every Desk bot: <code>stop(id)</code> returns everything, and a token that refuses transfers can never lock your ETH. Trading new tokens is high risk: you choose the strategy, you own the outcome."
+    ],
+    "contracts": [
+      "<b>ArchitectSniper</b> <code>0x6B30B094&hellip;66b5C84c</code> &mdash; new, verified on Blockscout (full match) and Sourcify (exact match). Fee 1% per buy and sell (router on pools, WETH to the treasury on curves); constructor pins the Pons curve factory; 24,527 bytes of runtime, 126 checks on a fork of our node against a live curve, including a fake curve, a token that refuses transfers inside stop(), a capped buy that refunds ETH and a graduated curve."
+    ]
+  },
+  {
+    "date": "2026-09-14",
+    "no": 4,
+    "title": "NLYRA Weekly Update #04",
+    "note": "Bots v3 and Shadow copy trading are public. The bots page has one gallery again, the new generation first.",
+    "new": [
+      "<b>Send to another wallet.</b> On any buy or sell in the Desk you can now name the wallet that receives the tokens or the ETH: pay from the wallet that signs, hold in the one you choose, one transaction. A tiny verified contract (<code>0x0eF655f1&hellip;52d1Ddc0</code>) on top of the fee router, which keeps validating everything as before. It is a convenience, not privacy: the chain still shows who paid and who received.",
+      "<b>Bots v3 is public.</b> <b>Spot Grid v3 &middot; Compound</b> and <b>Infinity Grid v3 &middot; Compound</b> are on <a href=\"/desk/bots\">/desk/bots</a> for everyone, first in the gallery. Each bot carries a small gas reserve that pays for its own fills and refunds the remainder on stop, and reinvests what it earns: the spot grid puts every closed level into the next buy, the infinity grid grows the position it keeps. PnL is shown net of gas. The v2 grids stay only for bots already running and will be retired.",
+      "<b>Shadow &mdash; copy trading.</b> Follow any wallet. Every ETH-quoted swap it makes is mirrored from your own escrow at your size, with a per-trade amount, a cap per token, a maximum number of open positions, your own stop-loss and take-profit per position, and a gas reserve. The leader never touches your money and the keeper can only mirror within the limits your bot stores on-chain. Stop returns the ETH, the unused gas and every open position; <i>Sell positions &amp; stop</i> sells them first.",
+      "<b>Leaders ranked by what a copier would have made, not by their own profit.</b> A wallet that is first into every launch looks brilliant on Smart Money and loses money for anyone who arrives five seconds later. The Shadow picker runs a copy backtest over the last seven days &mdash; same trades, five seconds late, the fee on both legs, dead bags at zero &mdash; and shows that number; snipers are labelled, wallets quiet for twelve hours drop to the bottom, and the preview says in plain words when copying a wallet would have lost.",
+      "<b>The leader's last 20 trades</b> are shown on the Shadow page before you commit, with the ones that would be mirrored marked.",
+      "<b>Full wallet history from the chain.</b> The wallet card on a token page now reconstructs every buy and sell that wallet ever made in that token from our own node, not only the last 24 hours, with PnL including what it still holds.",
+      "<b>Wallet avatars.</b> The 8&times;8 blockies are gone; every wallet gets the animal and colour of its alias, everywhere."
+    ],
+    "improved": [
+      "<b>One bots gallery.</b> The v3 types come first with a banner; the v2 grids sit at the end tagged legacy. The simple page (<code>/desk/bots2</code>) points to the full page for the new bots.",
+      "<b>Bot page actions</b> (stop, gas, limits, compound) are grouped in the right column on desktop.",
+      "<b>Gas per mirror</b> on Shadow is estimated from measured mainnet fills (about 320k gas), so the suggested reserve is smaller."
+    ],
+    "fixed": [
+      "<b>Self-referral.</b> A trader whose own name was in the referral link got a <i>bad referral</i> error on every trade. The link is ignored when it points to yourself.",
+      "<b>Launchpad on MetaMask mobile.</b> <i>Creation failed</i> / <i>Failed to fetch</i> came from MetaMask estimating gas against the public RPC; the page now estimates on our node, shows the real error text, and offers our RPC.",
+      "<b>Holder Rewards launches were not announced.</b> LYRA now watches that factory too."
+    ],
+    "known": [
+      "<b>Copy trading in a launch-sniper market is hard.</b> In the first mainnet round only about a fifth of the Smart Money wallets were copy-positive over seven days, and most of those trade in bursts and go quiet. The ranking is honest about it; treat Shadow as a tool, not a promise.",
+      "<b>Pools quoted in stock tokens</b> (GME, NVDA&hellip;) are not priced by the indexer yet, so their swaps show without a dollar value."
+    ],
+    "contracts": [
+      "<b>Three, all verified on Blockscout (full match) and Sourcify (exact match).</b> <b>ArchitectSpotGridV4</b> <code>0xF8ef5260&hellip;2A659D5f</code> (Spot Grid v3 &middot; Compound), <b>ArchitectInfinityGridV4</b> <code>0xBdC77e3D&hellip;0b88DDeb</code> (Infinity Grid v3 &middot; Compound), <b>ArchitectShadow</b> <code>0xE26dd0A0&hellip;B0B1B3D2</code> (Shadow). Withdrawal without the site: the same <code>stop</code> as before on the grids; <code>stop(id)</code> on Shadow. All three are in the <a href=\"/desk/help/bots\">rescue guide</a> and its bot-id finder."
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "no": 3,
+    "title": "NLYRA 每周更新 #03",
+    "note": "这一周，Desk 搬到了我们自己的节点上；第一批自己付燃气的机器人交到了测试者手里。",
+    "new": [
+      "<b>Desk 跑在我们自己的节点上。</b> 自 9 月 6 日周六起，价格、K 线、成交、持币者、顶级交易者和钱包画像都直接来自我们的 Robinhood Chain 节点和我们自己的索引 &mdash; 路径上没有任何第三方数据源 &mdash; 浏览器 <a href=\"/explorer\">nlyra.xyz/explorer</a> 也是我们自己的。第三方还做的事：蜜罐扫描器里的第二意见、Blockscout 上的源码核对、以及代币 logo（见下）。",
+      "<b>Bots v3 &mdash; 带复利的现货网格 &mdash; 已上主网，测试者在用。</b> 老网格做不到的两件事。每个机器人带一小笔<b>燃气储备</b>，每次成交的精确燃气从里面付；停止时剩余退回给你。已平网格的利润会<b>再投入</b>下一笔买单（可开关；你的已实现利润数字永远不会下降）。每条腿 1% 的费用不变，走同一个费用路由。尚未从站点链接；独立的测试页会并入机器人页面。",
+      "<b>顾及燃气的定档。</b> 在 Bots v3 里，自动模式会选择网格数，使燃气保持在一轮买+卖收益的约 15% 以下。手动设置的网格超过 25% 会有警告，燃气超过利润时会被拒绝 &mdash; 为 keeper 打工的机器人不会被创建。预览会把数字打出来。",
+      "<b>扣除燃气后的盈亏。</b> 在 Bots v3 里，每次成交的燃气都被记账并从总额里扣除，按成交、按机器人。Desk 和资金池的费用单独显示；它们本来就在每个金额里面，所以不会被重复扣除。",
+      "<b>机器人页面展示整个机器人。</b> 实时价格与下一笔买卖、把每个已挂订单画成横线并标出每次成交的 K 线图、订单梯、燃气表、每次成交及其交易 &mdash; 创建之前，预览里就有同样的图。面板可折叠，图表可拖动缩放，一点即全屏。",
+      "<b>成交带价格。</b> 代币页的成交流水重做了：每笔买卖都打印成交价、一个数量条、时间和钱包，灰尘成交被标为灰尘，而不是伪装成交易量。",
+      "<b>保留名称。</b> 项目名称 &mdash; NLYRA、NERON、LYRA、The Desk、Architect 及其形近写法 &mdash; 不能再被任何人注册为交易者名称。"
+    ],
+    "improved": [
+      "<b>网格档位按今天的美元显示。</b> 网格以 ETH 计价；它的美元标签只在创建当天算过一次，随 ETH 波动而漂移 &mdash; 有用户看着一条写着 0.000115$ 的卖出线在 0.000119$ 时没有成交，因为按那天的 ETH，这条线其实是 0.0001195$。现在档位、下一笔买卖和区间每次显示时都按当前 ETH 价格换算，旧现货网格和 v3 都是。",
+      "<b>成交历史保留七天。</b> 之前成交 24 小时后就被清理：我们索引链上每一笔成交 &mdash; 每天约 740 万笔 &mdash; 磁盘装不下更多。现在被机器人反复操作的约 180 个池（占该量的 81%）仍为 24 小时，其他所有代币保留七天。9 月 10 日之前的历史已不可恢复；从那时起累积。代币页上的交易者卡片 &mdash; 某个钱包买了什么、卖了什么 &mdash; 也能回溯同样的七天。",
+      "<b>代币 logo。</b> DexScreener 封锁了我们的服务器，八月以来发行的代币只显示一个字母。现在 logo 从 GeckoTerminal 慢速获取，每个代币一次；第一天找回 200 多个。项目方从未上传图片的代币仍显示字母。",
+      "<b>只画真实 K 线。</b> 代币页和机器人图表的每个时间框架都只画有成交的时段，紧密排列，薄池子就该这么读。"
+    ],
+    "fixed": [
+      "<b>看板上荒谬的百分比</b>（+128,879%、+3,961,183,202%）。比窗口更年轻的代币被拿去和它流动性近乎为零时的第一笔灰尘成交比较。现在比该列窗口更年轻的代币显示 <code>new</code>，超过 +10,000% 的以倍数打印，流动性低于 1000$ 的行在任何百分比排序中沉到底部。",
+      "<b>9 月 11 日约 50 分钟的陈旧价格。</b> 看板 API 重启后，整个列表显示了几小时前的价格，而 K 线是对的；它自己恢复了。原因已明（看板的冷重建），该进程的重启现在按计划进行，不再随意。",
+      "<b>Bots v3 测试页。</b> 页面拒绝了 Uniswap V4 池（合约和预览一直都接受）；图表画了填充柱；布局在手机上错乱、在桌面上拥挤。三处都已修复，这次是拿着截图修的。",
+      "<b>一个页面两个名字。</b> <code>/desk2</code> 和 <code>/desk</code> 是同一个应用的两个地址，两种链接都在流传。现在 <code>/desk2</code> 重定向到 <code>/desk</code>；静态资源没有移动。"
+    ],
+    "known": [
+      "<b>Bots v3 仅限测试者。</b> 小额。独立页面会并入 <a href=\"/desk/bots\">/desk/bots</a>，作为又一种机器人类型，界面与其他类型相同。",
+      "<b>新合约已在 Sourcify 验证，Blockscout 上尚未：</b> 浏览器的 Cloudflare 拦下了我们的验证提交。同样的源码、同样的编译设置；会手动提交。",
+      "<b>成交索引器每五到六小时因内存重启一次</b>，每次损失约三十秒的 K 线和成交。正在处理。",
+      "<b>Bots v1 和 v2 页面仍与 v3 测试页并存。</b> 目标是只有一个机器人页面。"
+    ],
+    "contracts": [
+      "<b>一个，全新，已在 Sourcify 验证（完全匹配）&mdash; 部署于 2026-09-11。</b> <b>ArchitectSpotGridV4</b>，地址 <code>0xF8ef5260&hellip;2A659D5f</code>，已注册为费用路由 v2 的调用者。名字里是 V4，因为它是该系列的第四个托管合约；产品叫 Bots v3，因为它是机器人界面的第三代。没有任何东西被替换或退役：<b>Spot Grid v3</b> <code>0x994Cf0A4&hellip;4DA71511</code> 和上表中的其他地址都没有变。新的一行已在表中。"
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "no": 2,
+    "title": "NLYRA 每周更新 #02",
+    "note": "进行中的一周。这一条是在这周跑着的时候写的，周五收口，在那之前它会一直长。",
+    "new": [
+      "<b>用美元跑的网格。</b>两个新的托管合约，让网格可以用 <b>USDG</b>（Robinhood Chain 上的美元）来计价，而不是 ETH。网格逻辑和 v3 一模一样，一档一档都一样；变的只是每笔交易另一边放的是什么。由此带来两件事。一是你闲置的本金是美元，所以一个你本想让它保持中性的网格，不会在你不知情的时候悄悄做多或做空 ETH。二是<b>股票代币</b> &mdash; NVDA、SPY、GME 等等 &mdash; 终于能开网格了，因为它们的池子只对 USDG 报价。",
+      "<b>给 USDG 机器人入金是两步，不是一步。</b>USDG 是 ERC-20，不是链的原生币，所以开仓是先 <code>approve</code> 再 open，合约的最小额是 0.1 USDG。退出没有变化：还是那个只有 maker 能调的 <code>stop(id, 0x, 0, false)</code>，不需要 keeper、不需要服务器、不需要路由数据，它会把你的代币和你的 USDG 原样退回，不卖任何东西。费率一样是每条成交腿 1%（有推荐人则 0.9%）。还是那句话：机器人执行的是你的策略，它不预测行情。",
+      "<b>有一处托管细节在 ETH 那边没有对应物。</b>USDG 是受监管的稳定币，发行方可以冻结一个地址。如果一笔付款因为这个原因进不了你的钱包，合约不会把它弄丢：金额会记到 <code>pending</code> 上，之后用 <code>withdrawPending(token, to)</code> 发到你指定的地址。",
+      "<b>创建入口会在 bots v2。</b>新的机器人界面正在接 USDG 计价这条线。"
+    ],
+    "improved": [
+      "<b>机器人每笔订单的最低金额调整为 30 美元。</b>此前为 10 美元。keeper 在 Robinhood Chain 上执行一次成交约花费 0.30 美元 gas，而 10 美元的成交只带来 0.10 美元手续费 &mdash; 也就是说平台在倒贴钱运行小网格。30 美元时一次成交刚好覆盖自身执行成本。仅适用于此后创建的机器人；已在运行的机器人保留原有档位。网站的预算均由该数字推导，推荐卡片和自动模式已同步。",
+      "<b>Bots v2 现在显示订单所在的位置。</b>网格与无限网格的预览会把每个档位对照当前价格画出来，出资前就能看到整条阶梯。来自用户建议。"
+    ],
+    "fixed": [
+      "<b>几分钟前刚发行的代币可能显示 &ldquo;no trading pool found&rdquo;。</b>首次访问全新代币会触发链上池子搜索，在拥挤的 RPC 上可能需要几分钟 &mdash; 而页面曾把空结果当作最终答案缓存。现在会显示 &ldquo;new token &mdash; finding its pool on-chain&rdquo; 并自动持续检查，直到池子出现。来自用户反馈。"
+    ],
+    "contracts": [
+      "<b>两个，都是新的，都已验证 &mdash; 2026-08-30 部署。</b><b>ArchitectSpotGridUSDG</b> 在 <code>0xdd13354c&hellip;6f6311e4</code>，<b>ArchitectInfinityGridUSDG</b> 在 <code>0x551C66EF&hellip;6f6b19a3</code>。没有任何东西被替换或退役：ETH 计价的 <b>Spot Grid v3</b> <code>0x994Cf0A4&hellip;4DA71511</code> 和 <b>Infinity Grid v3</b> <code>0x177a8837&hellip;573d2D7D</code> 原封不动，仍然是 ETH 机器人的当前合约。两个新合约都不可升级，托管规则相同，响应同一个 <code>stop(bytes32,bytes,uint256,bool)</code>（选择器 <code>0x81e9e1bb</code>），owner 相同且 <code>pendingOwner()</code> 都是零，现在已经列进 <a href=\"#desk-contracts\">&sect;3 &middot; The Desk 合约</a> 和<a href=\"/desk/help/bots\">救援指南</a>。",
+      "<b>对上一周的一处更正。</b>更新 #01 在这一栏里点了名重建后的 Holder Rewards 工厂 <code>0xc641a5bD&hellip;69169398</code>，但地址表里始终没有它这一行 &mdash; 也就是说，一个照我们说的去做、拿「这个地址是不是你们的」去对表的读者，会什么都查不到。现在它已经是 <a href=\"#addresses\">&sect;3 &middot; 官方合约地址</a>里的一行了。"
+    ],
+    "known": [
+      "<b>USDG 机器人还不能从站上创建。</b>合约已经部署并验证；界面没做完，USDG 计价目前仍然把自己报告为「未上线」。在那之前，请把上面这两个地址当作文档来看 &mdash; 而不是一个可以手动打钱过去的地方。"
+    ]
+  },
+  {
+    "date": "2026-08-28",
+    "no": 1,
+    "title": "NLYRA 每周更新 #01",
+    "note": "第一期周更。从今往后，这个页面就是记录本身：每周五，什么坏了、什么变好了、什么是新的、什么仍然不对，以及有没有哪个合约地址挪过位置。",
+    "fixed": [
+      "<b>/faq</b> 从来就不是一个 FAQ。它是一份挂着 FAQ 网址的九屏生态总览，所以人们真正会问的那些问题反而没地方待。现在它是短问题配短答案，而那些长篇材料搬进了这份文档，而不是被删掉。",
+      "合约表格不再让人以为每一个地址都是当前的。被取代的部署会标上 <span class=\"lgc\">历史版本</span>，正在用的那个标上 <span class=\"cur\">当前</span>，因为一个在旧合约上开出来的仓位仍然住在那里，也仍然从那里提取。",
+      "<b>已验证的合约可能被误报为 SOURCE UNVERIFIED。</b>当区块浏览器拒绝我们的查询时，扫描器曾把「沉默」当成结论。现在两种情况分开处理：只有浏览器真正作出回答时才会说「未验证」；浏览器无法访问时显示「无法核验——这不是结论」；源码读取现在有三条通道（Blockscout、Sourcify 和链本身），一扇门关上不再让 LYRA 失明。",
+      "<b>市值不再因浏览器不返回 supply 而显示 $0。</b>The Desk 现在会直接从链上读取 <code>totalSupply()</code> 作为后备——链不会有状态不好的一天。",
+      "<b>从阿拉伯语页面扫描可能会拒绝有效地址。</b>从右到左的键盘会把不可见的方向控制符和地址一起粘贴；现在所有页面和 API 都会在校验前把它们剥离。",
+      "<b>你的 WETH 现在会显示在 The Desk 上。</b>一位资金以 WETH 形式持有的交易者看到「你需要 ETH 才能交易」，尽管他的限价单一直正常。现在所有买入表单（市价、限价、阶梯）和充值卡片都会显示两种余额，并在模式需要另一种币时给出提示。来自用户报告。",
+      "<b>机器人图表可能只显示一次买入，实际上买了四次。</b>比最后一根缓存 K 线更新的成交全部塌缩成一个标记。现在每笔成交都有自己真实时间和价格的点位。同样来自用户报告。",
+      "<b>免费发行现在会解释 Holder Rewards，而不是报错。</b>在免费发行中选择 Holder Rewards 曾返回难懂的错误。现在明确说明：Holder Rewards 需要你自己的钱包——用 “Create — one transaction”（约 $0.30 gas）。免费发行也支持它已列入计划。"
+    ],
+    "improved": [
+      "托管现在是逐个产品说明的，而不是一句口号。兑换和限价单不托管；机器人、ladder、martingale 和 Predict 下注会托管。<a href=\"#custody\">§3 · 托管模型</a>用一张表说明哪个是哪个。",
+      "审计立场在 <a href=\"#risks\">§3 · 风险与审计</a>的开头就明明白白写着：没有任何一个 NLYRA 合约经过第三方公司的审计。上游血统被描述成血统，而不是对我们这次部署的审计。",
+      "「怎么上到这条链」现在是带一个能用按钮的一整节，而不是散落各处的说明 —— 网络参数、一次 <code>wallet_addEthereumChain</code> 调用、三条真实的跨链路线，以及你实际需要多少 gas。<a href=\"#add-network\">§1</a>。",
+      "<b>Limit orders: the <i>fills near</i> price is now exact.</b> It already accounted for the trading fee; it now also includes the keeper&rsquo;s 0.3% execution margin, so the level printed on the ticket is precisely the chart price at which the order executes.",
+      "<b>&ldquo;Why didn&rsquo;t my limit order fill?&rdquo; is answered where you look.</b> A new FAQ entry and a new section of the Desk manual explain that the chart shows the pool&rsquo;s raw price while orders fill on the executable quote &mdash; about 1.3% past the trigger. We audited every historical fill and expiry first: zero incorrect outcomes.",
+      "<b>在没有任何安全 API 覆盖的链上，威胁评分现在直接读代码。</b>在 Robinhood Chain 上，GoPlus 和卖出模拟器都没有覆盖；可读的已验证源码现在充当审计来源，而不是把代币判为无法审计。"
+    ],
+    "new": [
+      "<b><a href=\"/docs\">nlyra.xyz/docs</a></b> —— 就是这个文档中心。五个章节、一个常驻目录，还有一个能一次性过滤页面上每一个标题和段落的搜索框。",
+      "<b><a href=\"/report\">nlyra.xyz/report</a></b> —— 在任何页面上报告一个 bug 或者提一个改进建议。它会直接送到 Architect 那里。它绝不会向你索要助记词或私钥，而且它会拒绝保存看起来像助记词或私钥的提交内容。",
+      "一张按「你想做什么」编排的<a href=\"#which-product\">决策表</a>，这样「这十四样东西我该打开哪一个」的答案就是一行，而不是一次导览。",
+      "<a href=\"#tr-blockscout\">从 Blockscout 一步步提取</a>现在写进了文档，而不只是待在救援指南里 —— 其中包括每种仓位类型对应的函数以及原始选择器，所以这个调用可以在任何工具里手工构造。",
+      "<b><a href=\"#supply-locks\">§3 · $NLYRA 供应量与锁仓</a></b> —— 代币的释放时间表，首次公布。团队锁每 10 天释放 10%，<b>在 2026 年 11 月 22 日结束</b>。流动性锁完全是另一回事，而且它根本不是一个计时器。",
+      "<b>nlyra.xyz speaks Arabic and Chinese.</b> All 18 pages are served under <code>/ar</code> and <code>/zh</code>, with right-to-left layout for Arabic, translated FAQ, home and the docs&rsquo; Start Here section, and a language chip on every page. Machine-translated for now &mdash; a native-speaker review pass is planned."
+    ],
+    "known": [
+      "<b>Liquidity Desk 的护栏比产品页原本暗示的要窄。</b>这个金库没有 owner、没有暂停、也没有升级路径，不能把资金发到任意地址，也不能挡住一次提取。它没有约束住的，是 Keeper 拿哪个代币来配对，以及它在一笔兑换里能接受的最小收到量 &mdash; 那是运营者的判断，而不是写进代码的规则。<a href=\"#p-invest\">&sect;2</a> 和 <a href=\"/invest\">/invest</a> 现在就是这么写的。",
+      "<b>Holder Rewards 发行场地已重建并重新开放。</b>它的奖励分发器从调用者提供的数据里读取池子地址，然后再拿它和调用者比对，于是那道 swap 回调防护可以被绕过。现在这道防护改为从合约存储里读取池子。新的发行使用工厂 <code>0xc641a5bD946290cA1905A68c4BA3b1d969169398</code>，已在 Blockscout 上验证。<b>从来没有用户资金暴露过</b> &mdash; 旧工厂上唯一一次发行是我们自己的测试，它里面什么都没有。",
+      "<b>合约所有权放在一把单独的热钱包私钥上，不是多签。</b>同一个地址拥有全部十四个 Desk 合约，而且它们每一个的 <code>pendingOwner()</code> 都是零，所以那个两步交接从来没有开始过。合约限住了那把密钥能做什么 —— 它够不到你的托管资金 —— 但那些确实存在的权限前面并没有第二个签名。这一条是本周在 <a href=\"#admin-powers\">§3</a> 里首次披露的。",
+      "<b>Predict 的 owner 可以为将来的轮次把它的预言机指向别处</b>，而那决定了这些轮次里谁赢。这是整个生态里最强的一项 owner 权限，在这一周之前它在任何地方都没有被写进文档。",
+      "<b>质押 APR 曾经被不一致地公布过。</b><code>/gov</code> 上写的是 20%，而质押页面上写的是 30%。合约发放的是一个固定的奖励流，所以这个利率是「有多少被质押」的结果，而不是一个设定值 &mdash; 它会随着人们质押和解押而移动。<code>/gov</code> 已经改正，质押页面本来就把 30% 表述为一个目标，而 <a href=\"#p-staking\">&sect;2 展示的是计算过程</a>，不是一个标题数字。",
+      "<b>Smart Rebalance 显示「Soon」，因为它是一个占位。</b>它背后还没有合约，也还没有引擎。它在产品里是可见的，所以把它写进文档，但它什么也不做。",
+      "<b>止损是由 Keeper 执行的，不是由合约执行的。</b>如果 Keeper 离线，止损和止盈都不会触发。资金在整个过程中都可以提取，但那道保护不在 —— 出现这种情况时，机器人主页会显示一个 <i>keeper offline</i> 标记。",
+      "<b>DexScreener 目前屏蔽了这台服务器</b>，所以 Desk 改为直接读链，而不使用他们的数据源。因此，不在行情板上的代币，价格可能更稀薄或更慢；请相信 TRADES 标签页里的真实成交，胜过任何推算出来的数字。",
+      "一些从旧 FAQ 继承下来的、关于管理员权限和代码血统的说法，在 <a href=\"#admin-powers\">§3</a> 里被标为<i>正在重新核实</i>。在它们从已部署的源码里被重新推导出来之前，我们把它们标出来，而不是当作事实重述一遍。"
+    ],
+    "contracts": [
+      "<b>一个。</b>重建后的 Holder Rewards 工厂已上线 <code>0xc641a5bD…69169398</code>（2026-08-27）——即「已知问题」中描述的重新开放；旧工厂 <code>0x68F93ED8…EF90</code> 已标记为 legacy。The Desk 最近的部署仍是 Spot Grid v3（<code>0x994Cf0A4…4DA71511</code>）和 Infinity Grid v3（<code>0x177a8837…573d2D7D</code>），均为 2026-08-23。"
+    ]
+  }
+]
+  </script>
+</section>
+
+
+</main>
+</div>
+
+<footer class="dfoot"><div class="inner">
+  <span><b>NERON &amp; LYRA</b> &mdash; nlyra.xyz &middot; Robinhood Chain &middot; 链 ID 4663</span>
+  <span><a href="/zh/docs">文档</a> &middot; <a href="/zh/faq">常见问题</a> &middot; <a href="https://nlyra.xyz/report?from=docs-footer"><b>报告问题或提出改进建议</b></a> &middot; <a id="tg-foot" href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram</a> &middot; <a href="mailto:nlyraproject&#64;gmail&#46;com">Email</a></span>
+</div></footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── 1 · changelog: render from the JSON data block ─────────────── */
+  var CL_ORDER = [
+    ['fixed',     '已修复'],
+    ['improved',  '已改进'],
+    ['new',       '新增'],
+    ['known',     '已知问题'],
+    ['contracts', '合约变更']
+  ];
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function renderChangelog() {
+    var out = document.getElementById('cl-out');
+    var src = document.getElementById('changelog-data');
+    if (!out || !src) return;
+    var data;
+    try { data = JSON.parse(src.textContent); } catch (e) { out.innerHTML = '<p style="color:var(--danger)">The changelog data block is not valid JSON.</p>'; return; }
+    if (!Array.isArray(data) || !data.length) { out.innerHTML = '<p>No updates published yet.</p>'; return; }
+    var html = '';
+    data.forEach(function (e) {
+      var d = new Date((e.date || '') + 'T12:00:00Z');
+      var when = isNaN(d) ? esc(e.date || '') : d.toLocaleDateString('zh-CN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+      html += '<div class="cle" id="update-' + esc(String(e.no || e.date || '')) + '">';
+      html += '<div class="when">' + when + '</div>';
+      html += '<h3>' + esc(e.title || ('Update ' + (e.no || ''))) + '</h3>';
+      if (e.note) html += '<p style="font-size:15px;color:var(--text-2);margin:0 0 6px">' + e.note + '</p>';
+      CL_ORDER.forEach(function (pair) {
+        var items = e[pair[0]];
+        if (!items || !items.length) return;
+        html += '<div class="grp2 ' + pair[0] + '"><h4>' + pair[1] + '</h4><ul>';
+        items.forEach(function (it) { html += '<li>' + it + '</li>'; });
+        html += '</ul></div>';
+      });
+      html += '</div>';
+    });
+    out.innerHTML = html;
+  }
+  renderChangelog();
+
+  /* ── 2 · build the left index from the document itself ──────────── */
+  var chapters = Array.prototype.slice.call(document.querySelectorAll('main.main section.ch'));
+  var toc = document.getElementById('toc');
+  var tocHtml = '';
+  chapters.forEach(function (ch) {
+    var title = ch.getAttribute('data-t') || (ch.querySelector('h2') ? ch.querySelector('h2').textContent : ch.id);
+    tocHtml += '<div class="grp" data-for="' + ch.id + '"><a class="top" href="#' + ch.id + '">' + esc(title) + '</a><ul>';
+    Array.prototype.forEach.call(ch.querySelectorAll('article.blk'), function (b) {
+      var bt = b.getAttribute('data-t') || (b.querySelector('h3') ? b.querySelector('h3').textContent : b.id);
+      tocHtml += '<li><a href="#' + b.id + '" data-for="' + b.id + '">' + esc(bt) + '</a></li>';
+    });
+    tocHtml += '</ul></div>';
+  });
+  if (toc) toc.innerHTML = tocHtml;
+
+  /* ── 3 · search index: heading + body text of every block ───────── */
+  var blocks = Array.prototype.slice.call(document.querySelectorAll('main.main article.blk')).map(function (b) {
+    var ch = b.closest('section.ch');
+    return {
+      el: b,
+      id: b.id,
+      chId: ch ? ch.id : '',
+      text: ((b.getAttribute('data-t') || '') + ' ' + (ch ? (ch.getAttribute('data-t') || '') : '') + ' ' + b.textContent).toLowerCase().replace(/\s+/g, ' ')
+    };
+  });
+  var chapterEls = {};
+  chapters.forEach(function (c) { chapterEls[c.id] = c; });
+  var tocLinks = {};
+  Array.prototype.forEach.call(document.querySelectorAll('#toc a[data-for]'), function (a) { tocLinks[a.getAttribute('data-for')] = a; });
+  var tocGroups = {};
+  Array.prototype.forEach.call(document.querySelectorAll('#toc .grp'), function (g) { tocGroups[g.getAttribute('data-for')] = g; });
+
+  var srch = document.getElementById('srch');
+  var srchWrap = document.getElementById('srchwrap');
+  var hits = document.getElementById('hits');
+  var clr = document.getElementById('srchclr');
+
+  function applyFilter(qRaw) {
+    var q = String(qRaw || '').trim().toLowerCase();
+    if (srchWrap) srchWrap.classList.toggle('has', !!q);
+    if (!q) {
+      blocks.forEach(function (b) { b.el.classList.remove('hide'); if (tocLinks[b.id]) tocLinks[b.id].classList.remove('hide'); });
+      chapters.forEach(function (c) { c.classList.remove('hide'); if (tocGroups[c.id]) tocGroups[c.id].classList.remove('hide'); });
+      if (hits) hits.textContent = '';
+      return;
+    }
+    var terms = q.split(/\s+/).filter(Boolean);
+    var n = 0, liveCh = {};
+    blocks.forEach(function (b) {
+      var ok = terms.every(function (t) { return b.text.indexOf(t) !== -1; });
+      b.el.classList.toggle('hide', !ok);
+      if (tocLinks[b.id]) tocLinks[b.id].classList.toggle('hide', !ok);
+      if (ok) { n++; liveCh[b.chId] = true; }
+    });
+    chapters.forEach(function (c) {
+      var on = !!liveCh[c.id];
+      c.classList.toggle('hide', !on);
+      if (tocGroups[c.id]) tocGroups[c.id].classList.toggle('hide', !on);
+    });
+    if (hits) hits.textContent = n === 0 ? 'No section matches "' + qRaw.trim() + '"' : n + (n === 1 ? ' section' : ' sections') + ' match';
+  }
+
+  if (srch) {
+    var tmr = null;
+    srch.addEventListener('input', function () { clearTimeout(tmr); var v = srch.value; tmr = setTimeout(function () { applyFilter(v); }, 90); });
+    srch.addEventListener('keydown', function (e) { if (e.key === 'Escape') { srch.value = ''; applyFilter(''); srch.blur(); } });
+  }
+  if (clr) clr.addEventListener('click', function () { srch.value = ''; applyFilter(''); srch.focus(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/' && srch && document.activeElement !== srch && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
+      e.preventDefault(); srch.focus();
+    }
+  });
+  // ?q= deep link
+  try {
+    var qp = new URLSearchParams(location.search).get('q');
+    if (qp && srch) { srch.value = qp; applyFilter(qp); }
+  } catch (e) {}
+
+  /* ── 4 · scroll spy on the index ────────────────────────────────── */
+  if ('IntersectionObserver' in window) {
+    var current = null;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var a = tocLinks[en.target.id];
+        if (!a || a === current) return;
+        if (current) current.classList.remove('on');
+        a.classList.add('on');
+        current = a;
+      });
+    }, { rootMargin: '-60px 0px -70% 0px', threshold: 0 });
+    blocks.forEach(function (b) { io.observe(b.el); });
+  }
+
+  /* ── 5 · close the mobile drawer after picking a link ───────────── */
+  var side = document.getElementById('side');
+  if (side) side.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    if (window.matchMedia('(max-width: 900px)').matches && side.classList.contains('open')) {
+      side.classList.remove('open');
+      var btn = side.querySelector('.sidetoggle');
+      if (btn) btn.textContent = '☰ 目录与搜索';
+    }
+  });
+
+  /* ── 6 · click-to-copy addresses ────────────────────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('code[data-c]'), function (c) {
+    c.title = 'click to copy';
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function () {
+      var t = c.textContent;
+      var done = function () { c.textContent = 'copied'; setTimeout(function () { c.textContent = t; }, 1100); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(c.dataset.c).then(done, function () {});
+      else { try { var ta = document.createElement('textarea'); ta.value = c.dataset.c; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); } catch (e) {} }
+    });
+  });
+
+  /* ── 7 · Add Robinhood Chain (wallet_addEthereumChain) ──────────── */
+  var RH_CHAIN = {
+    chainId: '0x1237',                       // 4663
+    chainName: 'Robinhood Chain',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'],
+    blockExplorerUrls: ['https://robinhoodchain.blockscout.com']
+  };
+  var btn = document.getElementById('addnet');
+  var msg = document.getElementById('addnet-msg');
+  function say(text, kind) { if (!msg) return; msg.textContent = text; msg.className = kind || ''; }
+  if (btn) btn.addEventListener('click', async function () {
+    var eth = window.ethereum;
+    if (!eth) { say('No wallet found in this browser. Open nlyra.xyz/docs inside your wallet app’s own browser, or install MetaMask or Rabby.', 'err'); return; }
+    btn.disabled = true; say('Check your wallet…');
+    try {
+      try {
+        await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: RH_CHAIN.chainId }] });
+        say('You are on Robinhood Chain. ✓', 'ok');
+      } catch (sw) {
+        if (sw && (sw.code === 4902 || sw.code === -32603)) {
+          await eth.request({ method: 'wallet_addEthereumChain', params: [RH_CHAIN] });
+          say('Robinhood Chain added. ✓', 'ok');
+        } else { throw sw; }
+      }
+    } catch (e) {
+      if (e && e.code === 4001) say('You rejected the request. Nothing changed.', '');
+      else say('Your wallet refused: ' + ((e && e.message) || 'unknown error') + ' — add it by hand with the values above.', 'err');
+    }
+    btn.disabled = false;
+  });
+
+  /* ── 8 · smooth-scroll respecting the sticky nav ────────────────── */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    var id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    var t = document.getElementById(id);
+    if (!t) return;
+    e.preventDefault();
+    if (t.classList.contains('hide') && srch && srch.value) { srch.value = ''; applyFilter(''); }
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+  });
+})();
+</script>
+
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/zh/docs" style="color:inherit">nlyra.xyz/zh/docs</a>.</div>
+</body>
+</html>

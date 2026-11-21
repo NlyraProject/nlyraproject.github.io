@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$NLYRA Staking — App</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/brand/dual-core.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js" integrity="sha384-6Zl0Pc8zjSz8KvmNeXRvUQgY4ryFb+BwDvKCmLYcBME0joAaru491tQgi9B7zsMM" crossorigin="anonymous"></script>
+<style>
+  :root { --surface:var(--bg); --border:var(--line-strong); --ink:var(--text); --ink2:var(--text-2); --ink3:var(--text-3); --grad:var(--brand-grad); --shadow:none; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; }
+  .wrap { max-width:520px; margin:0 auto; padding:28px 16px 60px; }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .top .crumb { font:500 13px var(--font-body); color:var(--text-2); }
+  .pill { font:600 12px var(--font-mono); padding:6px 12px; border-radius:var(--radius-pill); background:var(--nested); color:var(--text); border:1px solid var(--line-strong); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:22px; margin-bottom:14px; }
+  h1 { font-family:var(--font-display); font-weight:600; font-size:26px; letter-spacing:-.01em; margin-bottom:2px; }
+  h1 .g { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--text-3); font-size:13px; margin-bottom:14px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:46px; padding:0 14px; border:none; border-radius:var(--radius-md); background:var(--neron); color:#fff; font:600 14.5px var(--font-body); letter-spacing:.02em; cursor:pointer; transition:filter .15s; }
+  .btn:hover { filter:brightness(1.08); } .btn:disabled { opacity:.4; cursor:default; }
+  .btn.primary { background:var(--grad); }
+  .btn.ghost { background:var(--nested); color:var(--text); border:1px solid var(--line-strong); font-weight:500; }
+  .btn.ghost:hover { border-color:var(--accent-line); filter:none; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stat { background:var(--nested); border-radius:var(--radius-md); padding:13px 14px; }
+  .stat .k { font-size:11px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); }
+  .stat .v { font-family:var(--font-mono); font-size:19px; font-weight:700; margin-top:4px; color:var(--text); font-variant-numeric:tabular-nums; }
+  .stat .v.grad { color:var(--lyra); }
+  .stat .u { font-family:var(--font-mono); font-size:12px; margin-top:3px; color:var(--text-3); font-variant-numeric:tabular-nums; }
+  input { width:100%; padding:13px 14px; font-size:16px; font-family:var(--font-mono); font-weight:600; background:var(--bg); color:var(--text); border:1px solid var(--line-strong); border-radius:var(--radius-md); outline:none; margin:10px 0 4px; }
+  input:focus { border-color:var(--accent-line); }
+  .max { font-size:12px; color:var(--accent); font-weight:600; cursor:pointer; }
+  #log { font-family:var(--font-mono); font-size:12px; color:var(--text-2); background:var(--nested); border-radius:var(--radius-md); padding:12px 14px; margin-top:6px; min-height:40px; white-space:pre-wrap; word-break:break-all; }
+  a { color:var(--accent); text-decoration:none; font-weight:500; }
+  .addr { font-family:var(--font-mono); font-size:11.5px; color:var(--text-3); }
+  @media(max-width:420px){ .row2{grid-template-columns:1fr} }
+</style>
+<style id="lang-css">
+.nl-nav details.lang{position:relative}
+.nl-nav details.lang>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border:1px solid rgba(255,255,255,.14);border-radius:9px;font-size:13px;
+  color:var(--text-2,#9aa4b2);background:rgba(255,255,255,.03);white-space:nowrap}
+.nl-nav details.lang>summary::-webkit-details-marker{display:none}
+.nl-nav details.lang>summary:hover{color:#fff;border-color:rgba(139,124,246,.5)}
+.nl-nav details.lang .menu{position:absolute;top:calc(100% + 6px);right:0;min-width:172px;z-index:70;
+  background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.nl-nav details.lang .menu a{display:flex;justify-content:space-between;gap:12px;padding:9px 11px;
+  border-radius:8px;font-size:14px;color:#e6e9ef;text-decoration:none}
+.nl-nav details.lang .menu a:hover{background:rgba(139,124,246,.16)}
+.nl-nav details.lang .menu a[aria-current]{color:#8B7CF6;font-weight:600}
+.nl-nav details.lang .menu a i{font-style:normal;opacity:.5;font-size:12px}
+@media(max-width:900px){.nl-nav details.lang .menu{right:auto;left:0}}
+.i18n-partial{background:rgba(139,124,246,.12);border-bottom:1px solid rgba(139,124,246,.3);
+  padding:9px 16px;font-size:13.5px;color:#cfd5e1;text-align:center}
+.i18n-partial a{color:#8B7CF6;text-decoration:none;margin:0 5px}
+</style><link rel="alternate" hreflang="en" href="https://nlyra.xyz/staking/app"><link rel="alternate" hreflang="ar" href="https://nlyra.xyz/ar/staking/app"><link rel="alternate" hreflang="zh-Hans" href="https://nlyra.xyz/zh/staking/app"><link rel="alternate" hreflang="x-default" href="https://nlyra.xyz/staking/app"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/i18n/zh.css"><link rel="canonical" href="https://nlyra.xyz/zh/staking/app">
+</head>
+<body class="nl"><div class="i18n-partial" dir="ltr">此页面暂为英文。已翻译的页面： <a href="https://nlyra.xyz/zh/">首页</a>·<a href="/zh/faq">常见问题</a>·<a href="/zh/docs">文档</a></div>
+<nav class="nl-nav" id="nlnav" aria-label="NLYRA">
+  <a class="lockup" href="https://nlyra.xyz/zh/" aria-label="NERON × LYRA home"><img class="mark" src="/brand/dual-core-mark.svg" alt="" aria-hidden="true" width="34" height="22">NERON<span class="x">×</span><span class="lyra">LYRA</span></a>
+  <div class="links">
+    <details data-nav="intel"><summary>Intelligence <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/">Scanner <small>paste a CA</small></a>
+        <a href="https://nlyra.xyz/zh/wallet">Wallet Check</a>
+        <a href="https://nlyra.xyz/zh/map">Constellation <small>holders map</small></a>
+        <a href="/faq#agents">The Agents</a>
+        <a href="https://nlyra.xyz/zh/premium">The Key</a>
+      </div></details>
+    <details data-nav="trade"><summary>Trade &amp; DeFi <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/desk">The Desk <small>terminal</small></a>
+        <a href="https://nlyra.xyz/desk/bots">Bots <small>grid · DCA · copy</small></a>
+        <a href="https://nlyra.xyz/zh/explorer">The Explorer <small>blocks &amp; txs</small></a>
+        <a href="https://nlyra.xyz/newstake/">Staking v2 <small>real yield</small></a><a href="https://nlyra.xyz/bsc">Bots on BNB Chain <small>infinity grid · usdt</small></a>
+        <a href="https://nlyra.xyz/zh/staking">Staking v1 <small>withdraw only</small></a>
+      </div></details>
+    <details data-nav="build"><summary>Build <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/launch">Launchpad</a>
+        <a href="https://nlyra.xyz/zh/api-docs">API</a>
+      </div></details>
+    <details data-nav="community"><summary>Community <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/zh/chat">Chat <small>with LYRA</small></a>
+        <a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram ↗</a>
+        <a href="/zh/faq">How it works</a>
+        <a href="https://nlyra.xyz/zh/stats">Stats</a>
+      </div></details>
+  </div>
+  <span class="spacer"></span>
+  <details class="lang" data-nav="lang"><summary aria-label="Language"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>中</summary><div class="menu"><a href="/staking/app" hreflang="en">English<i>EN</i></a><a href="/ar/staking/app" hreflang="ar">العربية<i>AR</i></a><a href="/zh/staking/app" aria-current="true" hreflang="zh-Hans">中文<i>中</i></a></div></details><a class="cta" href="https://nlyra.xyz/desk2/">Open the Desk</a>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" onclick="var n=document.getElementById('nlnav');var o=n.classList.toggle('open');this.setAttribute('aria-expanded',String(o));"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</nav>
+<script>(function(){var n=document.getElementById('nlnav');if(!n)return;var p=location.pathname;var map={'/':'intel','/wallet':'intel','/map':'intel','/premium':'intel','/desk':'trade','/desk2':'trade','/dex':'trade','/stake':'trade','/staking':'trade','/invest':'trade','/launch':'build','/api-docs':'build','/bounties':'build','/gov':'build','/chat':'community','/faq':'community','/stats':'community','/roulette':'play','/slots':'play','/game':'play'};var k=map[p.replace(/\/$/,'')||'/'];if(k){var a=n.querySelector('[data-nav="'+k+'"]');if(a){if(a.tagName==='A')a.setAttribute('aria-current','page');else a.querySelector('summary').setAttribute('aria-current','page');}}document.addEventListener('click',function(e){n.querySelectorAll('details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});})();</script>
+
+<div class="wrap">
+  <div class="top">
+    <span class="crumb">Earn · <b>$NLYRA Staking</b></span>
+    <span class="pill" id="net">disconnected</span>
+  </div>
+  <div class="card">
+    <h1>Stake <span class="g">$NLYRA</span></h1>
+    <p class="sub" id="v1sub">Robinhood Chain · rewards stream every second · exit anytime</p>
+    <div id="v1fin" hidden style="margin:14px 0 4px;padding:14px 16px;border-radius:9px;border:1px solid rgba(232,79,224,.45);background:rgba(232,79,224,.08);font-size:14px;line-height:1.5"><b>Staking V1 rewards ended on Oct 17, 2026.</b> This pool no longer pays rewards. Your tokens are safe: withdraw them here anytime, then stake in <a href="https://nlyra.xyz/newstake/app/" style="color:var(--lyra);font-weight:700">Staking V2 · real yield →</a></div>
+    <div class="stats">
+      <div class="stat"><div class="k">Pool APR</div><div class="v grad" id="apr">—</div></div>
+      <div class="stat"><div class="k">Total staked</div><div class="v" id="tvl">—</div></div>
+      <div class="stat"><div class="k">Your stake</div><div class="v" id="mine">—</div></div>
+      <div class="stat"><div class="k">Your rewards</div><div class="v grad" id="earned">—</div><div class="u" id="earnedUsd"></div></div>
+    </div>
+  </div>
+
+  <div class="card" id="connect-card">
+    <button class="btn primary" id="connect">Connect wallet</button>
+  </div>
+
+  <div class="card" id="actions" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+      <b style="font-size:14px;">Amount</b>
+      <span class="max" id="max">wallet: — MAX</span>
+    </div>
+    <input id="amt" type="number" min="0" placeholder="0.0">
+    <button class="btn primary" id="stake">Stake</button>
+    <div class="row2">
+      <button class="btn ghost" id="withdraw">Withdraw</button>
+      <button class="btn ghost" id="claim">Claim rewards</button>
+    </div>
+    <div class="row2">
+      <button class="btn" id="compound">Compound · claim &amp; re-stake</button>
+      <button class="btn ghost" id="exit">Exit · all + claim</button>
+    </div>
+  </div>
+
+  <div id="log">ready.</div>
+  <p style="margin-top:14px; font-size:12px; text-align:center;">
+    <span class="addr" id="caddr"></span><br>
+    <a id="explorer" target="_blank" rel="noopener">contract on Blockscout ↗</a> · <a href="https://nlyra.xyz/zh/staking">launch page</a>
+  </p>
+</div>
+
+<script>
+const CFG = {"contract":"0x5e63228add4390f77BbcDb364F6A7b42bA7Aa3ef","token":"0xb9d3824149ad8ac984153ceec91d5a2405d1fb95"};
+const cfg = (typeof CFG === 'object') ? CFG : {};
+const STAKING = cfg.contract, NLYRA = cfg.token || '0xb9d3824149ad8ac984153ceec91d5a2405d1fb95';
+const CHAIN = { chainId: '0x1237', chainName: 'Robinhood Chain', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'], blockExplorerUrls: ['https://robinhoodchain.blockscout.com'] };
+const SABI = ['function totalSupply() view returns (uint256)','function balanceOf(address) view returns (uint256)',
+  'function earned(address) view returns (uint256)','function rewardRate() view returns (uint256)','function periodFinish() view returns (uint256)', /* V1-FIN-2026-10-18 */
+  'function stake(uint256)','function withdraw(uint256)','function getReward()','function exit()'];
+const TABI = ['function balanceOf(address) view returns (uint256)','function allowance(address,address) view returns (uint256)','function approve(address,uint256) returns (bool)'];
+
+const $ = (id) => document.getElementById(id);
+$('caddr').textContent = STAKING || 'contract not configured';
+$('explorer').href = 'https://robinhoodchain.blockscout.com/address/' + STAKING;
+const fmt = (v, d = 1) => { const n = Number(ethers.formatEther(v)); return n >= 1e6 ? (n/1e6).toFixed(2)+'M' : n >= 1e3 ? (n/1e3).toFixed(d)+'K' : n.toFixed(2); };
+const log = (m) => { $('log').textContent = m; };
+
+let provider, signer, me, walletBal = 0n, earnedF = 0, priceUsd = 0;
+// $NLYRA price in USD, fetched by the visitor's browser (DexScreener blocks our server, not browsers)
+const TOKEN_LC = NLYRA.toLowerCase();
+async function fetchPrice() {
+  try {
+    const r = await fetch('https://api.dexscreener.com/tokens/v1/robinhood/' + NLYRA);
+    const pairs = await r.json();
+    const p = (Array.isArray(pairs) ? pairs : []).filter(x => (x.baseToken?.address || '').toLowerCase() === TOKEN_LC)
+      .sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0))[0];
+    if (p && Number(p.priceUsd) > 0) { priceUsd = Number(p.priceUsd); return showUsd(); }
+  } catch (e) {}
+  try {
+    const r = await fetch('https://api.geckoterminal.com/api/v2/networks/robinhood/tokens/' + NLYRA);
+    const j = await r.json();
+    const v = Number(j?.data?.attributes?.price_usd);
+    if (v > 0) { priceUsd = v; showUsd(); }
+  } catch (e) {}
+}
+function showUsd() {
+  if (!me || !(priceUsd > 0)) { $('earnedUsd').textContent = ''; return; }
+  const usd = earnedF * priceUsd;
+  $('earnedUsd').textContent = '≈ $' + (usd >= 1000 ? usd.toLocaleString('en-US', { maximumFractionDigits: 0 }) : usd.toFixed(usd >= 1 ? 2 : 4));
+}
+fetchPrice(); setInterval(fetchPrice, 60000);
+const ro = new ethers.JsonRpcProvider(CHAIN.rpcUrls[0]);
+const roS = new ethers.Contract(STAKING, SABI, ro);
+const roT = new ethers.Contract(NLYRA, TABI, ro);
+
+async function refresh() {
+  try {
+    const [tvl, rate, fin] = await Promise.all([roS.totalSupply(), roS.rewardRate(), roS.periodFinish()]);
+    const ended = Number(fin) > 0 && Date.now() / 1000 >= Number(fin); /* V1-FIN-2026-10-18 */
+    if (ended) { $('v1fin').hidden = false; $('v1sub').textContent = 'Robinhood Chain · rewards ended Oct 17 · withdraw anytime'; }
+    $('tvl').textContent = fmt(tvl);
+    const tvlF = Number(ethers.formatEther(tvl));
+    $('apr').textContent = ended ? 'Ended' : tvlF > 0 ? ((Number(ethers.formatEther(rate)) * 31536000 / tvlF) * 100).toFixed(1) + '%' : '∞';
+    if (me) {
+      const [mine, earned, bal] = await Promise.all([roS.balanceOf(me), roS.earned(me), roT.balanceOf(me)]);
+      walletBal = bal;
+      $('mine').textContent = fmt(mine);
+      earnedF = Number(ethers.formatEther(earned));
+      $('earned').textContent = earnedF.toFixed(4);
+      showUsd();
+      $('max').textContent = 'wallet: ' + fmt(bal) + '  MAX';
+    }
+  } catch (e) { /* rpc hiccup */ }
+}
+refresh(); setInterval(refresh, 8000);
+
+$('connect').onclick = async () => {
+  try {
+    if (!window.ethereum) return log('No wallet found — open in MetaMask / Rabby browser.');
+    provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+    try { await provider.send('wallet_switchEthereumChain', [{ chainId: CHAIN.chainId }]); }
+    catch (e) { await provider.send('wallet_addEthereumChain', [CHAIN]); }
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner(); me = await signer.getAddress();
+    $('net').textContent = me.slice(0, 6) + '…' + me.slice(-4);
+    $('connect-card').style.display = 'none'; $('actions').style.display = 'block';
+    log('connected. '); refresh();
+  } catch (e) { log('connect failed: ' + (e.shortMessage || e.message)); }
+};
+
+$('max').onclick = () => { $('amt').value = ethers.formatEther(walletBal); };
+
+// MetaMask no recarga la página al cambiar de cuenta: avisa por evento.
+// Sin esto, la app queda pegada a la primera wallet conectada.
+if (window.ethereum && window.ethereum.on) {
+  window.ethereum.on('accountsChanged', async (accs) => {
+    if (!accs || !accs.length) {
+      signer = null; me = null; walletBal = 0n;
+      $('net').textContent = 'disconnected';
+      $('actions').style.display = 'none'; $('connect-card').style.display = 'block';
+      $('mine').textContent = '—'; $('earned').textContent = '—'; $('earnedUsd').textContent = ''; earnedF = 0; $('max').textContent = 'MAX';
+      log('wallet disconnected');
+      return;
+    }
+    try {
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner(); me = await signer.getAddress();
+      $('net').textContent = me.slice(0, 6) + '…' + me.slice(-4);
+      $('connect-card').style.display = 'none'; $('actions').style.display = 'block';
+      log('switched to ' + me.slice(0, 6) + '…' + me.slice(-4));
+      refresh();
+    } catch (e) { log('account switch failed: ' + (e.shortMessage || e.message)); }
+  });
+  window.ethereum.on('chainChanged', () => location.reload());
+}
+
+async function run(name, fn) {
+  try { log(name + '…'); const tx = await fn(); log(name + ' tx sent: ' + tx.hash.slice(0, 20) + '… waiting'); await tx.wait(); log(name + ' ✅'); refresh(); }
+  catch (e) { log(name + ' ✕ ' + (e.shortMessage || e.message).slice(0, 140)); }
+}
+
+$('stake').onclick = async () => {
+  const v = $('amt').value; if (!v || Number(v) <= 0) return log('enter an amount');
+  const amt = ethers.parseEther(v);
+  const t = new ethers.Contract(NLYRA, TABI, signer);
+  const s = new ethers.Contract(STAKING, SABI, signer);
+  const allowance = await roT.allowance(me, STAKING);
+  if (allowance < amt) await run('approve', () => t.approve(STAKING, amt));
+  await run('stake', () => s.stake(amt));
+};
+$('withdraw').onclick = async () => {
+  const v = $('amt').value; if (!v || Number(v) <= 0) return log('enter an amount');
+  const s = new ethers.Contract(STAKING, SABI, signer);
+  await run('withdraw', () => s.withdraw(ethers.parseEther(v)));
+};
+$('claim').onclick = async () => { const s = new ethers.Contract(STAKING, SABI, signer); await run('claim', () => s.getReward()); };
+$('compound').onclick = async () => {
+  if (!signer) return;
+  const pending = await roS.earned(me);
+  if (pending <= 0n) return log('nothing to compound yet');
+  const s = new ethers.Contract(STAKING, SABI, signer);
+  const t = new ethers.Contract(NLYRA, TABI, signer);
+  await run('claim', () => s.getReward());
+  if ((await roT.allowance(me, STAKING)) < pending) { await run('approve', () => t.approve(STAKING, pending)); }
+  await run('re-stake ' + Number(ethers.formatEther(pending)).toFixed(2) + ' NLYRA', () => s.stake(pending));
+};
+$('exit').onclick = async () => { const s = new ethers.Contract(STAKING, SABI, signer); await run('exit', () => s.exit()); };
+</script>
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/zh/staking/app" style="color:inherit">nlyra.xyz/zh/staking/app</a>.</div>
+</body>
+</html>

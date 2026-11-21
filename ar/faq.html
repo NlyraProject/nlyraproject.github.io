@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأسئلة الشائعة — NLYRA · إجابات قصيرة ومباشرة</title>
+<meta name="description" content="هل NLYRA وصائية؟ هل يستطيع الفريق الوصول إلى أموالي؟ هل العقود مدقَّقة؟ كم تتقاضى The Desk؟ الأسئلة التي يطرحها الناس فعلًا عن منظومة NERON و LYRA على Robinhood Chain، بإجابات مباشرة.">
+<!--OG-->
+<meta property="og:title" content="الأسئلة الشائعة عن NLYRA — إجابات قصيرة ومباشرة">
+<meta property="og:description" content="الحفظ، وصلاحيات المشرف، والتدقيقات، والرسوم، والـ Keeper، والسحب من دون الموقع، وأي عناوين العقود رسمية.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nlyra.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<!--/OG-->
+<link rel="icon" href="/brand/dual-core.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { line-height: 1.6; }
+  a:hover { text-decoration: none; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 46px 0 34px; }
+  .kicker { font: 600 12px var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--text-3); }
+  h1 { font-size: clamp(28px, 5vw, 42px); letter-spacing: -.02em; margin: 10px 0 12px; line-height: 1.12; }
+  .lead { color: var(--text-2); font-size: 16.5px; }
+  .heroact { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  section { padding: 22px 0; }
+
+  .qa { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; scroll-margin-top: 70px; }
+  .qa > summary { padding: 16px 18px; font-weight: 600; font-size: 15.5px; cursor: pointer; list-style: none;
+      display: flex; justify-content: space-between; align-items: center; gap: 14px; font-family: var(--font-display); color: var(--text); }
+  .qa > summary::-webkit-details-marker { display: none; }
+  .qa > summary::after { content: '+'; color: var(--text-3); font-size: 21px; font-weight: 400; flex: none; line-height: 1; }
+  .qa[open] > summary::after { content: '\2212'; }
+  .qa .a { padding: 0 18px 16px; color: var(--text-2); font-size: 14.5px; }
+  .qa .a p { margin-bottom: 9px; }
+  .qa .a p:last-child { margin-bottom: 0; }
+  .qa .a b { color: var(--text); }
+  .qa .a code { font-family: var(--font-mono); font-size: 12px; color: var(--text); background: var(--nested); padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+  .qa .a ul { padding-left: 20px; margin: 8px 0; }
+  .qa .a li { margin: 4px 0; }
+  .more { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; }
+  .yes { color: var(--safe); font-weight: 600; } .no { color: var(--danger); font-weight: 600; }
+  .part { color: var(--caution); font-weight: 600; }
+
+  .callout { background: var(--nested); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px 24px; margin-top: 8px; }
+  .callout h2 { font-size: 19px; margin-bottom: 9px; }
+  .callout p { color: var(--text-2); font-size: 14.5px; }
+  .callout p + p { margin-top: 9px; }
+  .callout .g2 { color: var(--text); font-weight: 600; }
+  .callout .links { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .seedwarn { border: 1px solid rgba(248,113,113,.35); background: var(--danger-bg); border-radius: var(--radius-lg); padding: 16px 18px; margin-top: 8px; }
+  .seedwarn b { color: var(--danger); }
+  .seedwarn p { color: var(--text-2); font-size: 14px; }
+
+  footer.dfoot { border-top: 1px solid var(--line); padding: 24px 20px 56px; margin-top: 34px; font-size: 13px; color: var(--text-3); }
+  footer.dfoot .inner { max-width: 760px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer.dfoot a { color: var(--text-2); }
+</style>
+<style id="lang-css">
+.nl-nav details.lang{position:relative}
+.nl-nav details.lang>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border:1px solid rgba(255,255,255,.14);border-radius:9px;font-size:13px;
+  color:var(--text-2,#9aa4b2);background:rgba(255,255,255,.03);white-space:nowrap}
+.nl-nav details.lang>summary::-webkit-details-marker{display:none}
+.nl-nav details.lang>summary:hover{color:#fff;border-color:rgba(139,124,246,.5)}
+.nl-nav details.lang .menu{position:absolute;top:calc(100% + 6px);right:0;min-width:172px;z-index:70;
+  background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.nl-nav details.lang .menu a{display:flex;justify-content:space-between;gap:12px;padding:9px 11px;
+  border-radius:8px;font-size:14px;color:#e6e9ef;text-decoration:none}
+.nl-nav details.lang .menu a:hover{background:rgba(139,124,246,.16)}
+.nl-nav details.lang .menu a[aria-current]{color:#8B7CF6;font-weight:600}
+.nl-nav details.lang .menu a i{font-style:normal;opacity:.5;font-size:12px}
+@media(max-width:900px){.nl-nav details.lang .menu{right:auto;left:0}}
+.i18n-partial{background:rgba(139,124,246,.12);border-bottom:1px solid rgba(139,124,246,.3);
+  padding:9px 16px;font-size:13.5px;color:#cfd5e1;text-align:center}
+.i18n-partial a{color:#8B7CF6;text-decoration:none;margin:0 5px}
+</style><link rel="alternate" hreflang="en" href="https://nlyra.xyz/faq"><link rel="alternate" hreflang="ar" href="https://nlyra.xyz/ar/faq"><link rel="alternate" hreflang="zh-Hans" href="https://nlyra.xyz/zh/faq"><link rel="alternate" hreflang="x-default" href="https://nlyra.xyz/faq"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/i18n/rtl.css"><link rel="canonical" href="https://nlyra.xyz/ar/faq">
+</head>
+<body class="nl">
+<nav class="nl-nav" id="nlnav" aria-label="NLYRA">
+  <a class="lockup" href="https://nlyra.xyz/ar/" aria-label="الصفحة الرئيسية NERON × LYRA"><img class="mark" src="/brand/dual-core-mark.svg" alt="" aria-hidden="true" width="34" height="22">NERON<span class="x">×</span><span class="lyra">LYRA</span></a>
+  <div class="links">
+    <details data-nav="intel"><summary>الاستخبارات <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/ar/">الماسح <small>ألصق عنوان عقد</small></a>
+        <a href="https://nlyra.xyz/ar/wallet">فحص المحفظة</a>
+        <a href="https://nlyra.xyz/ar/map">Constellation <small>خريطة الحائزين</small></a>
+        <a href="/faq#agents">الوكيلان</a>
+        <a href="https://nlyra.xyz/ar/premium">The Key</a>
+      </div></details>
+    <details data-nav="trade"><summary>التداول و DeFi <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/desk">The Desk <small>الطرفية</small></a>
+        <a href="https://nlyra.xyz/desk/bots">Bots</a>
+        <a href="https://nlyra.xyz/ar/explorer">The Explorer <small>الكتل والمعاملات</small></a>
+        <a href="https://nlyra.xyz/newstake/">الستاكينغ v2 <small>عائد حقيقي</small></a><a href="https://nlyra.xyz/bsc">بوتات على BNB Chain <small>infinity grid · usdt</small></a>
+        <a href="https://nlyra.xyz/ar/staking">الستاكينغ v1 <small>حتى 17 أكتوبر</small></a>
+      </div></details>
+    <details data-nav="build"><summary>البناء <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/ar/launch">منصة الإطلاق</a>
+        <a href="https://nlyra.xyz/ar/api-docs">API</a>
+      </div></details>
+    <details data-nav="community"><summary>المجتمع <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/ar/chat">الدردشة <small>مع LYRA</small></a>
+        <a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram ↗</a>
+        <a href="/ar/docs">التوثيق <small>الدليل</small></a>
+        <a href="/ar/faq">الأسئلة الشائعة</a>
+        <a href="https://nlyra.xyz/ar/stats">الإحصاءات</a>
+      </div></details>
+  </div>
+  <span class="spacer"></span>
+  <details class="lang" data-nav="lang"><summary aria-label="Language"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>AR</summary><div class="menu"><a href="/faq" hreflang="en">English<i>EN</i></a><a href="/ar/faq" aria-current="true" hreflang="ar">العربية<i>AR</i></a><a href="/zh/faq" hreflang="zh-Hans">中文<i>中</i></a></div></details><a class="cta" href="https://nlyra.xyz/desk2/">افتح The Desk</a>
+  <button class="burger" type="button" aria-label="القائمة" aria-expanded="false" onclick="var n=document.getElementById('nlnav');var o=n.classList.toggle('open');this.setAttribute('aria-expanded',String(o));"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</nav>
+<script>(function(){var n=document.getElementById('nlnav');if(!n)return;var p=location.pathname;var map={'/':'intel','/wallet':'intel','/map':'intel','/premium':'intel','/desk':'trade','/desk2':'trade','/dex':'trade','/stake':'trade','/staking':'trade','/invest':'trade','/launch':'build','/api-docs':'build','/bounties':'build','/gov':'build','/chat':'community','/faq':'community','/docs':'community','/report':'community','/stats':'community','/roulette':'play','/slots':'play','/game':'play'};var k=map[p.replace(/\/$/,'')||'/'];if(k){var a=n.querySelector('[data-nav="'+k+'"]');if(a){if(a.tagName==='A')a.setAttribute('aria-current','page');else a.querySelector('summary').setAttribute('aria-current','page');}}document.addEventListener('click',function(e){n.querySelectorAll('details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});})();</script>
+
+
+<header class="wrap">
+  <div class="kicker">الأسئلة الشائعة</div>
+  <h1 class="brand-headline">الأسئلة التي<br>يطرحها الناس فعلًا.</h1>
+  <p class="lead">الأشياء التي يسأل عنها الناس فعلًا قبل أن يضعوا أموالهم. إجابات قصيرة هنا، وكل واحدة منها تحيل إلى النسخة المطوّلة في <a href="/ar/docs">التوثيق</a>.</p>
+  <div class="heroact">
+    <a class="btn-primary" href="/ar/docs">افتح التوثيق الكامل</a>
+    <a class="btn-secondary" href="https://nlyra.xyz/report?from=faq">أبلغ عن خلل</a>
+  </div>
+</header>
+
+<section class="wrap">
+
+  <details class="qa" id="agents"><summary>مَن هما NERON و LYRA؟</summary><div class="a">
+    <p>وكيلان يعملان بالذكاء الاصطناعي، بتقسيم واضح للعمل بينهما.</p>
+    <p><b>NERON</b> هو المراقب. يقرأ السلسلة نفسها &mdash; صلاحيات العقد، والملكية، وأقفال السيولة، وتحليل الحائزين، وشكل كل مجمّع &mdash; وهو المحرّك خلف الحكم: SAFE أو CAUTION أو DANGER أو RUG. وما لا تقوله السلسلة، لا يدّعيه NERON.</p>
+    <p><b>LYRA</b> هي القارئة. تنزّل كود Solidity الموثَّق للعقد وتقرأه سطرًا سطرًا، فتميّز الصلاحية المقيَّدة من الصلاحية المفتوحة &mdash; الفرق بين مالك يستطيع تجميد تحويل ومالك يكتفي بتحصيل رسم. قراءتها تجلس إلى جانب حكم NERON، فتحصل على "ماذا" و"لماذا" معًا.</p>
+    <p>هما واجهة الماسح، وسبب وجود المنظومة كلها. لا يحتفظان بأموال ولا يوقّعان معاملات نيابةً عنك.</p>
+    <a class="more" href="/docs#what-is">ما هي NLYRA &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-custodial" open><summary>هل NLYRA وصائية (custodial)؟</summary><div class="a">
+    <p><span class="part">يعتمد على المنتج</span> &mdash; ومن يجيب عن هذا بكلمة واحدة فهو يبيع لك شيئًا.</p>
+    <ul>
+      <li><b>غير وصائية:</b> مبادلات السوق، والأوامر المحدَّدة (limit orders)، وتوفير السيولة، وستاكينغ &lrm;$NLYRA. المبادلات ذرّية، والأمر المحدَّد لا يحجز شيئًا في ضمان، بل توقّع شاهد Permit2 لتحويل واحد بالضبط.</li>
+      <li><b>محجوزة في عقد ضمان (escrow):</b> البوتات، والـ Ladder، والـ Martingale، ورهانات Predict، وإيداعات Shield. <b>هذه تحتفظ بأموالك داخل عقد طوال مدة عملها.</b> العقد مسجَّل باسم محفظتك بصفتك صاحب الأمر (maker) وأنت وحدك من يستطيع السحب &mdash; لكن المال لا يكون في محفظتك في تلك الأثناء.</li>
+    </ul>
+    <p>لا أحد في NLYRA يملك مفاتيح أموالك في أيٍّ من الحالتين.</p>
+    <a class="more" href="/docs#custody">جدول الحفظ الكامل &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-team"><summary>هل يستطيع الفريق الوصول إلى أموالي؟</summary><div class="a">
+    <p><span class="no">لا</span> &mdash; لا توجد دالة مالك تصل إلى أرصدة المستخدمين، ولا أيٌّ من عقود The Desk قابل للترقية، فلا يمكن إضافة ذلك لاحقًا. (استثناء واحد في مكان آخر من المنظومة: مدخل Lyra Shield وكيل (proxy) قابل للترقية.)</p>
+    <p>القائمة الكاملة على The Desk: <b>الإيقاف المؤقت</b> (يوقف التداول، ولا يوقف سحبًا أبدًا)، و<b>استدعاء <code>rescue(token, to)</code></b> على الفائض فوق ما أودعه المستخدمون &mdash; مقيَّد حسابيًا، ويرتدّ عند الصفر &mdash; و<b>تغيير نطاق الرسوم للبوتات والمبادلات الجديدة</b> ضمن سقف صارم قدره 3%، و<b>تغيير حصة المُحيل</b>، وعلى Predict وحده <b>إعادة توجيه الأوراكل</b> الذي يحسم الجولات المستقبلية.</p>
+    <p>وما لا تستطيعه: تحريك أموالك المحجوزة في الضمان، أو إعادة توجيه سحب (عنوان صاحب الأمر ليس له دالة تعديل)، أو ترقية أي شيء، أو رفع الرسوم على بوت يعمل بالفعل أو أمر سبق توقيعه.</p>
+    <p><b>التحفّظ الصادق:</b> تلك المفاتيح مفاتيح ساخنة مفردة، لا محفظة متعددة التواقيع (multisig)، ولم يبدأ بعد الانتقال إلى أي شيء أكثر أمانًا.</p>
+    <a class="more" href="/docs#admin-powers">كل صلاحيات المشرف، مسرودة &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-audit"><summary>هل العقود مدقَّقة؟</summary><div class="a">
+    <p><b>جزئيًا، وإليك أي جزء بالضبط.</b> كثير مما تستخدمه يعمل على كود دقّقه آخرون منذ سنوات: Uniswap V2 و V3، و Synthetix StakingRewards، و Permit2، ودوائر 0xbow Privacy Pools.</p>
+    <p><b>ستاكينغ العائد الحقيقي v2 مُدقَّق.</b> راجعت Coinsult عقوده (30 سبتمبر 2026): &lrm;0 حرجة و&lrm;0 متوسطة، وكل ملاحظة إمّا حُلّت أو أُقِرّ بها. التقارير: <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_RealYieldStaking%20%281%29.pdf">الستاكينغ</a> &middot; <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_NlyraFeeSplitter%20%281%29.pdf">مُقسِّم الرسوم</a> &middot; <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_PositionMarket%20%281%29.pdf">سوق المراكز</a> &middot; <a target="_blank" rel="noopener" href="https://github.com/Coinsult/Audits/blob/main/Nlyra_External%20%281%29.pdf">الواجهات</a>.</p>
+    <p>أما العقود الأخرى التي كتبناها بأنفسنا &mdash; The Desk، والبوتات، ومنصة الإطلاق، والألعاب &mdash; فهي <b>لم تخضع</b> لتدقيق من شركة تدقيق خارجية. التدقيق الذي جرى على الكود الأصلي (upstream) يقول إن التصميم مدروس جيدًا، ولا يقول شيئًا عن توصيلاتنا نحن ولا عن الكود المحيط به، فلا نحسبه لنا.</p>
+    <p>وما نفعله بدلًا من ذلك: كل مصدر موثَّق وقابل للقراءة على Blockscout، و LYRA تقرأ كل عقد قبل إطلاقه، و<b>كل مسار سحب جرى تشغيله على الشبكة الرئيسية بمال حقيقي</b> &mdash; فالطريقة التي تُخرج بها أموالك مُختبَرة، لا مفترَضة. والعقود صغيرة وغير قابلة للتعديل وعلنية، فيمكنك فحصها بنفسك.</p>
+    <p>ومع ذلك، "لم يُعثَر على خلل" ليست أبدًا "لا يوجد خلل". حدِّد حجم مركزك على هذا الأساس.</p>
+    <a class="more" href="/docs#risks">المخاطر والتدقيقات، بالكامل &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-fees"><summary>ما الرسوم التي تتقاضاها The Desk؟</summary><div class="a">
+    <p><b>1% من كل صفقة منفَّذة</b>، أو <b>0.9% إن جئت عبر إحالة</b>. هذه هي القصة كلها فيما يخص التداول.</p>
+    <ul>
+      <li>تُحصَّل لحظة المبادلة، عبر موجّه الرسوم &mdash; على أوامر السوق، وتنفيذ الأوامر المحدَّدة، ودرجات الـ Ladder، وخطوات الـ Martingale، وكل تنفيذ بوت.</li>
+      <li><b>0% رسوم أداء.</b> لا يُؤخذ شيء من ربحك، أبدًا.</li>
+      <li>وضع أمر محدَّد مجاني (فهو مجرد توقيع). والإلغاء يكلّف غازًا فقط، نحو 0.001 دولار. والإيداع في بوت والسحب منه يكلّفان غازًا فقط.</li>
+      <li>مجمّع NLYRA في Predict يأخذ 3% من الجائزة، وفقط عند تسوية جولة برابح.</li>
+      <li>سقف الـ 1% مثبَّت في كود الصفحة، وموجّه الرسوم يرفض أي شيء دون 0.9%.</li>
+    </ul>
+    <p>وبشكل منفصل، يتقاضى المجمّع رسمه الخاص، وبعض مجمّعات V4 تُلحق خطّافًا (hook) يأخذ &lrm;1&ndash;2%&rlm; إضافية &mdash; وكلاهما داخل عرض السعر الذي تراه أصلًا.</p>
+    <a class="more" href="/desk/docs#fees">كل رسم وكل حد أدنى &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-keeper"><summary>ماذا يحدث إذا توقّف الـ Keeper؟</summary><div class="a">
+    <p>يتجمّد بوتك في منتصف الاستراتيجية: لا شراء، ولا بيع، ولا جني أرباح، و<b>لا وقف خسارة</b>. وتعرض لوحة البوتات وسم <i>keeper offline</i> عند حدوث ذلك.</p>
+    <p><b>أموالك تبقى آمنة وقابلة للسحب طوال الوقت</b> &mdash; فالسحب لا يحتاج إلى الـ Keeper ولا إلى الخادم ولا إلى الموقع. ما تخسره هو الأتمتة، بما فيها الحماية التي كنت تعتمد عليها.</p>
+    <p>نمط عطل الـ Keeper هو التوقّف عن الفعل، لا السرقة: فهو لا يملك شيئًا، ولا يحتفظ بأموال أبدًا، وكل تنفيذ يطلقه يُعاد فحصه مقابل قواعد على السلسلة. فإن كان متوقفًا وكنت تعتمد على وقف خسارة، فاسحب وأدِر المركز يدويًا.</p>
+    <a class="more" href="/docs#tr-bot">ماذا تفعل عندما يتعطّل بوت &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-usdgbots"><summary>هل أستطيع تشغيل البوتات بالـ USDG بدل الـ ETH؟</summary><div class="a">
+    <p>لهذا وُجدت شبكات الـ USDG. عقدا ضمان مسعّران بالـ <b>USDG</b> &mdash; دولار Robinhood Chain &mdash; منشوران وموثَّقان على السلسلة، ويجري تفعيلهما في واجهة bots v2 الجديدة:</p>
+    <ul>
+      <li><b>Spot Grid &middot; USDG:</b> <code data-c="0xdd13354cfE3E79a944d8F93476176F016f6311e4">0xdd13354cfE3E79a944d8F93476176F016f6311e4</code></li>
+      <li><b>Infinity Grid &middot; USDG:</b> <code data-c="0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3">0x551C66EF613c283FC439AE21DFa9C54c6f6b19a3</code></li>
+    </ul>
+    <p><b>ما الذي يتغيّر.</b> منطق الشبكة هو منطق v3 نفسه، درجةً بدرجة، ولا يختلف إلا التسعير. فرأس مالك الخامل يجلس بالدولار لا بالـ ETH، وبذلك لا تصير شبكتك التي أردتها محايدة طويلةً أو قصيرة على ETH من دون أن تدري. وهي أيضًا السبيل الوحيد لتشغيل شبكة على <b>توكنات الأسهم</b> (NVDA و SPY و GME وسواها)، لأن بِرَكها مسعّرة مقابل USDG وحدها.</p>
+    <p><b>كيف تموّلها.</b> الـ USDG توكن ERC-20 لا العملة الأصلية للشبكة، لذلك فتح البوت هو <b>approve ثم open</b> &mdash; توقيعان بدل توقيع واحد. أما الخروج فلم يتغيّر: النداء نفسه <code>stop(id, 0x, 0, false)</code> للـ maker وحده، بلا keeper وبلا خادم وبلا بيانات مسار، ويُدفَع إليك بالـ USDG وبالتوكنات.</p>
+    <p>الحفظ نفسه والرسوم نفسها كسائر The Desk &mdash; أموالك تعيش داخل العقد، ولا يُخرجها إلا محفظتك، والـ keeper لا ينفّذ إلا داخل الحدود التي وضعتها أنت، والرسوم 1% على كل ساق منفَّذة. البوتات تنفّذ استراتيجيتك، وهي لا تتنبّأ بالسوق.</p>
+    <p>وثمة فارق حقيقي واحد: <b>الـ USDG عملة مستقرة خاضعة للتنظيم، وبإمكان مُصدِرها تجميد عنوان.</b> فإن رُفض دفعٌ إلى محفظتك لهذا السبب فالعقد لا يضيّعه &mdash; بل يقيّد المبلغ في <code>pending</code>، ويتيح لك <code>withdrawPending(token, to)</code> إرساله إلى مكان آخر لاحقًا.</p>
+    <a class="more" href="/docs#desk-contracts">كل عقود The Desk، الحالية والقديمة &larr;</a> &nbsp; <a class="more" href="https://nlyra.xyz/desk/help/bots">كيف تُخرج أموالك &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-limitfill"><summary>أمر الحد الخاص بي لم يُنفَّذ أبداً — هل هو معطّل؟</summary><div class="a">
+    <p>في الغالب لم يصل السعر إلى المستوى <b>القابل للتنفيذ</b>. الرسم البياني يعرض سعر المجمّع الخام، بينما يُنفَّذ أمرك على السعر القابل للتنفيذ — الذي يتضمن رسم 1% (أو 0.9% مع الإحالة) وهامش أمان 0.3% للمنفّذ. على الرسم البياني يعني ذلك تقريباً <b>1.3% بعد سعرك المحدد</b>.</p>
+    <ul>
+      <li>سعر <b>fills near</b> في نافذة الأمر هو المستوى الذي يُنفَّذ فعلاً. اعتمد عليه لا على ذيل الشمعة.</li>
+      <li>أعطِ الأمر وقتاً: طلب حركة 5% مع انتهاء صلاحية خلال ساعة واحدة ينتهي غالباً دون تنفيذ — وهذا سلوك سليم لا عطل.</li>
+      <li>المنفّذ يفحص كل أمر مفتوح <b>مرة كل ثانية</b> على مدار الساعة. راجعنا السجل الكامل في 2026-08-28: كل تنفيذ وكل انتهاء صلاحية كان صحيحاً.</li>
+    </ul>
+  </div></details>
+
+  <details class="qa" id="q-nowebsite"><summary>هل أستطيع السحب من دون الموقع؟</summary><div class="a">
+    <p><span class="yes">نعم.</span> لا شيء يخصّ أموالك يعتمد على إمكانية الوصول إلى nlyra.xyz.</p>
+    <p>كل عقد ضمان يعرض دالة سحب مقصورة على صاحب الأمر لا تحتاج إلا إلى <b>معرّف البوت</b> &mdash; بلا بيانات مسار، ولا عرض سعر، ولا توقيع منّا. لا يعوقها الإيقاف المؤقت ولا يعوقها انتهاء الصلاحية، وبعد انتهاء الصلاحية يستطيع أي شخص استدعاء <code>refundExpired(id)</code> ويظل الدفع لك أنت، لا للمستدعي أبدًا.</p>
+    <p>استدعِها من تبويب Write Contract في <a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Blockscout</a>، أو من دليل الإنقاذ &mdash; ملف واحد مكتفٍ بذاته يمكنك حفظه بـ Ctrl+S واستخدامه دون اتصال، مع نسخة مرآة خارج الموقع على GitHub.</p>
+    <p><b>احفظه قبل أن تحتاج إليه.</b></p>
+    <a class="more" href="https://nlyra.xyz/desk/help/bots">دليل الإنقاذ &larr;</a> &nbsp; <a class="more" href="/docs#tr-blockscout">خطوة بخطوة من Blockscout &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-rugresistant"><summary>ماذا تعني عبارة "rug-resistant" فعليًا؟</summary><div class="a">
+    <p>تعني أشياء محدَّدة عن التوكنات المُطلَقة عبر <b>Architect Launch</b>، ولا تعني شيئًا على الإطلاق عن التوكنات المُطلَقة في أي مكان آخر:</p>
+    <ul>
+      <li>يولد التوكن داخل مجمّع حقيقي، ومركز السيولة <b>مقفل مدى الحياة</b> في خزنة لا يتحكم بها المُنشئ &mdash; فالـ rug الكلاسيكي، أي سحب السيولة، لا سبيل له.</li>
+      <li>التوكن نفسه <b>بلا صلاحيات مالك</b>: المعروض ثابت وقت الترجمة، فلا توجد دالة سك، ولا قائمة حظر، ولا إيقاف مؤقت.</li>
+      <li>أول عملية شراء للمُنشئ نفسه <b>مقيَّدة بسقف صارم عند 5% من المعروض</b>، وذرّية داخل معاملة الإنشاء.</li>
+    </ul>
+    <p><b>وما لا تعنيه.</b> الـ 5% الخاصة بالمُنشئ <b>غير مقفلة وقابلة للبيع من الكتلة الأولى</b>، ولا شيء يمنعه من شراء المزيد من المجمّع مباشرةً بعد ذلك. سيناريو "المُنشئ يملك 5% عند سعر القاع ويبيعها على حائزيه" مفتوح على مصراعيه، وهكذا تذهب معظم توكنات منصات الإطلاق إلى الصفر فعليًا. كما أنها لا تعني أن السعر لا يمكن أن يصل إلى الصفر، ولا تقول شيئًا عن التوكنات المعروضة في لوحة السوق التي لم تُطلَق هنا. حكم الماسح مرشِّح، لا وعد.</p>
+    <a class="more" href="/docs#p-launch">كيف يعمل Launch &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-addresses"><summary>أي عناوين العقود رسمية؟</summary><div class="a">
+    <p>فقط تلك المدرجة في <a href="/docs#addresses">جدول العناوين في التوثيق</a>. إن لم يكن العنوان هناك، فهو ليس لنا.</p>
+    <p>وأكثر عنوانين يُنتحلان:</p>
+    <ul>
+      <li><b>توكن &lrm;$NLYRA:</b> <code data-c="0xb9d3824149ad8ac984153ceec91d5a2405d1fb95">0xb9d3824149ad8ac984153ceec91d5a2405d1fb95</code></li>
+      <li><b>موجّه رسوم The Desk (v2):</b> <code data-c="0x9d1eA9Abbb99D813b7acA7666285CDed7f833565">0x9d1eA9Abbb99D813b7acA7666285CDed7f833565</code></li>
+    </ul>
+    <p>ولاحظ أن لعدة عقود <b>نسخًا قديمة</b> ما زالت تعمل وما زالت تحتفظ بمراكز فُتحت عليها. والعنوان القديم ليس عنوانًا مزيّفًا &mdash; والجدول يوضّح أيّهما أيّ.</p>
+    <p>واثنان آخران يستحقان المعرفة: خزينة الرسوم هي <code data-c="0xe30647793192D15BFA6E53aE8651368d332fe04C">0xe30647793192D15BFA6E53aE8651368d332fe04C</code> وقافل السيولة هو <code data-c="0x736D76699C26D0d966744cAe304C000d471f7F35">0x736D76699C26D0d966744cAe304C000d471f7F35</code>.</p>
+    <p>والموقع الرسمي الوحيد هو <b>nlyra.xyz</b>. ونحن لا نراسل أحدًا أولًا.</p>
+    <a class="more" href="/docs#addresses">كل العناوين، الحالية والقديمة &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-apr"><summary>هل العائد السنوي (APR) على الستاكينغ مضمون؟</summary><div class="a">
+    <p><span class="no">لا &mdash; ومن يَعِدك بعائد سنوي مضمون فهو يكذب عليك.</span></p>
+    <p><b>ستاكينغ &lrm;$NLYRA يدفع تدفّقًا ثابتًا، لا نسبة ثابتة.</b> يُصدر العقد عددًا محدَّدًا من التوكنات في الثانية ويقسّمها على كل من هم في الستاكينغ، فالنسبة المئوية ناتج لا مُدخَل. قراءة بتاريخ 27 أغسطس 2026: 12,801,393 NLYRA على مدى الدورة المنتهية في 17 أكتوبر، مقابل 292.4M في الستاكينغ &larr; <b>&lrm;&asymp;26.6%</b>. وأي رقم مُعلَن يصبح قديمًا في اللحظة التي يدخل فيها أحدهم أو يخرج &mdash; احسبه من <code>rewardRate()</code> و <code>totalSupply()</code> على العقد.</p>
+    <p><b>ومجمّعات المُنشئين في Architect Stake</b> أقوى، لكنها مع ذلك ليست ضمانًا: يحجز العقد كامل مكافأة كل مودِع من احتياطي المُنشئ المقفل لحظة دخوله، فالمعدل المُعلن مموَّل قبل أن تدخل. وهذا لا يقول شيئًا عن قيمة التوكن حين تخرج.</p>
+    <p>ومُتحقَّق منه مقابل البايتكود المنشور: عقد الستاكينغ <b>بلا مالك، وبلا إيقاف مؤقت، وبلا دالة كنس</b>، ومجمّع المكافآت مموَّل حتى آخر wei.</p>
+    <a class="more" href="/docs#p-staking">الستاكينغ بنوعيه &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-lock"><summary>هل توكنات الفريق مقفلة، ولكم من الوقت؟</summary><div class="a">
+    <p><b>نعم، والجواب أشهر، لا سنوات.</b> 52,570,139 NLYRA &mdash; أي 5.26% من المعروض &mdash; موجودة في PinkLock02 وتُحرَّر بواقع <b>10% كل 10 أيام</b>. أُفرِج عن الدفعة الأولى في 24 أغسطس 2026، و<b>يُفرَج عن الأخيرة في 22 نوفمبر 2026</b>. ولا يزال 47.3M مقفلًا اليوم. ولم يعد بإمكان أحد تغيير الجدول، بمن في ذلك نحن.</p>
+    <p><b>وهذا قفل مختلف عن قفل السيولة.</b> فمركز سيولة الإطلاق &mdash; 99.7% من كل سيولة NLYRA &mdash; يحتفظ به عقد <b>ليست فيه أي دالة سحب أو فتح أو تحويل على الإطلاق</b>، ولا وكيل (proxy) لإضافة واحدة. وهو ليس على مؤقّت؛ لا يوجد مسار كود يُفرج عنه.</p>
+    <p>خطِّط على أساس دخول 5.26% من المعروض إلى التداول الحر قبل 22 نوفمبر 2026.</p>
+    <a class="more" href="/docs#supply-locks">الجدول الكامل والأرقام &larr;</a>
+  </div></details>
+
+  <details class="qa" id="q-revenue"><summary>إلى أين تذهب إيرادات المنظومة؟</summary><div class="a">
+    <p>كل رسم على السلسلة وقابل للتتبّع. والتدفقات الرئيسية:</p>
+    <ul>
+      <li><b>تداول The Desk، 1%:</b> 30% تُقيَّد لصالح مُحيلك من الموجّه نفسه، بالأصل الذي أُخذ به الرسم، وقابلة للمطالبة في أي وقت. والـ 70% الباقية تذهب إلى الخزينة. والـ 30% سياسة حالية &mdash; يستطيع المالك ضبط حصة المُحيل على صفر بالنسبة إلى الرسوم المستقبلية.</li>
+      <li><b>Launch:</b> حصة البروتوكول من رسوم المجمّع تذهب إلى <b>Buyback Burner</b> &mdash; وهو عقد بلا مالك يستطيع أي شخص تشغيله، ويرسل <b>50% للتشغيل و 50% لشراء &lrm;$NLYRA من السوق مباشرةً إلى <code>0xdEaD</code></b>.</li>
+      <li><b>Liquidity Desk:</b> 20% من الربح زائد 0.5% عند الخروج، وكلاهما إلى الـ Buyback Burner.</li>
+      <li><b>DEX:</b> 0.05% من حجم V2 وربع شريحة رسوم كل مجمّع V3 إلى الخزينة، والباقي لمزوّدي السيولة.</li>
+    </ul>
+    <p>أما ما تفعله الخزينة بعد ذلك بحصتها فليس موثَّقًا هنا بعد، لأنه لم يُتحقَّق منه على السلسلة بما يصلح للنشر. العنوان علني، وكذلك تدفقاته الخارجة.</p>
+    <a class="more" href="/docs#revenue">جدول الإيرادات الكامل &larr;</a>
+  </div></details>
+
+</section>
+
+<section class="wrap">
+  <div class="seedwarn">
+    <p><b>لن تطلب منك NLYRA أبدًا عبارتك السرّية أو مفتاحك الخاص.</b> لا هنا، ولا في رسالة خاصة، ولا من "الدعم"، ولا بحجة "التحقق من" محفظتك أو "استعادتها". من يطلبها فهو يسرقك. ونحن أيضًا لا نراسل أحدًا أولًا، والموقع الرسمي الوحيد هو nlyra.xyz.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="callout">
+    <h2>لم تجد ما تبحث عنه؟</h2>
+    <p>المواد المطوّلة التي كانت في هذه الصفحة &mdash; قائمة المنتجات الكاملة، وكل عنوان عقد، وصلاحيات المشرف، والحفظ، والسحب الطارئ، وقسم المخاطر الصريح &mdash; <span class="g2">انتقلت إلى التوثيق</span>. ولم يُحذف شيء.</p>
+    <p>وإن كان شيء معطّلًا أو ناقصًا، فقُل ذلك. يصل مباشرةً إلى الـ Architect، والإصلاحات تُذكر بالاسم في سجل تغييرات الجمعة.</p>
+    <div class="links">
+      <a class="btn-primary" href="/ar/docs">افتح التوثيق</a>
+      <a class="btn-secondary" href="https://nlyra.xyz/report?from=faq">أبلغ عن خلل أو اقترح تحسينًا</a>
+      <a class="btn-secondary" id="tg-cta" href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">اسأل في Telegram</a>
+    </div>
+  </div>
+</section>
+
+<footer class="dfoot"><div class="inner">
+  <span><b>NERON &amp; LYRA</b> &mdash; nlyra.xyz &middot; Robinhood Chain &middot; معرّف السلسلة 4663</span>
+  <span><a href="/ar/docs">التوثيق</a> &middot; <a href="/desk/docs">دليل The Desk</a> &middot; <a href="https://nlyra.xyz/report?from=faq-footer"><b>أبلغ عن خلل أو اقترح تحسينًا</b></a> &middot; <a id="tg-foot" href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram</a></span>
+</div></footer>
+
+<script>
+const CFG = {"telegram":"https://t.me/NeronWakeUp"};
+const cfg = (typeof CFG === 'object') ? CFG : { telegram: 'https://t.me/NeronWakeUp' };
+for (const id of ['tg-nav', 'tg-foot', 'tg-cta']) { const el = document.getElementById(id); if (el) el.href = cfg.telegram; }
+document.querySelectorAll('code[data-c]').forEach((c) => {
+  c.title = 'انقر للنسخ';
+  c.style.cursor = 'pointer';
+  c.onclick = () => { const t = c.textContent; navigator.clipboard.writeText(c.dataset.c).then(() => { c.textContent = 'تم النسخ'; setTimeout(() => { c.textContent = t; }, 1100); }, () => {}); };
+});
+// open the question named in the URL
+if (location.hash) { const el = document.querySelector(location.hash); if (el && el.tagName === 'DETAILS') { el.open = true; el.scrollIntoView({ block: 'start' }); } }
+</script>
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/ar/faq" style="color:inherit">nlyra.xyz/ar/faq</a>.</div>
+</body>
+</html>

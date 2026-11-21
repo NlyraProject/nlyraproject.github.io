@@ -1,0 +1,92 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   NLYRA brand tokens — v1 ("Two AI minds, one brand")
+   Drop-in: <link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+   Presentation only. Every page maps its own legacy variables onto these.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  /* the pair */
+  --neron:#8B7CF6; --lyra:#E84FE0;
+  --brand-grad:linear-gradient(90deg,#8B7CF6,#E84FE0);
+  /* surfaces */
+  --bg:#070B18; --card:#0F1528; --nested:#141B33; --raised:#1A2240;
+  --line:rgba(233,238,248,.08); --line-strong:#1E2747;
+  /* text */
+  --text:#E9EEF8; --text-2:#9AA7BD; --text-3:#78859F; /* visual-review 2026-08: was #5D6A82, 3.46:1 → 5.09:1 */
+  /* verdicts — scan results only */
+  --safe:#4ADE80; --caution:#FBBF24; --danger:#F87171;
+  --safe-bg:rgba(74,222,128,.12); --caution-bg:rgba(251,191,36,.12); --danger-bg:rgba(248,113,113,.12);
+  /* accents derived from the pair (use sparingly) */
+  --accent:var(--neron); --accent-2:var(--lyra);
+  --accent-bg:rgba(139,124,246,.12); --accent-line:rgba(139,124,246,.35);
+  /* type */
+  --font-display:'Space Grotesk','Inter',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* radius */
+  --radius-sm:6px; --radius-md:9px; --radius-lg:14px; --radius-pill:999px;
+  /* shadow (dark theme: depth comes from surface steps, shadows only for floating things) */
+  --shadow-float:0 24px 64px -12px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06);
+}
+
+/* ── base ── */
+html{background:var(--bg)}
+body.nl{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.5 var(--font-body);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+.nl h1,.nl h2,.nl h3,.nl .display{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;color:var(--text)}
+.nl h1{font-size:clamp(26px,4vw,32px);line-height:1.15}
+.nl h2{font-size:clamp(20px,3vw,24px);line-height:1.2}
+.nl h3{font-size:17px;line-height:1.3}
+.nl p,.nl li{color:var(--text-2)}
+.nl a{color:var(--accent);text-decoration:none}
+.nl a:hover{color:var(--lyra)}
+.nl .muted{color:var(--text-3)}
+.nl .mono{font-family:var(--font-mono)}
+.nl ::selection{background:rgba(139,124,246,.3)}
+.nl :focus-visible{outline:2px solid var(--neron);outline-offset:2px;border-radius:4px}
+
+/* ── the gradient, once per screen ── */
+.nl .brand-headline{background:var(--brand-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nl .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border:0;border-radius:var(--radius-md);
+  background:var(--brand-grad);color:#fff;font:600 15px var(--font-body);cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.18);transition:filter .12s,transform .12s}
+.nl .btn-primary:hover{filter:brightness(1.07)}
+.nl .btn-primary:active{transform:translateY(1px)}
+
+/* ── components ── */
+.nl .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:var(--radius-md);
+  background:var(--nested);border:1px solid var(--line-strong);color:var(--text);font:500 14px var(--font-body);cursor:pointer}
+.nl .btn-secondary:hover{background:var(--raised)}
+.nl .input,.nl input[type=text],.nl input[type=number],.nl input[type=search],.nl textarea,.nl select{
+  background:var(--card);border:1px solid var(--line-strong);border-radius:var(--radius-md);color:var(--text);padding:10px 12px;font:400 15px var(--font-body);outline:0}
+.nl input:focus,.nl textarea:focus,.nl select:focus{border-color:var(--accent-line)}
+.nl .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px}
+.nl .card .card{background:var(--nested)}
+.nl .tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--radius-pill);font:600 11px var(--font-body);letter-spacing:.06em;text-transform:uppercase;background:var(--nested);color:var(--text-2)}
+.nl .tag.safe{background:var(--safe-bg);color:var(--safe)}.nl .tag.caution{background:var(--caution-bg);color:var(--caution)}.nl .tag.danger{background:var(--danger-bg);color:var(--danger)}
+
+/* ── the shared navigation: 4 items, neutral colour, no per-item gradients ── */
+.nl-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;height:56px;padding:0 20px;background:rgba(7,11,24,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nl-nav .lockup{display:flex;align-items:center;gap:10px;color:var(--neron);font:600 17px var(--font-display);letter-spacing:.01em;white-space:nowrap}
+.nl-nav .lockup svg,.nl-nav .lockup img{width:34px;height:22px;object-fit:contain}
+.nl-nav .lockup .x{color:var(--text-3);font-weight:500;margin:0 1px}
+.nl-nav .lockup .lyra{color:var(--lyra)}
+.nl-nav .links{display:flex;align-items:center;gap:4px;margin-left:8px}
+.nl-nav .links>a,.nl-nav .links>details>summary{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-md);color:var(--text-2);font:500 13px var(--font-body);letter-spacing:.02em;cursor:pointer;list-style:none}
+.nl-nav .links>a:hover,.nl-nav .links>details>summary:hover,.nl-nav .links>a[aria-current="page"]{color:var(--text);background:var(--nested)}
+.nl-nav .links summary::-webkit-details-marker{display:none}
+.nl-nav .links details{position:relative}
+.nl-nav .links details[open]>summary{color:var(--text);background:var(--nested)}
+.nl-nav .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:200px;padding:6px;background:var(--card);border:1px solid var(--line-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow-float);display:flex;flex-direction:column}
+.nl-nav .menu a{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border-radius:var(--radius-md);color:var(--text-2);font:500 13px var(--font-body)}
+.nl-nav .menu a:hover{color:var(--text);background:var(--nested)}
+.nl-nav .menu a small{color:var(--text-3);font-weight:400}
+.nl-nav .spacer{flex:1}
+.nl-nav .cta{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:var(--radius-md);border:1px solid var(--accent-line);background:var(--accent-bg);color:var(--text);font:600 13px var(--font-body)}
+.nl-nav .burger{display:none;width:40px;height:40px;border:0;background:none;color:var(--text);border-radius:var(--radius-md)}
+@media(max-width:860px){
+  .nl-nav{padding:0 14px;gap:10px}
+  .nl-nav .links{display:none;position:absolute;left:0;right:0;top:56px;flex-direction:column;align-items:stretch;gap:2px;padding:10px 12px 14px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .nl-nav.open .links{display:flex}
+  .nl-nav .links>a,.nl-nav .links>details>summary{padding:12px 12px;font-size:15px}
+  .nl-nav .menu{position:static;box-shadow:none;border:0;background:transparent;padding:0 0 0 12px}
+  .nl-nav .burger{display:grid;place-items:center}
+  .nl-nav .cta{display:none}
+}

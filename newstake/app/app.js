@@ -1,0 +1,1053 @@
+/* NLYRA Real Yield Staking v2 · app
+   Talks straight to the verified contracts; this page never holds keys or funds. */
+(function () {
+  'use strict';
+  var E = window.ethers;
+  var CHAIN_ID = 4663, CHAIN_HEX = '0x1237';
+  var ST = '0x5CB0Cb16cA019bcff4E494b32575848E4CdB5aF8';
+  var SP = '0x8300Ef5cC02cAb1D141dBE1c0B33d8Ac115F2D48';
+  var SP_BLOCK = 75661721;
+  var NLYRA = '0xB9d3824149aD8ac984153CeEc91D5a2405d1FB95';
+  var WETH = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73';
+  var BS = 'https://robinhoodchain.blockscout.com/tx/';
+  var BOOST = [1, 1.25, 1.5, 2];
+  var TIER_NAME = ['Flexible', '7 days', '14 days', '30 days'];
+  var TIER_DAYS = [0, 7, 14, 30];
+  var MODE_NAME = { 0: 'WETH + NLYRA', 1: 'ETH', 2: 'NLYRA', 3: 'USDG' };
+  var MAXU = E.MaxUint256;
+  // Coinsult RYSM1: anyone can push a lock into any wallet, and a wallet holds at most 32 open
+  // locks. Locks under TINY are shown apart as probable junk, with a way to clear them.
+  var MAX_POS = 32, TINY = E.parseUnits('1000', 18);
+
+  var ST_ABI = [
+    'function rewardInfo() view returns (uint256 wethRate,uint256 nlyraRate,uint256 finish,uint256 totalBoosted,uint256 totalStaked,uint256 totalCooling,uint256 bonusReserve)',
+    'function userInfo(address) view returns (tuple(uint128 flexible,uint128 locked,uint128 boosted,uint128 cooling,uint64 cooldownEnd,uint64 nextExpiry,uint64 recentDay,uint32 usedMask,uint128 recentCur,uint128 recentPrev) account,uint256 earnedWeth,uint256 earnedNlyra,uint256 positionCount)',
+    'function positionsOf(address) view returns (tuple(uint128 amount,uint64 unlockTime,uint8 tier)[])',
+    'function positionOffer(address,uint256) view returns (address)',
+    'function boostedBalanceOf(address) view returns (uint256)',
+    'function paused() view returns (bool)',
+    'function committedRewards() view returns (uint256 weth,uint256 nlyra)',
+    'function tranches() view returns (tuple(uint96 rateWeth,uint96 rateNlyra,uint64 end,uint96 eligWeth,uint96 eligNlyra)[])',
+    'function stake(uint256)', 'function stakeLocked(uint256,uint8)', 'function extendLock(uint256,uint8)',
+    'function requestUnstake(uint256)', 'function withdrawLocked(uint256)', 'function cancelUnstake()', 'function withdraw()',
+    'function offerPosition(uint256,address)', 'function cancelPositionOffer(uint256)', 'function acceptPosition(address,uint256) returns (uint256)',
+    'function claim(uint8,uint256) returns (uint256)', 'function claimTo(address,uint8,uint256) returns (uint256)',
+    'function compound(uint256,uint8,uint256) returns (uint256)',
+    'function POOL_NLYRA() view returns (address)', 'function POOL_USDG() view returns (address)',
+  ];
+  var ERC = ['function balanceOf(address) view returns (uint256)', 'function allowance(address,address) view returns (uint256)', 'function approve(address,uint256) returns (bool)'];
+  var HARVESTED = 'event Harvested(address indexed caller,bool collected,uint256 wethToStaking,uint256 nlyraToStaking,uint256 wethToTreasury,uint256 nlyraToTreasury)';
+
+  var SP_ABI = ['function harvestableIn() view returns (uint256)', 'function harvest()'];
+  var LOCKER = '0x736D76699C26D0d966744cAe304C000d471f7F35';
+  var LK_ABI = ['function collectFees(address) returns (uint256,uint256)'];
+  // DESK & BOTS (21 Oct 2026): every fee of the Desk and its bots goes through the ArchitectFeeRouter to
+  // the ArchitectFeeSplit. Once a day (06:10 UTC) it sends half to this staking contract as WETH and
+  // sweepDonations opens the 7-day tranche, so those tranches are fees, not treasury boost.
+  var FS = '0x63457eFa7e970760672464ab9E3720097982ED11';
+  var FS_BLOCK = 94323038, FS_START = 1792589932; // 21 Oct 13:38:52 UTC: the router starts paying it
+  var FS_ABI = ['function pending() view returns (uint256 wethLike, uint256 usdg)'];
+  var DISTRIBUTED = 'event Distributed(uint256 wethToStakers,uint256 wethToTreasury,uint256 nlyraToStakers,uint256 nlyraToTreasury,uint256 usdgIn,uint256 wethFromUsdg)';
+  var LOG_WINDOW = 2900000; // the RPCs answer eth_getLogs for at most 10M blocks: read in windows well under it
+  var ROUTER = '0x9d1eA9Abbb99D813b7acA7666285CDed7f833565', TREASURY = '0xe30647793192D15BFA6E53aE8651368d332fe04C';
+  var USDG = '0x5fc5360d0400a0fd4f2af552add042d716f1d168';
+  var ACCRUED = 'event Accrued(address indexed who,address indexed token,uint256 amount)';
+  var POOL_ABI = ['function slot0() view returns (uint160 sqrtPriceX96,int24,uint16,uint16,uint16,uint8,bool)', 'function token0() view returns (address)'];
+  // On nlyra.xyz the page reads through the NLYRA gateway (/rpc) and takes prices from the Desk API.
+  // Anywhere else (GitHub Pages, a local copy) it runs on its own: the public Robinhood Chain RPC, and
+  // prices read straight from the Uniswap v3 pools the contract itself swaps in. Nothing here needs us.
+  var ONSITE = /(^|\.)nlyra\.xyz$/i.test(location.hostname);
+  var roPub = new E.JsonRpcProvider('https://rpc.mainnet.chain.robinhood.com', CHAIN_ID, { staticNetwork: true });
+  var ro = ONSITE ? new E.JsonRpcProvider(location.origin + '/rpc', CHAIN_ID, { staticNetwork: true }) : roPub;
+  var LOGO = (document.querySelector('link[rel="icon"]') || {}).href || 'dual-core.svg';
+  var stR = new E.Contract(ST, ST_ABI, ro), nlR = new E.Contract(NLYRA, ERC, ro), spR = new E.Contract(SP, SP_ABI, ro), lkR = new E.Contract(LOCKER, LK_ABI, ro), fsR = new E.Contract(FS, FS_ABI, ro);
+  var eip = null, signer = null, me = null;
+  var G = {}, U = {}, px = { nlyra: 0, eth: 0 }, H = [];
+  // Desk & bots: the split's payouts to stakers (dist), what it holds for the next one (pend*), the
+  // router's net fees of the last 7 days (net7, from the fees API) and whether the history loaded (ok)
+  var F = { dist: [], pendW: 0, pendU: 0, pendUsd: 0, net7: null, ok: null };
+  var mode = 1, stTier = 3, busy = false, tick = { base: 0, rate: 0, at: 0 };
+
+  function $(id) { return document.getElementById(id); }
+  function f18(x) { return Number(E.formatUnits(x, 18)); }
+  function num(n, d) { return Number(n).toLocaleString('en-US', { maximumFractionDigits: d == null ? 2 : d, minimumFractionDigits: 0 }); }
+  function tok(x, d) { return num(f18(x), d == null ? 0 : d); }
+  function kfmt(n) { return n >= 1e9 ? num(n / 1e9, 2) + 'B' : n >= 1e6 ? num(n / 1e6, 2) + 'M' : n >= 1e3 ? num(n / 1e3, 1) + 'K' : num(n, 0); }
+  function usd(n) { if (!isFinite(n)) return '—'; if (n === 0) return '$0.00'; return n >= 1000 ? '$' + num(n, 0) : n >= 1 ? '$' + n.toFixed(2) : '$' + n.toFixed(n >= .01 ? 3 : 4); }
+  function pct(n) { return !n ? '—' : (n >= 1000 ? num(n, 0) : n >= 100 ? num(n, 0) : num(n, 1)) + '%'; }
+  function short(a) { return a.slice(0, 6) + '…' + a.slice(-4); }
+  function dstr(ts) { return new Date(Number(ts) * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }); }
+  function left(ts) { var s = Number(ts) - Date.now() / 1000; if (s <= 0) return 'now'; var d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600); return d ? d + 'd ' + h + 'h' : h + 'h ' + Math.floor((s % 3600) / 60) + 'm'; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function parseAmt(v) { v = String(v || '').replace(/,/g, '').trim(); if (!v || isNaN(Number(v))) return 0n; try { return E.parseUnits(v, 18); } catch (e) { return 0n; } }
+  function log(html) { var l = $('log'); if (l.querySelector('.muted')) l.innerHTML = ''; var d = document.createElement('div'); d.innerHTML = html; l.prepend(d); }
+  var toastT;
+  function toast(html, ms) { var t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); } t.innerHTML = html; clearTimeout(toastT); toastT = setTimeout(function () { t.remove(); }, ms || 5000); }
+  function errMsg(e) {
+    // ethers files an answer it cannot classify (a WalletConnect wallet's own error, a refusal inside the WalletConnect
+    // library) as "could not coalesce error" and keeps the real one in e.error. 4 Nov: a wallet linked without Robinhood
+    // Chain showed only "could not coalesce error" on every Re-lock, so nobody could tell what to do.
+    var inner = (e && (e.error || (e.info && e.info.error))) || null;
+    var m = (e && (e.shortMessage || e.reason || (e.info && e.info.error && e.info.error.message) || e.message)) || String(e);
+    if (/could not coalesce/i.test(m) && inner && inner.message) m = String(inner.message);
+    var code = inner && inner.code;
+    if (/user rejected|denied|4001|rejected by user|user cancel/i.test(m) || code === 4001 || code === 5000 || (e && e.code === 5000)) return 'cancelled in wallet';
+    if (/without Robinhood Chain|request\(\) chainId|chain is not approved/i.test(m)) return NO_CHAIN();
+    if (/request expired/i.test(m)) return 'your wallet app did not answer in time: open it, look for the request and try again';
+    return m.slice(0, 160);
+  }
+  // WalletConnect (the /brand/nlyra-wc.js link, for a phone browser with no wallet inside): its wallet signs in another app
+  function isWC() { return !!(eip && eip.isWalletConnect); }
+  function NO_CHAIN() { var W = window.__NLYRA_WC__; return (W && W.NO_CHAIN) || 'Your wallet link has no Robinhood Chain. Open this page in the browser inside your wallet app.'; }
+  var RELINK = ' <button class="btn btn-ghost btn-sm" type="button" data-wc-relink>Link WalletConnect again</button>';
+  async function relinkWC() {
+    var W = window.__NLYRA_WC__;
+    if (!W || !W.relink) return;
+    try {
+      toast('Linking again: approve <b>Robinhood Chain</b> in your wallet app, then come back here.', 30000);
+      var accs = await W.relink(CHAIN_ID);
+      eip = W.provider;
+      await setAccount(accs && accs[0]);
+      toast(W.approved(CHAIN_ID) ? '<span class="t-ok">✓</span> Wallet linked with Robinhood Chain. Try again.' : '<span class="t-bad">' + esc(NO_CHAIN()) + '</span>', 12000);
+    } catch (e) { toast('<span class="t-bad">Link failed:</span> ' + esc(errMsg(e)) + '. You can also open this page in the browser inside your wallet app.', 15000); }
+  }
+  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-wc-relink]')) relinkWC(); });
+  function dailyUsd() { return (f18(G.wr || 0n) * px.eth + f18(G.nr || 0n) * px.nlyra) * 86400; }
+  // APR at the fee pace of the LAST 7 DAYS. Each payout streams over 7 days, so the live stream
+  // (dailyUsd) only shows 1/7 of a payout per day during the first week. The pace = every payout to
+  // stakers of the last 7 days + the fees already accrued for the next one, over the time they cover.
+  // (2 Oct: it used to be the LAST payout only, and one slow day took the headline from ~31% to 10%.)
+  var FIRST_START = 1790632884; // 28 Sep 22:01:24 UTC: the collection before the first payout
+  function paceUsd() {
+    // Preferred source: the contract's own tranches (each active daily payout, its size and start).
+    // No event history needed, so it can't silently fall back to the 1/7 stream.
+    // Fee part only (eligWeth/eligNlyra = what came from the fee splitter): a treasury boost tranche
+    // must never read as a jump in fees. It is shown apart (boostInfo).
+    var tr = (G.tr || []).map(function (t) {
+      return { usd: (f18(t[3]) * px.eth + f18(t[4]) * px.nlyra) * 7 * 86400, start: Number(t[2]) - 7 * 86400 };
+    }).filter(function (x) { return x.usd > 0; }).sort(function (a, b) { return a.start - b.start; });
+    var now = Date.now() / 1000;
+    var win = tr.filter(function (x) { return x.start >= now - 7 * 86400; });
+    if (win.length) {
+      // each payout covers the time since the collection before it: the previous payout if the contract
+      // still lists it, the very first collection at launch, or else the average gap between payouts
+      var i0 = tr.indexOf(win[0]), from;
+      if (i0 > 0) from = tr[i0 - 1].start;
+      else if (win[0].start < FIRST_START + 8 * 86400) from = FIRST_START;
+      else from = win[0].start - (win.length > 1 ? (win[win.length - 1].start - win[0].start) / (win.length - 1) : 86400);
+      var got = win.reduce(function (a, x) { return a + x.usd; }, 0) + (G.pendUsd || 0);
+      var span = now - from;
+      if (span > 3600) return got / span * 86400;
+    }
+    if (!H.length) return dailyUsd();
+    var last = H[H.length - 1], start = H.length > 1 ? H[H.length - 2].ts : FIRST_START;
+    var got = last.w * px.eth + last.n * px.nlyra + (G.pendUsd || 0);
+    var secs = Date.now() / 1000 - start;
+    return secs > 3600 ? got / secs * 86400 : dailyUsd();
+  }
+  // Desk & bots part of the pace: half of the router's net fees (after referral shares) of the last 7
+  // days, since every router fee is split 50/50 from 21 Oct on. Without the fees API: what the split
+  // actually paid in the last 7 days plus what it holds now, over the time that covers.
+  function deskPaceUsd() {
+    if (F.net7 != null) return F.net7 * 0.5 * px.eth / 7;
+    var now = Date.now() / 1000, from = Math.max(FS_START, now - 7 * 86400);
+    var got = F.dist.filter(function (x) { return x.ts >= from; }).reduce(function (a, x) { return a + x.w * px.eth + x.n * px.nlyra; }, 0) + F.pendUsd;
+    return now - from > 3600 ? got / (now - from) * 86400 : 0;
+  }
+  // TREASURY BOOST: the treasury can top the stream up by sending WETH/NLYRA straight to the staking
+  // contract; sweepDonations (or the next harvest) opens a 7-day tranche with it. Each tranche keeps
+  // its fee part apart (elig*), so whatever is above it is the boost: shown on its own, with its end date.
+  function boostInfo() {
+    var now = Date.now() / 1000, day = 0, end = 0;
+    var trs = (G.tr || []).map(function (t) { return { w: t[0] > t[3] ? t[0] - t[3] : 0n, n: t[1] > t[4] ? t[1] - t[4] : 0n, end: Number(t[2]) }; });
+    // The Desk & bots payouts also arrive as donations, but they are fees: each one comes off the first
+    // tranche opened at or after it (the keeper sweeps right after paying; at worst the next harvest
+    // takes it in, within a day). Only what is left above that is treasury boost.
+    var byStart = trs.slice().sort(function (a, b) { return a.end - b.end; });
+    F.dist.forEach(function (x) {
+      var t = byStart.find(function (t) { var s = t.end - 7 * 86400; return s >= x.ts - 120 && s <= x.ts + 26 * 3600; });
+      if (!t) return;
+      var rw = BigInt(Math.floor(x.w * 1e18 / (7 * 86400))), rn = BigInt(Math.floor(x.n * 1e18 / (7 * 86400)));
+      t.w = t.w > rw ? t.w - rw : 0n; t.n = t.n > rn ? t.n - rn : 0n;
+    });
+    trs.forEach(function (t) {
+      if (t.end <= now) return;
+      if (t.w < 1000000n && t.n < 1000000000000n) return; // per-second rounding of the fee part, not a boost
+      day += (f18(t.w) * px.eth + f18(t.n) * px.nlyra) * 86400; end = Math.max(end, t.end);
+    });
+    return { day: day, end: end };
+  }
+  function paintBoost() {
+    var on = (G.boostApr || 0) >= 0.05, hb = $('h-boost');
+    if (hb) {
+      hb.hidden = !on;
+      if (on) { $('h-boost-apr').textContent = '+' + pct(G.boostApr * 2); $('h-boost-t').textContent = 'until ' + dstr(G.boostEnd) + ' · paid by the NLYRA treasury, not by fees'; }
+    }
+    document.querySelectorAll('.plan').forEach(function (el) {
+      var pb = el.querySelector('.pb');
+      if (!pb) { pb = document.createElement('span'); pb.className = 'pb'; el.insertBefore(pb, el.querySelector('.mult')); }
+      pb.hidden = !on;
+      if (on) pb.textContent = '+' + pct(G.boostApr * BOOST[+el.dataset.t]) + ' treasury boost';
+    });
+    if (on && G.boostDay) $('g-dailytok').textContent += ' · incl. ' + usd(G.boostDay) + ' boost';
+  }
+  // unlock dates shown on plan cards (locks end at the next 00:00 UTC after N days)
+  document.querySelectorAll('.unl').forEach(function (el) { var t = Math.ceil((Date.now() / 1000 + Number(el.dataset.d) * 86400) / 86400) * 86400; el.textContent = 'until ' + dstr(t); });
+
+
+  // ---------- motion ----------
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var shown = {};
+  function roll(id, value, fmt) {
+    var el = $(id); if (!el) return;
+    if (!isFinite(value)) { el.textContent = '—'; return; }
+    var from = shown[id] == null ? 0 : shown[id]; shown[id] = value;
+    if (reduce || from === value) { el.textContent = fmt(value); return; }
+    var t0 = performance.now(), dur = 1100;
+    if (from !== 0 && Math.abs(from - value) / (Math.abs(value) || 1) > 0.002) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+    (function step(t) { var k = Math.min(1, Math.max(0, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (value - from) * e); if (k < 1) requestAnimationFrame(step); })(t0);
+  }
+  (function particles() {
+    var c = $('fx'); if (!c || reduce) return;
+    var x = c.getContext('2d'), P = [], W, Hh, dpr = Math.min(2, window.devicePixelRatio || 1);
+    function size() { W = c.width = innerWidth * dpr; Hh = c.height = innerHeight * dpr; c.style.width = innerWidth + 'px'; c.style.height = innerHeight + 'px'; }
+    size(); addEventListener('resize', size);
+    var n = innerWidth < 700 ? 28 : 60;
+    for (var i = 0; i < n; i++) P.push({ x: Math.random() * W, y: Math.random() * Hh, r: (Math.random() * 1.8 + .6) * dpr, vx: (Math.random() - .5) * .15 * dpr, vy: -(Math.random() * .35 + .08) * dpr, c: Math.random() < .5 ? '139,124,246' : '232,79,224', a: Math.random() * .5 + .15 });
+    (function loop() {
+      x.clearRect(0, 0, W, Hh);
+      for (var i = 0; i < P.length; i++) {
+        var p = P[i]; p.x += p.vx; p.y += p.vy; if (p.y < -10) { p.y = Hh + 10; p.x = Math.random() * W; }
+        x.beginPath(); x.arc(p.x, p.y, p.r, 0, 6.283); x.fillStyle = 'rgba(' + p.c + ',' + p.a + ')'; x.shadowBlur = 8 * dpr; x.shadowColor = 'rgba(' + p.c + ',.8)'; x.fill();
+      }
+      x.shadowBlur = 0;
+      for (var a = 0; a < P.length; a++) for (var b = a + 1; b < P.length; b++) {
+        var dx = P[a].x - P[b].x, dy = P[a].y - P[b].y, d = dx * dx + dy * dy, lim = 110 * dpr;
+        if (d < lim * lim) { x.beginPath(); x.moveTo(P[a].x, P[a].y); x.lineTo(P[b].x, P[b].y); x.strokeStyle = 'rgba(139,124,246,' + (0.12 * (1 - Math.sqrt(d) / lim)) + ')'; x.lineWidth = dpr; x.stroke(); }
+      }
+      if (document.visibilityState === 'visible') requestAnimationFrame(loop); else setTimeout(function () { requestAnimationFrame(loop); }, 500);
+    })();
+  })();
+  function confetti() {
+    if (reduce) return;
+    var c = document.createElement('canvas'); c.className = 'confetti'; document.body.appendChild(c);
+    var x = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight;
+    var cols = ['#8B7CF6', '#E84FE0', '#B466EE', '#4ADE80', '#ffffff'], P = [];
+    for (var i = 0; i < 160; i++) P.push({ x: innerWidth / 2, y: innerHeight * .35, vx: (Math.random() - .5) * 16, vy: Math.random() * -14 - 4, s: Math.random() * 6 + 3, c: cols[i % cols.length], r: Math.random() * 6, vr: (Math.random() - .5) * .3 });
+    var t0 = performance.now();
+    (function loop(t) {
+      x.clearRect(0, 0, c.width, c.height);
+      P.forEach(function (p) { p.vy += .45; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); });
+      if (t - t0 < 2600) requestAnimationFrame(loop); else c.remove();
+    })(t0);
+  }
+
+  // ---------- data ----------
+  async function prices() {
+    if (ONSITE) {
+      try {
+        var r = await Promise.all([NLYRA, WETH].map(function (t) { return fetch('/api/desk/token?t=' + t.toLowerCase()).then(function (x) { return x.json(); }); }));
+        px.nlyra = Number(r[0].priceUsd) || px.nlyra; px.eth = Number(r[1].priceUsd) || px.eth;
+        px.vol = Number((r[0].best && r[0].best.vol24) || (r[0].onchain && r[0].onchain.vol24Usd)) || px.vol || 0;
+      } catch (e) {}
+      if (px.nlyra && px.eth) return;
+    }
+    try { await poolPrices(); } catch (e) {}
+  }
+  // ETH in USD from the WETH/USDG pool and NLYRA in ETH from the WETH/NLYRA pool. Their addresses are
+  // immutables of the staking contract (checked against the Uniswap factory when it was deployed).
+  var POOLC = null, POOLT0 = null;
+  async function poolPrices() {
+    if (!POOLC) {
+      var a = await Promise.all([stR.POOL_USDG(), stR.POOL_NLYRA()]);
+      POOLC = a.map(function (x) { return new E.Contract(x, POOL_ABI, ro); });
+      POOLT0 = await Promise.all(POOLC.map(function (c) { return c.token0(); }));
+    }
+    var s = await Promise.all(POOLC.map(function (c) { return c.slot0(); }));
+    function ratio(i) { var q = Number(s[i][0]) / 2 ** 96; return q * q; } // token1 per token0, raw units
+    function wethFirst(i) { return POOLT0[i].toLowerCase() === WETH.toLowerCase(); }
+    var ethUsd = wethFirst(0) ? ratio(0) * 1e12 : 1 / (ratio(0) * 1e-12); // WETH 18 decimals, USDG 6
+    var nlyEth = wethFirst(1) ? 1 / ratio(1) : ratio(1);
+    if (isFinite(ethUsd) && ethUsd > 0) px.eth = ethUsd;
+    if (isFinite(nlyEth) && nlyEth > 0 && px.eth) px.nlyra = nlyEth * px.eth;
+  }
+  // Payout history: Pons harvests (H) and Desk & bots payouts (F.dist), amounts in WETH / NLYRA.
+  // On nlyra.xyz the fees API keeps them already dated. Elsewhere, or if it is down, they are read from
+  // the chain in RPC-sized windows (one eth_getLogs over the whole range broke once it passed 10M blocks).
+  // HISTORY-2026-11-06 · the track record: what the contract actually paid, by week and by month, and the realized
+  // APR since launch. The fees API computes it from the contract's own cuts (staking.history); nothing here estimates.
+  var TR = null, TRV = 'weeks', TRB = false;
+  function usd0(x) { return '$' + num(x, 0); }
+  function trDate(day, o) { return new Date(day + 'T00:00:00Z').toLocaleDateString('en-US', Object.assign({ timeZone: 'UTC' }, o)); }
+  function trLabel(b, v) {
+    if (v === 'months') return trDate(b.from, { month: 'long', year: 'numeric' });
+    var a = new Date(b.from + 'T00:00:00Z'), e = new Date(b.to + 'T00:00:00Z');
+    return trDate(b.from, { month: 'short', day: 'numeric' }) + '–' + trDate(b.to, a.getUTCMonth() === e.getUTCMonth() ? { day: 'numeric' } : { month: 'short', day: 'numeric' });
+  }
+  function trShort(b, v) { return v === 'months' ? trDate(b.from, { month: 'short' }) : trDate(b.from, { month: 'short', day: 'numeric' }); }
+  function paintTrack(h) {
+    var sec = $('track'); if (!sec) return;
+    if (!h || !h.sinceLaunch || !h.sinceLaunch.paid) { sec.hidden = true; return; }
+    TR = h; sec.hidden = false;
+    var a = h.sinceLaunch;
+    $('tr-since').textContent = 'since ' + new Date(h.launch).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + Math.round(a.days) + ' days';
+    $('tr-paid').textContent = usd0(a.paid.usd);
+    $('tr-paid-s').textContent = usd0(a.paid.feesUsd) + ' from fees · ' + usd0(a.paid.boostUsd) + ' treasury boost';
+    $('tr-apr').textContent = pct(a.aprUpTo);
+    $('tr-apr-s').textContent = pct(a.aprFlex) + ' flexible · ' + num(a.yieldPct, 2) + '% earned so far per staked NLYRA';
+    $('tr-fees').textContent = pct(a.aprFeesUpTo);
+    $('tr-fees-s').textContent = pct(a.aprFeesFlex) + ' flexible · without the treasury boost';
+    if (!TRB) {
+      TRB = true;
+      Array.prototype.forEach.call(sec.querySelectorAll('.tr-tabs button'), function (b) {
+        b.addEventListener('click', function () { TRV = b.dataset.v; Array.prototype.forEach.call(sec.querySelectorAll('.tr-tabs button'), function (x) { x.classList.toggle('on', x === b); }); paintTrackRows(); });
+      });
+    }
+    paintTrackRows();
+  }
+  function paintTrackRows() {
+    if (!TR) return;
+    var rows = TR[TRV] || [], v = TRV;
+    var t = '<thead><tr><th>' + (v === 'months' ? 'Month' : 'Week') + '</th><th>Paid to stakers</th><th>From fees</th><th>Treasury boost</th><th>APR · flexible</th><th>APR · 30-day lock</th></tr></thead><tbody>';
+    rows.forEach(function (b) {
+      t += '<tr' + (b.partial ? ' class="now"' : '') + '><td>' + esc(trLabel(b, v)) + (b.partial ? '<small>so far</small>' : '') + '</td><td>' + usd0(b.paid.usd) + '</td><td>' + usd0(b.paid.feesUsd) + '</td><td>' + usd0(b.paid.boostUsd) + '</td><td>' + pct(b.aprFlex) + '</td><td class="big">' + pct(b.aprUpTo) + '</td></tr>';
+    });
+    $('tr-table').innerHTML = t + '</tbody>';
+    // stacked bars: fees (gradient) and treasury boost (soft), APR with a 30-day lock
+    var W = 720, H = 160, top = 22, bottom = 26, n = rows.length, gap = 10, bw = n ? Math.min(90, (W - gap * (n + 1)) / n) : 0, x0 = (W - (bw * n + gap * (n - 1))) / 2;
+    var max = Math.max.apply(null, rows.map(function (b) { return b.aprUpTo; }).concat([1]));
+    var s = '<defs><linearGradient id="trG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E84FE0"/><stop offset="1" stop-color="#8B7CF6"/></linearGradient></defs>';
+    s += '<rect x="6" y="6" width="10" height="10" rx="2" fill="url(#trG)"/><text x="21" y="15">fees</text><rect x="58" y="6" width="10" height="10" rx="2" fill="#8B7CF6" opacity=".38"/><text x="73" y="15">treasury boost</text>';
+    rows.forEach(function (b, i) {
+      var x = x0 + i * (bw + gap), hf = (b.aprFeesUpTo / max) * (H - top - bottom), hb = ((b.aprUpTo - b.aprFeesUpTo) / max) * (H - top - bottom), yb = H - bottom - hf;
+      s += '<rect x="' + x + '" y="' + yb + '" width="' + bw + '" height="' + hf + '" rx="3" fill="url(#trG)"' + (b.partial ? ' opacity=".55"' : '') + '/>';
+      if (hb > 0) s += '<rect x="' + x + '" y="' + (yb - hb) + '" width="' + bw + '" height="' + hb + '" rx="3" fill="#8B7CF6" opacity="' + (b.partial ? '.22' : '.38') + '"/>';
+      s += '<text class="v" x="' + (x + bw / 2) + '" y="' + (yb - hb - 6) + '" text-anchor="middle">' + pct(b.aprUpTo) + '</text>';
+      s += '<text x="' + (x + bw / 2) + '" y="' + (H - 8) + '" text-anchor="middle">' + esc(trShort(b, v)) + '</text>';
+    });
+    $('tr-chart').innerHTML = s;
+  }
+  async function loadHistory() {
+    if (ONSITE) {
+      try {
+        var d = await fetch('/api/fees', { cache: 'no-store' }).then(function (r) { return r.json(); });
+        var rh = d.robinhood, rt = rh.router, pd = (d.live && d.live.pending) || rh.splitter.pending || {};
+        H = rh.pons.harvests.map(function (h) { return { ts: Date.parse(h.date) / 1000, w: h.wethToStakers, n: h.nlyraToStakers }; });
+        F.dist = rh.splitter.distributions.map(function (x) { return { ts: Date.parse(x.date) / 1000, w: x.wethToStakers, n: x.nlyraToStakers || 0 }; });
+        F.net7 = rt.netLast7 != null ? rt.netLast7 : rt.grossWethEq > 0 ? rt.last7 * rt.netWethEq / rt.grossWethEq : rt.last7;
+        if (!F.pendW && !F.pendU) { F.pendW = pd.weth || 0; F.pendU = pd.usdg || 0; }
+        sortHistory(); F.ok = true;
+        try { paintTrack(d.staking && d.staking.history); } catch (_) {}   // HISTORY-2026-11-06
+        return;
+      } catch (e) { /* read it from the chain */ }
+    }
+    F.net7 = null;
+    var hi = new E.Interface([HARVESTED]), di = new E.Interface([DISTRIBUTED]), provs = [ro, roPub];
+    for (var k = 0; k < provs.length; k++) {
+      try {
+        var pv = provs[k], blocks = {};
+        var stamp = async function (l) { if (!blocks[l.blockNumber]) blocks[l.blockNumber] = await pv.getBlock(l.blockNumber); return blocks[l.blockNumber].timestamp; };
+        var hl = await logsInWindows(pv, SP, hi.getEvent('Harvested').topicHash, SP_BLOCK);
+        var dl = await logsInWindows(pv, FS, di.getEvent('Distributed').topicHash, FS_BLOCK);
+        var h = [], ds = [];
+        for (var i = 0; i < hl.length; i++) { var a = hi.parseLog(hl[i]).args; h.push({ ts: await stamp(hl[i]), w: f18(a.wethToStaking), n: f18(a.nlyraToStaking) }); }
+        for (var j = 0; j < dl.length; j++) { var b = di.parseLog(dl[j]).args; ds.push({ ts: await stamp(dl[j]), w: f18(b.wethToStakers), n: f18(b.nlyraToStakers) }); }
+        H = h; F.dist = ds; sortHistory(); F.ok = true;
+        try { F.net7 = await routerNet7(pv); } catch (e) { /* the pace falls back to what the split paid */ }
+        return;
+      } catch (e) { /* try the next RPC */ }
+    }
+    if (!H.length && !F.dist.length) F.ok = false;
+  }
+  // The router's fees of the last 7 days that were ours (the treasury's, or the split's since 21 Oct),
+  // net of referral shares: the same number the fees API gives, read from the chain.
+  async function routerNet7(pv) {
+    var ai = new E.Interface([ACCRUED]), head = await pv.getBlock('latest'), us = [FS.toLowerCase(), TREASURY.toLowerCase()], net = 0;
+    var perSec = (head.number - FS_BLOCK) / (head.timestamp - FS_START);
+    var logs = await logsInWindows(pv, ROUTER, ai.getEvent('Accrued').topicHash, Math.floor(head.number - perSec * 7 * 86400));
+    logs.forEach(function (l) {
+      var a = ai.parseLog(l).args, t = a.token.toLowerCase();
+      if (us.indexOf(a.who.toLowerCase()) < 0) return;
+      net += t === WETH.toLowerCase() ? f18(a.amount) : t === USDG ? Number(a.amount) / 1e6 / (px.eth || Infinity) : 0;
+    });
+    return net;
+  }
+  async function logsUpTo(pv, address, topic, from, head) {
+    var out = [];
+    for (var a = from; a <= head; a += LOG_WINDOW) out = out.concat(await pv.getLogs({ address: address, topics: [topic], fromBlock: a, toBlock: Math.min(head, a + LOG_WINDOW - 1) }));
+    return out;
+  }
+  async function logsInWindows(pv, address, topic, from) {
+    var head = await pv.getBlockNumber(), out = [];
+    for (var a = from; a <= head; a += LOG_WINDOW) out = out.concat(await pv.getLogs({ address: address, topics: [topic], fromBlock: a, toBlock: Math.min(head, a + LOG_WINDOW - 1) }));
+    return out;
+  }
+  function sortHistory() {
+    H.sort(function (a, b) { return a.ts - b.ts; });
+    F.dist.sort(function (a, b) { return a.ts - b.ts; });
+  }
+
+  async function loadPool() {
+    var r = await stR.rewardInfo();
+    G = { wr: r[0], nr: r[1], finish: r[2], tb: r[3], ts: r[4], tc: r[5], bonus: r[6] };
+    try { G.paused = await stR.paused(); } catch (e) {}
+    G.pw = 0; G.pn = 0;
+    try { var q0 = await lkR.collectFees.staticCall(NLYRA, { from: SP }); G.pw = f18(q0[0]); G.pn = f18(q0[1]); } catch (e) { /* NoFeesToCollect */ }
+    G.pendUsd = (G.pw * px.eth + G.pn * px.nlyra) * 0.35;
+    try { var fp = await fsR.pending(); F.pendW = f18(fp[0]); F.pendU = Number(fp[1]) / 1e6; } catch (e) { /* keep the last reading */ }
+    F.pendUsd = (F.pendW * px.eth + F.pendU) * 0.5;
+    try { G.tr = await stR.tranches(); } catch (e) { G.tr = G.tr || []; }
+    var d = dailyUsd(), tbUsd = f18(G.tb) * px.nlyra;
+    G.pacePons = paceUsd(); G.paceDesk = deskPaceUsd();
+    G.pace = G.pacePons + G.paceDesk;
+    G.baseApr = tbUsd > 0 ? G.pace * 365 / tbUsd * 100 : 0;
+    roll('g-staked', f18(G.ts), function (v) { return kfmt(v) + ' NLYRA'; });
+    $('g-stakedusd').textContent = px.nlyra ? '≈ ' + usd(f18(G.ts) * px.nlyra) : ' ';
+    if (d > 0) roll('g-daily', d, usd); else $('g-daily').textContent = '—';
+    $('g-dailytok').textContent = d > 0 ? num(f18(G.wr) * 86400, 5) + ' WETH + ' + kfmt(f18(G.nr) * 86400) + ' NLYRA' : 'starts with the first harvest';
+    var paid = 0, np = H.length + F.dist.length;
+    H.concat(F.dist).forEach(function (h) { paid += h.w * px.eth + h.n * px.nlyra; });
+    if (np) roll('g-paid', paid, usd); else $('g-paid').textContent = '—';
+    $('g-paidn').textContent = np ? np + (np === 1 ? ' daily payout' : ' daily payouts') + ' so far' : F.ok === false ? 'payout history unavailable right now' : 'first payout pending';
+    if (G.baseApr) roll('h-apr', G.baseApr * 2, pct); else $('h-apr').textContent = '—';
+    await loadVault(d);
+    var live = $('live');
+    live.classList.toggle('on', d > 0 && !G.paused);
+    live.querySelector('span').textContent = G.paused ? 'Paused' : d > 0 ? 'Live · rewards streaming' : 'Live · waiting for first payout';
+    document.querySelectorAll('.plan').forEach(function (el) { var a = el.querySelector('.apr'); if (!a.id) a.id = 'plan-apr-' + el.dataset.t; if (G.baseApr) roll(a.id, G.baseApr * BOOST[+el.dataset.t], pct); else a.textContent = '—'; });
+    var bi = boostInfo();
+    G.boostDay = bi.day; G.boostEnd = bi.end;
+    G.boostApr = tbUsd > 0 && bi.day > 0 ? bi.day * 365 / tbUsd * 100 : 0;
+    paintBoost();
+    drawHistory();
+    estimate();
+  }
+
+  async function loadVault(d) {
+    try {
+      var c = await stR.committedRewards(), wait = Number(await spR.harvestableIn());
+      var vw = f18(c[0]), vn = f18(c[1]), vu = vw * px.eth + vn * px.nlyra;
+      roll('v-usd', vu, function (v) { return '$' + v.toFixed(2); });
+      $('v-weth').textContent = num(vw, 6); $('v-nlyra').textContent = num(vn, 0);
+      var fin = Number(G.finish), now = Date.now() / 1000;
+      var pctLeft = Math.min(100, Math.max(0, fin - now) / (7 * 86400) * 100);
+      drawTank();
+      $('v-streamed').textContent = vu > 0 ? 'Each layer is one daily payout, draining evenly over 7 days' : 'Nothing waiting right now';
+      $('v-end').textContent = fin > now ? 'fully paid out in ' + left(fin) : '';
+      G.nextAt = Date.now() + wait * 1000;
+      // fees already earned by the NLYRA position since the last collection (read-only simulation of the collect)
+      // plus what the Desk & bots split holds for its next payout (06:10 UTC); half of that is the stakers'
+      var pw = G.pw || 0, pn = G.pn || 0;
+      var gross = pw * px.eth + pn * px.nlyra, toStakers = gross * 0.7 * 0.5, desk = F.pendUsd * 2;
+      roll('v-est', toStakers + F.pendUsd, usd);
+      $('v-est-s').textContent = num(pw * .35 + F.pendW * .5, 6) + ' WETH + ' + num(pn * .35, 0) + ' NLYRA so far' + (F.pendUsd > 0 ? ' · ' + usd(F.pendUsd) + ' of it from the Desk & bots' : '');
+      roll('v-vol', gross * 0.7 + desk, usd);
+      $('v-vol-s').textContent = (gross ? usd(gross) + ' accrued on Pons − 30% Pons protocol fee' : 'nothing accrued on Pons yet') + ' + ' + usd(desk) + ' from the Desk & bots · split 50/50 stakers/treasury';
+    } catch (e) {}
+  }
+  setInterval(function () {
+    if (!G.nextAt) return;
+    var s = Math.max(0, (G.nextAt - Date.now()) / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = Math.floor(s % 60);
+    var t = s <= 0 ? 'due now' : (h ? h + 'h ' : '') + String(m).padStart(2, '0') + 'm ' + String(sec).padStart(2, '0') + 's';
+    $('v-next').textContent = t; $('next-t').textContent = t;
+    // the daily collection is permissionless: when it is due, anyone can trigger it from here
+    var due = s <= 0, hb = $('b-harvest');
+    if (hb && hb.hidden === due) { hb.hidden = !due; $('v-next-s').textContent = due ? 'anyone can trigger it · you only pay the gas' : 'Pons every 24 h · Desk & bots daily at 06:10 UTC'; }
+    var ring = $('next-ring'); if (ring) ring.style.strokeDashoffset = (94.25 * Math.min(1, s / 86400)).toFixed(2);
+  }, 1000);
+
+  async function loadUser() {
+    if (!me) { renderLocks(); return; }
+    var r = await Promise.all([stR.userInfo(me), stR.positionsOf(me), nlR.balanceOf(me), nlR.allowance(me, ST), stR.boostedBalanceOf(me)]);
+    var a = r[0].account;
+    U = { flex: a.flexible, locked: a.locked, cooling: a.cooling, coolEnd: a.cooldownEnd, ew: r[0].earnedWeth, en: r[0].earnedNlyra, pos: r[1], bal: r[2], allow: r[3], boosted: r[4] };
+    var staked = U.flex + U.locked;
+    $('me-bal').textContent = tok(U.bal) + ' NLYRA';
+    $('me-staked').textContent = tok(staked) + ' NLYRA';
+    $('me-weight').textContent = tok(U.boosted);
+    var share = G.tb > 0n ? f18(U.boosted) / f18(G.tb) : 0;
+    roll('me-share', share * 100, function (v) { return num(v, v >= 10 ? 1 : 2) + '%'; });
+    drawDonut(share);
+    var myApr = staked > 0n && G.baseApr ? G.baseApr * f18(U.boosted) / f18(staked) : 0;
+    if (myApr) roll('me-apr', myApr, pct); else $('me-apr').textContent = '—';
+    var myBoost = staked > 0n && G.boostApr ? G.boostApr * f18(U.boosted) / f18(staked) : 0;
+    $('me-boost-k').hidden = $('me-boost').hidden = !(myBoost >= 0.05);
+    if (myBoost >= 0.05) $('me-boost').textContent = '+' + pct(myBoost) + ' until ' + dstr(G.boostEnd);
+    var myDay = dailyUsd() * share;
+    $('me-rate').textContent = myDay ? usd(myDay) + ' / day' : '—';
+    // live ticker: start from on-chain earned, grow at my share of the stream
+    tick.base = f18(U.ew) * px.eth + f18(U.en) * px.nlyra; tick.rate = myDay / 86400; tick.at = Date.now();
+    $('rw-weth').textContent = num(f18(U.ew), 6);
+    $('rw-nlyra').textContent = num(f18(U.en), 0);
+    var has = U.ew > 0n || U.en > 0n;
+    $('b-claim').disabled = !has; $('b-compound').disabled = !has || G.paused;
+    var badge = $('tab-earn-badge'); badge.hidden = !(tick.base >= 0.01); badge.textContent = usd(tick.base);
+    // flexible / cooldown
+    var coolReady = U.cooling > 0n && Number(U.coolEnd) * 1000 <= Date.now();
+    $('flex-line').textContent = tok(U.flex) + ' NLYRA staked flexible' + (U.cooling > 0n ? ' · ' + tok(U.cooling) + ' in cooldown ' + (coolReady ? '(ready to withdraw)' : '(ready in ' + left(U.coolEnd) + ')') : '');
+    $('b-unstake').disabled = U.flex === 0n;
+    $('b-withdraw').hidden = !coolReady;
+    $('b-cancelcool').hidden = U.cooling === 0n;
+    // pending withdrawal on top, with the exact time it unlocks in the viewer's own clock (1/10)
+    var cb = $('cool-banner');
+    cb.hidden = U.cooling === 0n;
+    if (U.cooling > 0n) {
+      var cEnd = Number(U.coolEnd) * 1000, cPct = Math.max(0, Math.min(100, (Date.now() - (cEnd - 2 * 86400e3)) / (2 * 86400e3) * 100));
+      cb.classList.toggle('ready', coolReady);
+      $('cb-k').textContent = coolReady ? 'Ready to withdraw' : 'Withdrawal in progress';
+      $('cb-amt').textContent = tok(U.cooling);
+      $('cb-t').textContent = coolReady
+        ? 'The 2-day cooldown is over. Withdraw sends it back to this wallet.'
+        : 'Ready in ' + left(U.coolEnd) + ' · ' + new Date(cEnd).toLocaleString('en-US', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' (your time)';
+      $('cb-bar').style.width = (coolReady ? 100 : cPct).toFixed(1) + '%';
+      $('cb-withdraw').hidden = !coolReady;
+    }
+    renderLocks();
+    quoteClaim();
+    estimate();
+  }
+
+  // ---------- charts ----------
+  function svgEl(tag, attrs, text) { var e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+  function drawDonut(share) {
+    var s = $('donut'); s.innerHTML = '';
+    var R = 50, C = 2 * Math.PI * R;
+    s.appendChild(svgEl('circle', { cx: 60, cy: 60, r: R, fill: 'none', stroke: 'rgba(154,167,189,.14)', 'stroke-width': 14 }));
+    if (!document.getElementById('dg')) {
+      var defs = svgEl('defs', {}), lg = svgEl('linearGradient', { id: 'dg', x1: 0, x2: 1 });
+      lg.appendChild(svgEl('stop', { offset: 0, 'stop-color': '#8B7CF6' })); lg.appendChild(svgEl('stop', { offset: 1, 'stop-color': '#E84FE0' }));
+      defs.appendChild(lg); s.appendChild(defs);
+    }
+    var v = Math.max(share > 0 ? 0.012 : 0, Math.min(1, share));
+    s.appendChild(svgEl('circle', { cx: 60, cy: 60, r: R, fill: 'none', stroke: 'url(#dg)', 'stroke-width': 14, 'stroke-linecap': 'round', 'stroke-dasharray': (C * v) + ' ' + C }));
+  }
+  function drawPlans(amountN) {
+    var s = $('chart-plans'); s.innerHTML = '';
+    var W = 320, Hh = 170, top = 22, bottom = 26, bw = 46, gap = (W - bw * 4) / 5;
+    var d = G.pace || dailyUsd(), vals = BOOST.map(function (b) {
+      if (!amountN || !d) return 0; var w = amountN * b; return d * w / (f18(G.tb) + w) * 30;
+    });
+    var mx = Math.max.apply(null, vals) || 1;
+    s.appendChild(svgEl('line', { x1: 0, x2: W, y1: Hh - bottom, y2: Hh - bottom, stroke: 'rgba(154,167,189,.2)' }));
+    vals.forEach(function (v, i) {
+      var h = v ? Math.max(4, (Hh - top - bottom) * v / mx) : 4, x = gap + i * (bw + gap), y = Hh - bottom - h;
+      s.appendChild(svgEl('rect', { x: x, y: y, width: bw, height: h, rx: 6, fill: i === stTier ? (i === 3 ? '#E84FE0' : '#8B7CF6') : 'rgba(139,124,246,.28)' }));
+      s.appendChild(svgEl('text', { x: x + bw / 2, y: Hh - 8, 'text-anchor': 'middle' }, ['Flex', '7d', '14d', '30d'][i]));
+      if (v) s.appendChild(svgEl('text', { x: x + bw / 2, y: y - 6, 'text-anchor': 'middle', class: 'val' }, usd(v)));
+    });
+    if (!amountN || !d) s.appendChild(svgEl('text', { x: W / 2, y: 60, 'text-anchor': 'middle' }, d ? 'Enter an amount to compare plans' : 'Waiting for the first payout'));
+  }
+  // ---------- fee tank: one layer per daily payout, draining to stakers over 7 days ----------
+  function drawTank() {
+    var s = $('tank'); if (!s) return; s.innerHTML = '';
+    var now = Date.now() / 1000, W = 360, X = 14, Y = 10, TW = 136, TH = 168, R = 16;
+    var layers = (G.tr || []).map(function (t) {
+      var left = Math.max(0, Number(t[2]) - now), u = (f18(t[0]) * px.eth + f18(t[1]) * px.nlyra) * left;
+      return { usd: u, end: Number(t[2]), start: Number(t[2]) - 7 * 86400 };
+    }).filter(function (l) { return l.usd > 0.005; });
+    var pend = (G.pendUsd || 0) + (F.pendUsd || 0), tot = layers.reduce(function (a, l) { return a + l.usd; }, 0) + pend;
+    var defs = svgEl('defs', {}), cp = svgEl('clipPath', { id: 'tclip' });
+    cp.appendChild(svgEl('rect', { x: X, y: Y, width: TW, height: TH, rx: R })); defs.appendChild(cp);
+    var lg = svgEl('linearGradient', { id: 'tg', x1: 0, x2: 0, y1: 1, y2: 0 });
+    lg.appendChild(svgEl('stop', { offset: 0, 'stop-color': '#8B7CF6' })); lg.appendChild(svgEl('stop', { offset: 1, 'stop-color': '#E84FE0' }));
+    defs.appendChild(lg); s.appendChild(defs);
+    s.appendChild(svgEl('rect', { x: X, y: Y, width: TW, height: TH, rx: R, class: 'shell' }));
+    if (!tot) {
+      s.appendChild(svgEl('text', { x: X + TW + 18, y: Y + TH / 2, class: 'dim' }, 'Nothing waiting right now'));
+      return;
+    }
+    var g = svgEl('g', { 'clip-path': 'url(#tclip)' }); s.appendChild(g);
+    var fillH = TH * 0.86, minH = 12, n = layers.length + (pend > 0 ? 1 : 0);
+    var hs = layers.map(function (l) { return l.usd / tot * fillH; }).concat(pend > 0 ? [pend / tot * fillH] : []);
+    var extra = hs.reduce(function (a, h) { return a + Math.max(0, minH - h); }, 0), big = hs.filter(function (h) { return h > minH; }).reduce(function (a, h) { return a + h; }, 0) || 1;
+    hs = hs.map(function (h) { return h < minH ? minH : h - extra * (h / big); });
+    var y = Y + TH, labels = [];
+    layers.forEach(function (l, i) {
+      var h = hs[i]; y -= h;
+      var k = layers.length > 1 ? i / (layers.length - 1) : 1;
+      g.appendChild(svgEl('rect', { x: X, y: y, width: TW, height: h, fill: 'url(#tg)', opacity: (0.45 + 0.5 * k).toFixed(2) }));
+      g.appendChild(svgEl('line', { x1: X, x2: X + TW, y1: y, y2: y, stroke: 'rgba(7,11,24,.55)', 'stroke-width': 1.5 }));
+      labels.push({ y: y + h / 2, a: dstr(l.start) + ' payout', b: usd(l.usd) + ' left', c: 'ends ' + dstr(l.end) });
+    });
+    if (pend > 0) {
+      var h = hs[hs.length - 1]; y -= h;
+      g.appendChild(svgEl('rect', { x: X + 1, y: y, width: TW - 2, height: h, class: 'ghost' }));
+      labels.push({ y: y + h / 2, a: 'Next payout', b: usd(pend) + ' so far', c: 'collecting now', ghost: true });
+    }
+    // surface wave on the liquid
+    var wv = svgEl('path', { d: 'M' + (X - 60) + ' ' + y + ' q 15 -5 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 V ' + (y + 6) + ' H ' + (X - 60) + ' Z', fill: 'rgba(233,238,248,.18)' });
+    wv.appendChild(svgEl('animateTransform', { attributeName: 'transform', type: 'translate', from: '0 0', to: '60 0', dur: '3.2s', repeatCount: 'indefinite' }));
+    g.appendChild(wv);
+    // spout and drops flowing to stakers
+    s.appendChild(svgEl('rect', { x: X + TW / 2 - 7, y: Y + TH, width: 14, height: 8, rx: 3, fill: 'rgba(154,167,189,.35)' }));
+    var dp = svgEl('path', { id: 'dpath', d: 'M' + (X + TW / 2) + ' ' + (Y + TH + 8) + ' C ' + (X + TW / 2) + ' ' + (Y + TH + 26) + ' ' + (X + TW + 30) + ' ' + (Y + TH + 28) + ' ' + (X + TW + 44) + ' ' + (Y + TH + 28), fill: 'none', stroke: 'rgba(232,79,224,.25)', 'stroke-dasharray': '3 5' });
+    s.appendChild(dp);
+    [0, .8, 1.6].forEach(function (b) {
+      var c = svgEl('circle', { r: 3, class: 'drop' }), am = svgEl('animateMotion', { dur: '2.4s', begin: b + 's', repeatCount: 'indefinite' });
+      var mp = svgEl('mpath', {}); mp.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#dpath'); mp.setAttribute('href', '#dpath');
+      am.appendChild(mp); c.appendChild(am); s.appendChild(c);
+    });
+    s.appendChild(svgEl('text', { x: X + TW + 50, y: Y + TH + 32, class: 'v' }, usd(dailyUsd()) + ' / day to stakers'));
+    // labels on the right, spread so they never overlap; room for 6: the newest payouts (top of the tank) and the next one
+    var LX = X + TW + 18, gap = 30, top = Y + 12, bot = Y + TH - 6;
+    labels.sort(function (p, q) { return p.y - q.y; });
+    labels = labels.slice(0, 6);
+    for (var i = 0; i < labels.length; i++) labels[i].ly = Math.max(labels[i].y, i ? labels[i - 1].ly + gap : top);
+    var over = labels.length ? labels[labels.length - 1].ly - bot : 0;
+    if (over > 0) for (var j = labels.length - 1; j >= 0; j--) labels[j].ly = Math.min(labels[j].ly - over, j < labels.length - 1 ? labels[j + 1].ly - gap : bot);
+    labels.forEach(function (L) {
+      s.appendChild(svgEl('line', { x1: X + TW + 2, x2: LX - 4, y1: L.y, y2: L.ly - 4, class: 'lead' }));
+      s.appendChild(svgEl('text', { x: LX, y: L.ly - 6, class: L.ghost ? 'v' : '' }, L.a));
+      s.appendChild(svgEl('text', { x: LX, y: L.ly + 9, class: 'v' }, L.b));
+      var t2 = s.lastChild, w = 0; try { w = t2.getComputedTextLength(); } catch (e) { w = 90; }
+      s.appendChild(svgEl('text', { x: LX + w + 7, y: L.ly + 9, class: 'dim' }, '· ' + L.c));
+    });
+  }
+
+  // ---------- share card (1200x630) ----------
+  var logoImg = null;
+  function loadLogo() {
+    return new Promise(function (res) {
+      if (logoImg) return res(logoImg);
+      var im = new Image(); im.onload = function () { logoImg = im; res(im); }; im.onerror = function () { res(null); };
+      im.src = LOGO;
+    });
+  }
+  async function openShare(amountN, tier) {
+    var cv = $('share-cv'), x = cv.getContext('2d'), W = 1200, Hh = 630;
+    try { await Promise.all([document.fonts.load('700 96px "Space Grotesk"'), document.fonts.load('500 30px Inter')]); } catch (e) {}
+    var logo = await loadLogo();
+    x.fillStyle = '#070B18'; x.fillRect(0, 0, W, Hh);
+    var g1 = x.createRadialGradient(1010, 120, 10, 1010, 120, 520); g1.addColorStop(0, 'rgba(139,124,246,.42)'); g1.addColorStop(1, 'rgba(139,124,246,0)');
+    x.fillStyle = g1; x.fillRect(0, 0, W, Hh);
+    var g2 = x.createRadialGradient(140, 600, 10, 140, 600, 520); g2.addColorStop(0, 'rgba(232,79,224,.30)'); g2.addColorStop(1, 'rgba(232,79,224,0)');
+    x.fillStyle = g2; x.fillRect(0, 0, W, Hh);
+    x.strokeStyle = 'rgba(154,167,189,.18)'; x.lineWidth = 2; x.strokeRect(24, 24, W - 48, Hh - 48);
+    if (logo) { x.save(); x.shadowColor = 'rgba(139,124,246,.6)'; x.shadowBlur = 50; x.drawImage(logo, 840, 150, 290, 290); x.restore(); }
+    if (logo) x.drawImage(logo, 72, 64, 56, 56);
+    x.fillStyle = '#E9EEF8'; x.font = '700 30px "Space Grotesk", sans-serif'; x.fillText('NLYRA', 140, 103);
+    x.fillStyle = '#E84FE0'; x.fillText('Real Yield', 140 + x.measureText('NLYRA ').width, 103);
+    x.fillStyle = '#9AA7BD'; x.font = '500 30px Inter, sans-serif'; x.fillText("I'm staking", 72, 220);
+    var big = num(amountN, 0), fs = 104;
+    x.font = '700 ' + fs + 'px "Space Grotesk", sans-serif';
+    while (x.measureText(big + ' NLYRA').width > 740 && fs > 56) { fs -= 4; x.font = '700 ' + fs + 'px "Space Grotesk", sans-serif'; }
+    var gg = x.createLinearGradient(72, 0, 800, 0); gg.addColorStop(0, '#8B7CF6'); gg.addColorStop(1, '#E84FE0');
+    x.fillStyle = gg; x.fillText(big, 72, 330);
+    x.fillStyle = '#E9EEF8'; x.fillText(' NLYRA', 72 + x.measureText(big).width, 330);
+    var plan = tier ? TIER_DAYS[tier] + '-day lock · ' + BOOST[tier] + '× weight' : 'Flexible · 1× weight';
+    x.font = '600 28px Inter, sans-serif'; var pw = x.measureText(plan).width + 44;
+    x.fillStyle = 'rgba(232,79,224,.12)'; x.strokeStyle = 'rgba(232,79,224,.55)'; x.lineWidth = 2;
+    x.beginPath(); if (x.roundRect) x.roundRect(72, 370, pw, 54, 27); else x.rect(72, 370, pw, 54); x.fill(); x.stroke();
+    x.fillStyle = '#E84FE0'; x.fillText(plan, 94, 407);
+    x.fillStyle = '#E9EEF8'; x.font = '600 34px Inter, sans-serif'; x.fillText('Earning real ETH from every NLYRA trade', 72, 490);
+    var apr = G.baseApr ? G.baseApr * BOOST[tier || 0] : 0;
+    x.fillStyle = '#9AA7BD'; x.font = '500 26px Inter, sans-serif';
+    var url = ONSITE ? location.origin + '/newstake/app/' : location.href.split(/[?#]/)[0];
+    x.fillText((apr ? pct(apr) + ' APR at the 7-day fee pace · ' : '') + url.replace(/^https?:\/\//, '').replace(/\/$/, ''), 72, 540);
+    var txt = "I'm staking " + kfmt(amountN) + ' $NLYRA on NLYRA Real Yield (' + (tier ? TIER_DAYS[tier] + '-day lock' : 'flexible') + '). Real ETH from every trade, nothing printed.';
+    try { $('share-dl').href = cv.toDataURL('image/png'); } catch (e) {}
+    $('share-xpost').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url);
+    $('share-tg').href = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(txt);
+    $('share').hidden = false;
+  }
+  window.__nlyraShare = openShare;
+  $('share-close').onclick = function () { $('share').hidden = true; };
+  $('share').onclick = function (e) { if (e.target === this) this.hidden = true; };
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') $('share').hidden = true; });
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('svg').forEach(function (v) { if (v.pauseAnimations) v.pauseAnimations(); });
+  }
+
+  function drawHistory() {
+    var s = $('chart-hist'); s.innerHTML = '';
+    var W = 320, Hh = 140, top = 20, bottom = 24;
+    s.appendChild(svgEl('line', { x1: 0, x2: W, y1: Hh - bottom, y2: Hh - bottom, stroke: 'rgba(154,167,189,.2)' }));
+    var all = H.map(function (h) { return { ts: h.ts, w: h.w, n: h.n, desk: false }; })
+      .concat(F.dist.map(function (x) { return { ts: x.ts, w: x.w, n: x.n, desk: true }; }))
+      .sort(function (a, b) { return a.ts - b.ts; });
+    if (!all.length) { s.appendChild(svgEl('text', { x: W / 2, y: 60, 'text-anchor': 'middle' }, F.ok === false ? 'Payout history unavailable right now' : 'First daily payout pending')); return; }
+    var list = all.slice(-14), vals = list.map(function (h) { return h.w * px.eth + h.n * px.nlyra; });
+    var mx = Math.max.apply(null, vals) || 1, n = Math.max(list.length, 7), slot = W / n, bw = Math.min(34, slot * .62);
+    if (F.dist.length) {
+      // legend: which payouts came from Pons and which from the Desk & bots split
+      [['#8B7CF6', 'Pons', 0], ['#4FD1C5', 'Desk & bots', 46]].forEach(function (L) {
+        s.appendChild(svgEl('rect', { x: L[2], y: 0, width: 8, height: 8, rx: 2, fill: L[0] }));
+        s.appendChild(svgEl('text', { x: L[2] + 12, y: 8 }, L[1]));
+      });
+      top = 30;
+    }
+    list.forEach(function (h, i) {
+      var v = vals[i], ht = Math.max(4, (Hh - top - bottom) * v / mx), x = i * slot + (slot - bw) / 2, y = Hh - bottom - ht;
+      s.appendChild(svgEl('rect', { x: x, y: y, width: bw, height: ht, rx: 5, fill: h.desk ? '#4FD1C5' : i === list.length - 1 ? '#E84FE0' : '#8B7CF6' }));
+      var mid = x + bw / 2, edge = mid > W - 18, tx = edge ? x + bw : mid, ta = edge ? 'end' : 'middle';
+      if (list.length <= 7 || i % 2 === (list.length - 1) % 2) s.appendChild(svgEl('text', { x: tx, y: Hh - 8, 'text-anchor': ta }, dstr(h.ts)));
+      if (list.length <= 7 || i === list.length - 1) s.appendChild(svgEl('text', { x: tx, y: y - 6, 'text-anchor': ta, class: 'val' }, usd(v)));
+    });
+  }
+
+  // ---------- stake estimate ----------
+  function estimate() {
+    var a = parseAmt($('st-amt').value), an = f18(a), d = G.pace || dailyUsd();
+    // nothing typed: show a real example ($1,000 of NLYRA) instead of an empty box
+    var ex = !an && px.nlyra > 0 && d > 0;
+    $('est-ex').hidden = !ex;
+    if (ex) an = 1000 / px.nlyra;
+    var w = an * BOOST[stTier], share = an && G.tb != null ? w / (f18(G.tb) + w) : 0, day = d * share;
+    var apr = an && px.nlyra ? day * 365 / (an * px.nlyra) * 100 : G.baseApr * BOOST[stTier];
+    roll('est-day', day, usd); roll('est-week', day * 7, usd); roll('est-month', day * 30, usd);
+    if (apr) roll('est-apr', apr, pct); else $('est-apr').textContent = '—';
+    drawPlans(an);
+    var b = $('b-stake');
+    if (!me) { b.disabled = false; b.textContent = 'Connect wallet to stake'; return; }
+    b.disabled = a === 0n || !U.bal || a > U.bal || G.paused;
+    b.textContent = a === 0n ? 'Enter an amount' : a > (U.bal || 0n) ? 'Not enough NLYRA' : (U.allow < a ? 'Approve & stake ' : 'Stake ') + kfmt(an) + ' · ' + TIER_NAME[stTier];
+  }
+
+  // ---------- claim quote ----------
+  var qSeq = 0;
+  async function quoteClaim() {
+    var el = $('rw-quote'), seq = ++qSeq;
+    if (!me) { el.textContent = 'Connect your wallet'; return; }
+    if (U.ew === 0n && U.en === 0n) { el.textContent = 'Nothing yet'; return; }
+    if (mode === 0) { el.textContent = num(f18(U.ew), 6) + ' WETH + ' + num(f18(U.en), 0) + ' NLYRA'; return; }
+    el.textContent = 'Quoting…';
+    try {
+      var out = await stR.claim.staticCall(mode, 0, { from: me });
+      if (seq !== qSeq) return;
+      var v = Number(E.formatUnits(out, mode === 3 ? 6 : 18));
+      el.textContent = '≈ ' + num(v, mode === 2 ? 0 : mode === 3 ? 2 : 6) + ' ' + (mode === 1 ? 'WETH' : mode === 2 ? 'NLYRA' : 'USDG');
+    } catch (e) { if (seq === qSeq) el.textContent = 'Quote unavailable'; }
+  }
+
+  // ---------- locks ----------
+  function openLocks() { return (U.pos || []).map(function (p, i) { return { id: i, amount: p.amount, unlock: Number(p.unlockTime), tier: Number(p.tier) }; }).filter(function (p) { return p.amount > 0n; }); }
+  function slotsFull() { return openLocks().length >= MAX_POS; }
+  var FULL_MSG = 'All ' + MAX_POS + ' lock slots in this wallet are in use. Free one in <b>My locks</b> (remove tiny locks or release an unlocked one).';
+  function fmtTiny(x) { return x < 1000000000000n ? x.toString() + ' wei' : num(f18(x), 6) + ' NLYRA'; }
+  // withdrawLocked adds to the account cooldown and restarts its 2-day clock if it has not finished:
+  // clearing junk must never delay a real withdrawal that is already waiting.
+  function coolPending() { return U.cooling > TINY && Number(U.coolEnd) * 1000 > Date.now(); }
+  function renderJunk(tiny, now) {
+    var ready = tiny.filter(function (p) { return p.unlock <= now; }), wait = coolPending();
+    return '<div class="junk"><div class="junk-h"><b>Tiny locks <small>(under 1,000 NLYRA)</small></b>' +
+      (ready.length > 1 && !wait ? '<button class="btn btn-ghost btn-sm" data-act="junkall">Remove all ready (' + ready.length + ')</button>' : '') + '</div>' +
+      '<p>Anyone can send a lock to any wallet, so if you didn\'t create these, someone sent them to you. They can\'t take anything from you: each one only uses a lock slot. Once a lock unlocks you can remove it (its dust goes to your cooldown), or move it to another wallet of yours right away.</p>' +
+      (wait ? '<p class="junk-w">You have ' + tok(U.cooling) + ' NLYRA in cooldown until ' + dstr(U.coolEnd) + '. Removing a lock now would restart that 2-day countdown, so wait until it is ready and withdraw it first.</p>' : '') +
+      tiny.map(function (p) {
+        var open = p.unlock > now;
+        return '<div class="junk-r"><span><b>' + fmtTiny(p.amount) + '</b> · lock #' + p.id + ' · ' + (open ? 'removable from ' + dstr(p.unlock) : 'unlocked') + '</span>' +
+          (open ? '<span class="lock-mv"><input data-to="' + p.id + '" placeholder="Move to wallet 0x…" spellcheck="false"><button class="btn btn-ghost btn-sm" data-act="offer" data-id="' + p.id + '">Move</button></span>'
+                : '<button class="btn btn-ghost btn-sm" data-act="junkrm" data-id="' + p.id + '"' + (wait ? ' disabled' : '') + '>Remove</button>') + '</div>';
+      }).join('') + '</div>';
+  }
+  function renderLocks() {
+    var box = $('locks'), now = Date.now() / 1000;
+    if (!me) { box.innerHTML = '<p class="empty">Connect your wallet to see your locks.</p>'; $('tab-locks-badge').hidden = true; return; }
+    var all = openLocks();
+    var tiny = all.filter(function (p) { return p.amount < TINY; }), list = all.filter(function (p) { return p.amount >= TINY; });
+    var bdg = $('tab-locks-badge'); bdg.hidden = !all.length; bdg.textContent = all.length;
+    var head = all.length ? '<div class="slots' + (all.length >= MAX_POS - 4 ? ' near' : '') + '">Lock slots <b>' + all.length + ' / ' + MAX_POS + '</b>' +
+      (all.length >= MAX_POS ? ' · full: new locks and purchases will fail until you free one' : '') +
+      (coolPending() && list.some(function (p) { return p.unlock <= now; }) ? '<span>Releasing a lock while ' + tok(U.cooling) + ' NLYRA is in cooldown restarts that 2-day countdown.</span>' : '') + '</div>' : '';
+    var junk = tiny.length ? renderJunk(tiny, now) : '';
+    if (!list.length) { box.innerHTML = head + junk + (tiny.length ? '' : '<p class="empty">No locks yet. Pick a 7, 14 or 30-day plan in <b>Stake</b> to earn more.</p>'); return; }
+    Promise.all(list.map(function (p) { return stR.positionOffer(me, p.id).catch(function () { return E.ZeroAddress; }); })).then(function (offers) {
+      box.innerHTML = head + junk + list.map(function (p, k) {
+        var open = p.unlock > now, off = offers[k] !== E.ZeroAddress ? offers[k] : null;
+        var days = TIER_DAYS[p.tier] || 30, start = p.unlock - days * 86400, prog = open ? Math.min(100, Math.max(2, (now - start) / (p.unlock - start) * 100)) : 100;
+        var chip = open && p.tier ? '<span class="chip' + (p.tier === 3 ? ' l30' : '') + '">' + TIER_NAME[p.tier] + ' · ' + BOOST[p.tier] + '×</span>' : '<span class="chip done">Unlocked</span>';
+        var opts = [1, 2, 3].filter(function (t) { return !open || t >= p.tier; }).map(function (t) { return '<option value="' + t + '"' + (t === 3 ? ' selected' : '') + '>' + TIER_NAME[t] + '</option>'; }).join('');
+        return '<div class="lock"><div class="lock-h"><b>' + tok(p.amount) + ' <small class="muted" style="font:500 13px var(--body)">NLYRA</small></b>' + chip + '</div>' +
+          '<div class="bar"><i style="width:' + prog.toFixed(1) + '%"></i></div>' +
+          '<div class="lock-m"><span>' + (open ? 'Unlocks ' + dstr(p.unlock) + ' · in ' + left(p.unlock) : 'Ready to release') + '</span><span>Lock #' + p.id + '</span></div>' +
+          '<div class="lock-a">' + (open ? '' : '<button class="btn btn-ghost btn-sm" data-act="release" data-id="' + p.id + '">Release</button>') +
+          '<select data-sel="' + p.id + '" aria-label="New lock length">' + opts + '</select><button class="btn btn-ghost btn-sm" data-act="extend" data-id="' + p.id + '">' + (open ? 'Extend' : 'Re-lock') + '</button>' +
+          (open ? '<button class="btn btn-ghost btn-sm" data-act="share" data-id="' + p.id + '" data-amt="' + f18(p.amount) + '" data-tier="' + p.tier + '">Share</button>' : '') + '</div>' +
+          (off ? '<div class="lock-a"><span class="offered">Offered to ' + short(off) + '</span><button class="btn btn-ghost btn-sm" data-act="unoffer" data-id="' + p.id + '">Cancel</button></div>'
+               : '<div class="lock-mv"><input data-to="' + p.id + '" placeholder="Move to wallet 0x…" spellcheck="false"><button class="btn btn-ghost btn-sm" data-act="offer" data-id="' + p.id + '">Move</button></div>') +
+          '</div>';
+      }).join('');
+    });
+  }
+
+  // ---------- wallet ----------
+  var found = [];
+  window.addEventListener('eip6963:announceProvider', function (e) { found.push(e.detail); });
+  window.dispatchEvent(new Event('eip6963:requestProvider'));
+  async function connect() {
+    var d = found.filter(function (x) { return /metamask/i.test((x.info && x.info.name) || ''); })[0] || found[0];
+    eip = d ? d.provider : window.ethereum;
+    if (!eip) { toast('No wallet found. Open this page in a browser with MetaMask or Rabby.'); return; }
+    try {
+      var accs = await eip.request({ method: 'eth_requestAccounts' });
+      // a WalletConnect link without Robinhood Chain can still show this wallet's locks; signing needs the link again
+      var noChain = false;
+      try { await ensureChain(); } catch (e) { if (isWC() && errMsg(e) === NO_CHAIN()) noChain = true; else throw e; }
+      await setAccount(accs[0]);
+      if (eip.on) {
+        eip.on('accountsChanged', function (a) { setAccount(a[0]); });
+        eip.on('chainChanged', function () { refresh(); });
+      }
+      if (noChain) toast('<span class="t-bad">' + esc(NO_CHAIN()) + '</span>' + RELINK, 30000);
+    } catch (e) { toast('Connect failed: ' + esc(errMsg(e))); }
+  }
+  async function setAccount(a) {
+    me = a ? E.getAddress(a) : null;
+    signer = me ? await new E.BrowserProvider(eip, 'any').getSigner(me) : null;
+    $('connect-t').textContent = me ? short(me) : 'Connect wallet';
+    $('connect').classList.toggle('on', !!me);
+    U = {}; refresh();
+  }
+  async function ensureChain() {
+    var c = await eip.request({ method: 'eth_chainId' });
+    if (c === CHAIN_HEX) return;
+    try { await eip.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] }); }
+    catch (e) {
+      if (e && (e.code === 4902 || /unrecognized|not added/i.test(e.message || ''))) {
+        await eip.request({ method: 'wallet_addEthereumChain', params: [{ chainId: CHAIN_HEX, chainName: 'Robinhood Chain', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'], blockExplorerUrls: ['https://robinhoodchain.blockscout.com'] }] });
+      } else throw e;
+    }
+  }
+
+  // ---------- tx ----------
+  async function tx(label, fn) {
+    if (busy) return false;
+    if (!signer) { toast('Connect your wallet first.'); return false; }
+    busy = true; var ok = false;
+    try {
+      await ensureChain();
+      toast('Confirm <b>' + esc(label) + '</b> in your wallet' + (isWC() ? ' app (open it if it does not come up on its own)' : '') + '…', isWC() ? 20000 : 0);
+      var t = await fn();
+      toast(esc(label) + ' sent · waiting for confirmation…');
+      log('<span class="t-warn">' + esc(label) + '</span> sent · <a target="_blank" rel="noopener" href="' + BS + t.hash + '">view tx</a>');
+      var rc = await t.wait(1);
+      ok = rc.status === 1;
+      log(ok ? '<span class="t-ok">' + esc(label) + ' confirmed ✓</span>' : '<span class="t-bad">' + esc(label) + ' reverted</span>');
+      toast(ok ? '<span class="t-ok">✓</span> ' + esc(label) + ' confirmed' : '<span class="t-bad">' + esc(label) + ' failed</span>');
+      if (ok && !/^Approve/.test(label)) confetti();
+    } catch (e) {
+      var em = errMsg(e), relink = isWC() && em === NO_CHAIN();
+      log('<span class="t-bad">' + esc(label) + ':</span> ' + esc(em) + (relink ? RELINK : ''));
+      toast('<span class="t-bad">' + esc(label) + ':</span> ' + esc(em) + (relink ? RELINK : ''), relink ? 30000 : 0);
+    }
+    busy = false;
+    await refresh();
+    return ok;
+  }
+  function st() { return new E.Contract(ST, ST_ABI, signer); }
+  function nl() { return new E.Contract(NLYRA, ERC, signer); }
+
+  async function doStake() {
+    if (!me) return connect();
+    var a = parseAmt($('st-amt').value); if (a === 0n) return;
+    if (stTier !== 0 && slotsFull()) { toast(FULL_MSG); return; }
+    if (U.allow < a) { if (!(await tx('Approve NLYRA', function () { return nl().approve(ST, a); }))) return; }
+    var ok = stTier === 0 ? await tx('Stake ' + kfmt(f18(a)) + ' flexible', function () { return st().stake(a); })
+      : await tx('Stake ' + kfmt(f18(a)) + ' · ' + TIER_NAME[stTier], function () { return st().stakeLocked(a, stTier); });
+    if (ok) { var sharedN = f18(a), sharedT = stTier; $('st-amt').value = ''; estimate(); openShare(sharedN, sharedT); }
+  }
+  async function doClaim() {
+    var to = $('claim-to').value.trim();
+    if (to && !E.isAddress(to)) { toast('<span class="t-bad">That "send to" address is not valid.</span>'); return; }
+    var minOut = 0n;
+    if (mode !== 0) {
+      try { minOut = (await stR.claim.staticCall(mode, 0, { from: me })) * 98n / 100n; }
+      catch (e) { toast('<span class="t-bad">Could not quote the claim:</span> ' + esc(errMsg(e))); return; }
+    }
+    if (to) await tx('Claim as ' + MODE_NAME[mode] + ' → ' + short(to), function () { return st().claimTo(E.getAddress(to), mode, minOut); });
+    else await tx('Claim as ' + MODE_NAME[mode], function () { return st().claim(mode, minOut); });
+  }
+  async function doCompound() {
+    if (slotsFull()) { toast(FULL_MSG); return; }
+    var q;
+    try { q = await stR.compound.staticCall(0, 3, MAXU, { from: me }); }
+    catch (e) { toast('<span class="t-bad">Could not quote the compound:</span> ' + esc(errMsg(e))); return; }
+    await tx('Compound to a 30-day lock', function () { return st().compound(q * 100n / 105n * 97n / 100n, 3, MAXU); });
+  }
+
+  // ---------- UI events ----------
+  $('connect').onclick = function () { if (!me) connect(); };
+  document.querySelector('.tabs').onclick = function (e) {
+    var b = e.target.closest('button[data-tab]'); if (!b) return;
+    document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); });
+    document.querySelectorAll('.pane').forEach(function (p) { p.classList.toggle('on', p.dataset.pane === b.dataset.tab); });
+  };
+  $('plans').onclick = function (e) {
+    var b = e.target.closest('.plan'); if (!b) return;
+    stTier = +b.dataset.t;
+    this.querySelectorAll('.plan').forEach(function (x) { x.classList.toggle('on', x === b); });
+    estimate();
+  };
+  document.querySelector('.pcts').onclick = function (e) {
+    var b = e.target.closest('button'); if (!b || !U.bal) return;
+    var v = U.bal * BigInt(b.dataset.p) / 100n; $('st-amt').value = E.formatUnits(v, 18).replace(/\.0$/, ''); estimate();
+  };
+  // amount fields: numbers only (typing, pasting or dropping anything else is cleaned out)
+  document.querySelectorAll('img').forEach(function (i) { i.draggable = false; });
+  function numOnly(el, cb) {
+    el.addEventListener('drop', function (e) { e.preventDefault(); });
+    el.addEventListener('input', function () {
+      var v = el.value.replace(/,/g, '.').replace(/[^0-9.]/g, ''), k = v.indexOf('.');
+      if (k >= 0) v = v.slice(0, k + 1) + v.slice(k + 1).replace(/\./g, '');
+      if (v !== el.value) el.value = v;
+      if (cb) cb();
+    });
+  }
+  numOnly($('st-amt'), estimate);
+  numOnly($('un-amt'));
+  $('mode').onclick = function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    mode = +b.dataset.m; this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); quoteClaim();
+  };
+  $('b-stake').onclick = doStake;
+  $('b-claim').onclick = doClaim;
+  $('b-compound').onclick = doCompound;
+  $('un-max').onclick = function () { if (U.flex) $('un-amt').value = E.formatUnits(U.flex, 18).replace(/\.0$/, ''); };
+  $('b-unstake').onclick = function () {
+    var a = parseAmt($('un-amt').value);
+    if (a === 0n || a > U.flex) { toast('Enter an amount up to your flexible stake.'); return; }
+    tx('Unstake ' + kfmt(f18(a)) + ' (2-day cooldown)', function () { return st().requestUnstake(a); });
+  };
+  $('b-withdraw').onclick = function () { tx('Withdraw', function () { return st().withdraw(); }); };
+  $('cb-withdraw').onclick = $('b-withdraw').onclick;
+  $('b-harvest').onclick = async function () {
+    if (!me) { await connect(); if (!me) return; }
+    tx('Trigger the daily payout', function () { return new E.Contract(SP, SP_ABI, signer).harvest(); });
+  };
+  $('b-cancelcool').onclick = function () { tx('Re-stake cooldown', function () { return st().cancelUnstake(); }); };
+  $('locks').onclick = function (e) {
+    var b = e.target.closest('button[data-act]'); if (!b) return;
+    var id = +b.dataset.id, act = b.dataset.act;
+    if (act === 'share') { openShare(Number(b.dataset.amt), Number(b.dataset.tier)); return; }
+    if ((act === 'junkrm' || act === 'junkall') && coolPending()) { toast('Wait until your cooldown is ready: removing a lock now would restart it.'); return; }
+    if (act === 'junkrm') { tx('Remove tiny lock #' + id, function () { return st().withdrawLocked(id); }); return; }
+    if (act === 'junkall') {
+      var now = Date.now() / 1000;
+      var ids = openLocks().filter(function (p) { return p.amount < TINY && p.unlock <= now; }).map(function (p) { return p.id; });
+      (async function () {
+        for (var i = 0; i < ids.length; i++) {
+          var one = ids[i];
+          var ok = await tx('Remove tiny lock #' + one + ' (' + (i + 1) + '/' + ids.length + ')', function () { return st().withdrawLocked(one); });
+          if (!ok) break;
+        }
+      })();
+      return;
+    }
+    if (act === 'release') tx('Release lock #' + id, function () { return st().withdrawLocked(id); });
+    if (act === 'extend') { var t = +document.querySelector('[data-sel="' + id + '"]').value; tx('Lock #' + id + ' → ' + TIER_NAME[t], function () { return st().extendLock(id, t); }); }
+    if (act === 'unoffer') tx('Cancel move of lock #' + id, function () { return st().cancelPositionOffer(id); });
+    if (act === 'offer') {
+      var to = document.querySelector('[data-to="' + id + '"]').value.trim();
+      if (!E.isAddress(to)) { toast('Enter the wallet address to move lock #' + id + ' to.'); return; }
+      tx('Offer lock #' + id + ' → ' + short(to), function () { return st().offerPosition(id, E.getAddress(to)); });
+    }
+  };
+  $('b-find').onclick = async function () {
+    var from = $('rc-from').value.trim(), box = $('rc-list');
+    if (!E.isAddress(from)) { box.innerHTML = '<p class="muted">Enter wallet A\'s address.</p>'; return; }
+    if (!me) { box.innerHTML = '<p class="muted">Connect wallet B (the one receiving the lock) first.</p>'; return; }
+    box.innerHTML = '<p class="muted">Looking…</p>';
+    try {
+      var ps = await stR.positionsOf(from), rows = [];
+      for (var i = 0; i < ps.length; i++) {
+        if (ps[i].amount === 0n) continue;
+        var o = await stR.positionOffer(from, i);
+        if (o.toLowerCase() === me.toLowerCase()) rows.push('<div><span>Lock #' + i + ' · <b>' + tok(ps[i].amount) + ' NLYRA</b> · ' + (Number(ps[i].unlockTime) * 1000 > Date.now() ? 'unlocks ' + dstr(ps[i].unlockTime) : 'unlocked') + '</span><button class="btn btn-primary btn-sm" data-from="' + from + '" data-id="' + i + '">Accept</button></div>');
+      }
+      box.innerHTML = rows.length ? rows.join('') : '<p class="muted">No locks offered to ' + short(me) + ' from that wallet.</p>';
+    } catch (e) { box.innerHTML = '<p class="t-bad">' + esc(errMsg(e)) + '</p>'; }
+  };
+  $('rc-list').onclick = function (e) {
+    var b = e.target.closest('button[data-from]'); if (!b) return;
+    if (slotsFull()) { toast(FULL_MSG); return; }
+    tx('Accept lock #' + b.dataset.id, function () { return st().acceptPosition(E.getAddress(b.dataset.from), +b.dataset.id); }).then(function (ok) { if (ok) $('rc-list').innerHTML = ''; });
+  };
+
+  // live ticker
+  setInterval(function () {
+    if (!me || !tick.at) return;
+    var v = tick.base + tick.rate * (Date.now() - tick.at) / 1000;
+    $('rw-usd').textContent = '$' + v.toFixed(v >= 100 ? 4 : 6);
+  }, 100);
+
+  // ---------- staked by plan ----------
+  // The contract keeps no per-plan totals, so they are rebuilt here: every wallet that ever staked
+  // (Staked events) or received a lock (PositionTransferred) is read straight from the contract.
+  var EV_STAKED = 'event Staked(address indexed user,uint256 amount,uint8 tier,uint256 positionId,uint64 unlockTime)';
+  var EV_MOVED = 'event PositionTransferred(address indexed from,uint256 fromId,address indexed to,uint256 toId,uint256 amount,uint64 unlockTime,uint8 tier,address indexed operator)';
+  var ST_BLOCK = 75661721, TR = null, trAt = 0, TW = { who: {}, upto: ST_BLOCK - 1 };
+  async function loadTiers() {
+    if (Date.now() - trAt < 120000) return;
+    trAt = Date.now();
+    var iface = new E.Interface([EV_STAKED, EV_MOVED]);
+    var tS = iface.getEvent('Staked').topicHash, tM = iface.getEvent('PositionTransferred').topicHash;
+    // one event per query: the chain's RPC refuses an OR of topics ("could not coalesce error"). And windows under 10M
+    // blocks: the RPCs refuse a longer eth_getLogs, and from mid-October the contract's history was longer than that, so the
+    // one-shot read failed every time and this box stayed empty (4 Nov). After the first pass only the new blocks are read.
+    var logs = null, provs = [ro, roPub], head = 0;
+    for (var k = 0; k < provs.length && !logs; k++) {
+      try {
+        var pv = provs[k];
+        head = await pv.getBlockNumber();
+        var both = await Promise.all([tS, tM].map(function (t) { return logsUpTo(pv, ST, t, TW.upto + 1, head); }));
+        logs = both[0].concat(both[1]);
+      } catch (e) {}
+    }
+    if (!logs) { trAt = Date.now() - 60000; return; }   // again in a minute, not on every refresh
+    logs.forEach(function (l) { var t = l.topics[0] === tS ? l.topics[1] : l.topics[2]; TW.who[E.getAddress('0x' + t.slice(26))] = 1; });
+    TW.upto = head;
+    var addrs = Object.keys(TW.who), now = Date.now() / 1000;
+    var sum = [0n, 0n, 0n, 0n], expired = 0n, wallets = 0;
+    for (var i = 0; i < addrs.length; i += 8) {
+      var res = await Promise.all(addrs.slice(i, i + 8).map(function (a) {
+        return Promise.all([stR.userInfo(a), stR.positionsOf(a)]).catch(function () { return null; });
+      }));
+      res.forEach(function (r) {
+        if (!r) return;
+        var flex = r[0].account.flexible, any = flex > 0n;
+        sum[0] += flex;
+        r[1].forEach(function (p) {
+          if (p.amount === 0n) return;
+          any = true;
+          var t = Number(p.tier);
+          if (t >= 1 && t <= 3 && Number(p.unlockTime) > now) sum[t] += p.amount; else expired += p.amount;
+        });
+        if (any) wallets++;
+      });
+    }
+    TR = { sum: sum, expired: expired, wallets: wallets };
+    paintTiers();
+  }
+  function paintTiers() {
+    var box = $('tiers'); if (!box || !TR) return;
+    var tot = TR.sum[0] + TR.sum[1] + TR.sum[2] + TR.sum[3] + TR.expired;
+    box.hidden = tot === 0n;
+    if (tot === 0n) return;
+    var bar = '', grid = '';
+    TR.sum.forEach(function (v, i) {
+      var p = Number(v * 10000n / tot) / 100;
+      bar += '<i class="tb' + i + '" style="width:' + p + '%"></i>';
+      grid += '<div class="tc"><span class="tn"><i class="tdot tb' + i + '"></i>' + TIER_NAME[i] + ' <em>' + BOOST[i] + '×</em></span><b>' + kfmt(f18(v)) + '</b><small>' + num(p, 1) + '%' + (px.nlyra ? ' · ' + usd(f18(v) * px.nlyra) : '') + '</small></div>';
+    });
+    if (TR.expired > 0n) bar += '<i class="tbx" style="width:' + (Number(TR.expired * 10000n / tot) / 100) + '%"></i>';
+    $('tiers-bar').innerHTML = bar;
+    $('tiers-grid').innerHTML = grid;
+    var note = [TR.wallets + (TR.wallets === 1 ? ' wallet' : ' wallets') + ' staking'];
+    if (TR.expired > 0n) note.push(kfmt(f18(TR.expired)) + ' NLYRA in ended locks (1×, ready to withdraw)');
+    if (G.tc > 0n) note.push(kfmt(f18(G.tc)) + ' NLYRA in the 2-day exit cooldown');
+    $('tiers-note').textContent = note.join(' · ');
+  }
+
+  var first = true;
+  async function refresh() {
+    try {
+      await prices();
+      if (first) { first = false; await loadHistory(); }
+      await loadPool(); await loadUser();
+      loadTiers().catch(function () { trAt = 0; });
+    } catch (e) { log('<span class="t-bad">Read error:</span> ' + esc(errMsg(e))); }
+  }
+  refresh();
+  setInterval(function () { if (!busy && document.visibilityState === 'visible') refresh(); }, 20000);
+  setInterval(function () { if (document.visibilityState === 'visible') loadHistory().then(drawHistory); }, 600000);
+})();

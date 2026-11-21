@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify your $NLYRA — LYRA's inner circle</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/brand/dual-core.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/brand/nlyra-brand-tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--font-body);
+    font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -1;
+    background: radial-gradient(ellipse 60% 44% at 50% 0%, rgba(139, 124, 246, .10), transparent 62%);
+  }
+  .wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px 20px 48px; }
+  .card {
+    max-width: 480px; width: 100%; background: var(--card);
+    border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 28px 24px;
+  }
+  h1 { font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.25; letter-spacing: -.01em; }
+  .sub { color: var(--text-2); font-size: 14.5px; margin: 10px 0 22px; }
+  .msg {
+    font-family: var(--font-mono); font-size: 13px; color: var(--text-2);
+    background: var(--nested); border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 14px 16px; white-space: pre-wrap; margin-bottom: 20px;
+  }
+  .btn { width: 100%; }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  .out { display: none; margin-top: 20px; }
+  .sig {
+    font-family: var(--font-mono); font-size: 12px; word-break: break-all; color: var(--text-2);
+    background: var(--nested); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 12px 14px;
+    max-height: 110px; overflow-y: auto;
+  }
+  .copy { margin-top: 10px; width: 100%; }
+  .step { color: var(--text-2); font-size: 14px; margin-top: 14px; }
+  .step b { color: var(--text); font-weight: 600; }
+  .err { display: none; color: var(--danger); font-size: 14px; margin-top: 14px; }
+  .note { color: var(--text-3); font-size: 12.5px; margin-top: 22px; border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+<style id="lang-css">
+.nl-nav details.lang{position:relative}
+.nl-nav details.lang>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border:1px solid rgba(255,255,255,.14);border-radius:9px;font-size:13px;
+  color:var(--text-2,#9aa4b2);background:rgba(255,255,255,.03);white-space:nowrap}
+.nl-nav details.lang>summary::-webkit-details-marker{display:none}
+.nl-nav details.lang>summary:hover{color:#fff;border-color:rgba(139,124,246,.5)}
+.nl-nav details.lang .menu{position:absolute;top:calc(100% + 6px);right:0;min-width:172px;z-index:70;
+  background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.nl-nav details.lang .menu a{display:flex;justify-content:space-between;gap:12px;padding:9px 11px;
+  border-radius:8px;font-size:14px;color:#e6e9ef;text-decoration:none}
+.nl-nav details.lang .menu a:hover{background:rgba(139,124,246,.16)}
+.nl-nav details.lang .menu a[aria-current]{color:#8B7CF6;font-weight:600}
+.nl-nav details.lang .menu a i{font-style:normal;opacity:.5;font-size:12px}
+@media(max-width:900px){.nl-nav details.lang .menu{right:auto;left:0}}
+.i18n-partial{background:rgba(139,124,246,.12);border-bottom:1px solid rgba(139,124,246,.3);
+  padding:9px 16px;font-size:13.5px;color:#cfd5e1;text-align:center}
+.i18n-partial a{color:#8B7CF6;text-decoration:none;margin:0 5px}
+</style><link rel="alternate" hreflang="en" href="https://nlyra.xyz/verify"><link rel="alternate" hreflang="ar" href="https://nlyra.xyz/ar/verify"><link rel="alternate" hreflang="zh-Hans" href="https://nlyra.xyz/zh/verify"><link rel="alternate" hreflang="x-default" href="https://nlyra.xyz/verify"><link rel="canonical" href="https://nlyra.xyz/verify">
+</head>
+<body class="nl">
+<nav class="nl-nav" id="nlnav" aria-label="NLYRA">
+  <a class="lockup" href="/" aria-label="NERON × LYRA home"><img class="mark" src="/brand/dual-core-mark.svg" alt="" aria-hidden="true" width="34" height="22">NERON<span class="x">×</span><span class="lyra">LYRA</span></a>
+  <div class="links">
+    <details data-nav="intel"><summary>Intelligence <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="/">Scanner <small>paste a CA</small></a>
+        <a href="https://nlyra.xyz/wallet">Wallet Check</a>
+        <a href="https://nlyra.xyz/map">Constellation <small>holders map</small></a>
+        <a href="/faq#agents">The Agents</a>
+        <a href="https://nlyra.xyz/premium">The Key</a>
+      </div></details>
+    <details data-nav="trade"><summary>Trade &amp; DeFi <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/desk">The Desk <small>terminal</small></a>
+        <a href="https://nlyra.xyz/desk/bots">Bots <small>grid · DCA · copy</small></a>
+        <a href="https://nlyra.xyz/explorer">The Explorer <small>blocks &amp; txs</small></a>
+        <a href="https://nlyra.xyz/newstake/">Staking v2 <small>real yield</small></a><a href="https://nlyra.xyz/bsc">Bots on BNB Chain <small>infinity grid · usdt</small></a>
+        <a href="https://nlyra.xyz/staking">Staking v1 <small>withdraw only</small></a>
+      </div></details>
+    <details data-nav="build"><summary>Build <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/launch">Launchpad</a>
+        <a href="https://nlyra.xyz/api-docs">API</a>
+      </div></details>
+    <details data-nav="community"><summary>Community <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="menu">
+        <a href="https://nlyra.xyz/chat">Chat <small>with LYRA</small></a>
+        <a href="https://t.me/NeronWakeUp" target="_blank" rel="noopener">Telegram ↗</a>
+        <a href="/faq">How it works</a>
+        <a href="https://nlyra.xyz/stats">Stats</a>
+      </div></details>
+  </div>
+  <span class="spacer"></span>
+  <details class="lang" data-nav="lang"><summary aria-label="Language"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>EN</summary><div class="menu"><a href="/verify" aria-current="true" hreflang="en">English<i>EN</i></a><a href="/ar/verify" hreflang="ar">العربية<i>AR</i></a><a href="/zh/verify" hreflang="zh-Hans">中文<i>中</i></a></div></details><a class="cta" href="https://nlyra.xyz/desk2/">Open the Desk</a>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" onclick="var n=document.getElementById('nlnav');var o=n.classList.toggle('open');this.setAttribute('aria-expanded',String(o));"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</nav>
+<script>(function(){var n=document.getElementById('nlnav');if(!n)return;var p=location.pathname;var map={'/':'intel','/wallet':'intel','/map':'intel','/premium':'intel','/desk':'trade','/desk2':'trade','/dex':'trade','/stake':'trade','/staking':'trade','/invest':'trade','/launch':'build','/api-docs':'build','/bounties':'build','/gov':'build','/chat':'community','/faq':'community','/stats':'community','/roulette':'play','/slots':'play','/game':'play'};var k=map[p.replace(/\/$/,'')||'/'];if(k){var a=n.querySelector('[data-nav="'+k+'"]');if(a){if(a.tagName==='A')a.setAttribute('aria-current','page');else a.querySelector('summary').setAttribute('aria-current','page');}}document.addEventListener('click',function(e){n.querySelectorAll('details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});})();</script>
+<div class="wrap">
+<div class="card">
+  <h1><span class="brand-headline">Verify your $NLYRA</span><br>LYRA's inner circle</h1>
+  <p class="sub">Sign this message to prove your wallet holds 1,000,000+ $NLYRA. Signing is free, gasless, and moves nothing — it only proves the wallet is yours.</p>
+  <div class="msg mono" id="msg">loading…</div>
+  <button class="btn btn-primary" id="go">Connect wallet &amp; sign</button>
+  <div class="err" id="err"></div>
+  <div class="out" id="out">
+    <div class="step"><b>Your signature</b> — paste this back to LYRA (@Lyraneron). Once she confirms, her full mind opens for you at <b>@LYRAA_AI_bot</b>.</div>
+    <div class="sig" id="sig"></div>
+    <button class="copy btn-secondary" id="copy">Copy signature</button>
+  </div>
+  <p class="note">On mobile? Open this page inside your wallet's browser (MetaMask / Rabby / Trust → Browser tab). Nothing is transferred or approved — a signature can't touch your funds.</p>
+</div>
+</div>
+<script>
+(() => {
+  const q = new URLSearchParams(location.search);
+  const u = (q.get('u') || '').replace(/\D/g, '');
+  const n = (q.get('n') || '').replace(/[^a-f0-9]/gi, '');
+  const $ = id => document.getElementById(id);
+  if (!u || !n) {
+    $('msg').textContent = 'Missing code — DM LYRA (@Lyraneron) first and she hands you your personal link.';
+    $('go').style.display = 'none';
+    return;
+  }
+  const message = '$NLYRA holder check\nuid:' + u + '\nnonce:' + n;
+  $('msg').textContent = message;
+
+  $('go').addEventListener('click', async () => {
+    $('err').style.display = 'none';
+    if (!window.ethereum) {
+      $('err').textContent = 'No wallet found. On mobile: open this page inside your wallet app (Browser tab).';
+      $('err').style.display = 'block';
+      return;
+    }
+    $('go').disabled = true;
+    try {
+      const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const hex = '0x' + Array.from(new TextEncoder().encode(message))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+      const sig = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [hex, accs[0]],
+      });
+      $('sig').textContent = sig;
+      $('out').style.display = 'block';
+      $('go').style.display = 'none';
+    } catch (e) {
+      $('err').textContent = e && e.message ? e.message.slice(0, 140) : 'Signing failed — try again.';
+      $('err').style.display = 'block';
+      $('go').disabled = false;
+    }
+  });
+
+  $('copy').addEventListener('click', () => {
+    navigator.clipboard.writeText($('sig').textContent).then(() => {
+      $('copy').textContent = 'Copied — now paste it to @Lyraneron';
+    });
+  });
+})();
+</script>
+<div class="nlyra-backup-note" style="box-sizing:border-box;width:100%;padding:14px 16px;text-align:center;font:13px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;opacity:.75;direction:ltr">Backup copy hosted on GitHub. The live page is <a href="https://nlyra.xyz/verify" style="color:inherit">nlyra.xyz/verify</a>.</div>
+</body>
+</html>
